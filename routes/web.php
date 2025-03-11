@@ -39,6 +39,9 @@ use App\Http\Controllers\{
     ETicketController,
 };
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -74,11 +77,16 @@ Route::get('/link-storage', function() {
 
 Route::get('/', function () {
     return redirect()->route('login');
-
-    // return view('frontend.pages.home');
 });
 
+// Auth Routes
 Auth::routes();
+
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::get('/register', [RegisterController::class, 'register'])->name('register');
+Route::post('/register/store', [RegisterController::class, 'store'])->name('register.store');
 
 // ****************************************** Back-end Links *****************************************
 Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/admin', 'as' => 'admin.'], function() {

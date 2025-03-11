@@ -3,11 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
 use App\Providers\RouteServiceProvider;
-use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
+/* included models */
+use App\Models\User;
+use App\Models\UserCategory;
 
 class RegisterController extends Controller
 {
@@ -69,5 +75,12 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    public function register()
+    {
+        $categorys = UserCategory::where('status', 1)->get();
+
+        return view('auth.register', compact('categorys'));
     }
 }

@@ -17,9 +17,9 @@
     window.onload = addNewClass();
 
     function addNewClass() {
-        // $('.fxt-template-animation').imagesLoaded().done(function(instance) {
+        $('.fxt-template-animation').imagesLoaded().done(function(instance) {
             $('.fxt-template-animation').addClass('loaded');
-        // });
+        });
     }
 
     /*-------------------------------------

@@ -1,77 +1,295 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+        <title>Login | {{ $global_setting->title }}</title>
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
-                        @csrf
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{{ asset('loginAssets/css/bootstrap.min.css') }}">
+        <!-- Fontawesome CSS -->
+        <link rel="stylesheet" href="{{ asset('loginAssets/css/fontawesome-all.min.css') }}">
+        <!-- Flaticon CSS -->
+        <link rel="stylesheet" href="{{ asset('loginAssets/font/flaticon.css') }}">
+        <!-- Google Web Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ asset('loginAssets/style.css') }}">
 
-                        <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">নাম</label>
+        <style>
+.fxt-form-content {
+    position: relative;
+    padding: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+/* Common styles for all borders */
+.fxt-form-content .border {
+    position: absolute;
+    height: 5px;
+    width: 50%;
+    background: linear-gradient(90deg, #FF4500, #FFA500);
+    box-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
+    animation: borderMove 3s linear infinite;
+}
 
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+/* Top border - moves right */
+.fxt-form-content .border-top {
+    top: 0;
+    left: 50%;
+    transform-origin: left;
+}
 
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('ই-মেইল') }}</label>
+/* Bottom border - moves left */
+.fxt-form-content .border-bottom {
+    bottom: 0;
+    right: 50%;
+    transform-origin: right;
+    animation: borderMoveReverse 3s linear infinite;
+}
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+/* Left border - moves up */
+.fxt-form-content .border-left {
+    width: 5px;
+    height: 50%;
+    left: 0;
+    bottom: 50%;
+    transform-origin: bottom;
+    animation: borderMoveVerticalReverse 3s linear infinite;
+}
 
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+/* Right border - moves down */
+.fxt-form-content .border-right {
+    width: 5px;
+    height: 50%;
+    right: 0;
+    top: 50%;
+    transform-origin: top;
+    animation: borderMoveVertical 3s linear infinite;
+}
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('পাসওয়ার্ড') }}</label>
+/* Horizontal movement (Top moves right) */
+@keyframes borderMove {
+    0% { width: 0; left: 50%; }
+    50% { width: 50%; left: 50%; }
+    66% { width: 50%; left: 50%; } /* Pause for 1 sec */
+    100% { width: 0; left: 100%; }
+}
 
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+/* Reverse for Bottom Border (moves left) */
+@keyframes borderMoveReverse {
+    0% { width: 0; right: 50%; }
+    50% { width: 50%; right: 50%; }
+    66% { width: 50%; right: 50%; } /* Pause for 1 sec */
+    100% { width: 0; right: 100%; }
+}
 
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+/* Vertical movement (Right Border moves down) */
+@keyframes borderMoveVertical {
+    0% { height: 0; top: 50%; }
+    50% { height: 50%; top: 50%; }
+    66% { height: 50%; top: 50%; } /* Pause for 1 sec */
+    100% { height: 0; top: 100%; }
+}
 
-                        <div class="row mb-3">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('পাসওয়ার্ড নিশ্চিত করুন') }}</label>
+/* Reverse for Left Border (moves up) */
+@keyframes borderMoveVerticalReverse {
+    0% { height: 0; bottom: 50%; }
+    50% { height: 50%; bottom: 50%; }
+    66% { height: 50%; bottom: 50%; } /* Pause for 1 sec */
+    100% { height: 0; bottom: 100%; }
+}
+        </style>
+    </head>
 
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+    <body>
+        <div id="preloader" class="preloader">
+            <div class='inner'>
+                <div class='line1'></div>
+                <div class='line2'></div>
+                <div class='line3'></div>
             </div>
         </div>
-    </div>
-</div>
-@endsection
+
+        <section class="fxt-template-animation fxt-template-layout31">
+            <span class="fxt-shape fxt-animation-active"></span>
+
+            <div class="fxt-content-wrap">
+                <div class="fxt-heading-content">
+                    <div class="fxt-inner-wrap">
+                        <div class="fxt-transformY-50 fxt-transition-delay-3">
+                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="Logo" style="max-width: 300px;"></a>
+                        </div>
+
+                        <div class="fxt-transformY-50 fxt-transition-delay-4">
+                            <h1 class="fxt-main-title">{{ $global_setting->title }}</h1>
+                        </div>
+
+                        {{-- <div class="fxt-login-option">
+                            <ul>
+                                <li class="fxt-transformY-50 fxt-transition-delay-6"><a href="{{ route('login.google') }}"><img src="{{ asset('loginAssets/img/google-logo.png') }}" alt="Google Plus" style="max-width: 35px; margin-right: 5px;"> Sign in with Google</a></li>
+                                <li class="fxt-transformY-50 fxt-transition-delay-7"><a href="#">Sing in with Facebook</a></li>
+                            </ul>
+                        </div> --}}
+                    </div>
+                </div>
+
+                <div class="fxt-form-content">
+                    <div class="border border-top"></div>
+                    <div class="border border-bottom"></div>
+                    <div class="border border-left"></div>
+                    <div class="border border-right"></div>
+
+                    <div class="fxt-page-switcher">
+                        <h2 class="fxt-page-title mr-3">Register</h2>
+
+                        {{-- <ul class="fxt-switcher-wrap">
+                            <li><a href="login-31.html" class="fxt-switcher-btn active">Login</a></li>
+                            <li><a href="register-31.html" class="fxt-switcher-btn">Register</a></li>
+                        </ul> --}}
+                    </div>
+
+                    <div class="fxt-main-form">
+                        <div class="fxt-inner-wrap" style="max-width: 100%;">
+                            @include('alerts.alert')
+
+                            <form id="registerForm" action="{{ route('register.store') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
+                                @csrf
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <input type="text" id="name_en" class="form-control" name="name_en" placeholder="Enter Full Name" required="required">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <select name="user_category_id" id="user_category_id" class="form-control" required>
+                                                <option value="">--Select User Category--</option>
+
+                                                @foreach ($categorys as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <input type="email" id="email" class="form-control" name="email" placeholder="Enter Email" required="required">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <input type="text" id="mobile" class="form-control" name="mobile" placeholder="Enter Mobile No." required="required" maxlength="11">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <input id="password" type="password" class="form-control" name="password" placeholder="Enter Password" required="required">
+                                            <i toggle="#password" class="fa fa-fw fa-eye toggle-password field-icon"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <button type="submit" class="fxt-btn-fill">Register</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <div class="fxt-switcher-description">Already have an account?<a href="{{ url('/') }}" class="fxt-switcher-text ms-1">Login</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- jquery-->
+        <script src="{{ asset('loginAssets/js/jquery.min.js') }}"></script>
+        <!-- Bootstrap js -->
+        <script src="{{ asset('loginAssets/js/bootstrap.min.js') }}"></script>
+        <!-- Imagesloaded js -->
+        <script src="{{ asset('loginAssets/js/imagesloaded.pkgd.min.js') }}"></script>
+        <!-- Validator js -->
+        <script src="{{ asset('loginAssets/js/validator.min.js') }}"></script>
+        <!-- Custom Js -->
+        <script src="{{ asset('loginAssets/js/main.js') }}"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            $(document).ready(function () {
+                $("#registerForm").on("submit", function (e) {
+                    e.preventDefault();
+
+                    let email = $("#email").val().trim();
+                    let password = $("#password").val().trim();
+                    let submitButton = $("button[type='submit']");
+
+                    if (email === "" || password === "") {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Validation Error",
+                            text: "Email and Password are required!"
+                        });
+                        return;
+                    }
+
+                    submitButton.prop("disabled", true);
+                    submitButton.text("Logging in...");
+
+                    $.ajax({
+                        url: "{{ route('login') }}",
+                        method: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            email: email,
+                            password: password
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Login Successful",
+                                    text: response.message
+                                });
+
+                                window.location.href = response.redirect;
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Login Failed",
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: xhr.responseJSON.message || "An error occurred. Please try again."
+                            });
+                        },
+                        complete: function () {
+                            submitButton.prop("disabled", false);
+                            submitButton.text("Log in");
+                        }
+                    });
+                });
+            });
+
+        </script>
+    </body>
+</html>

@@ -3,13 +3,14 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+        <title>Login | {{ $global_setting->title }}</title>
+
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>Login | SEBPO - Project Management Software</title>
-
+        
         <!-- Favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/css/bootstrap.min.css') }}">
         <!-- Fontawesome CSS -->
@@ -21,30 +22,90 @@
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/style.css') }}">
 
-        <script src="{{ asset('loginAssets/js/particles.min.js') }}"></script>
-
         <style>
-            .fxt-template-layout9 {
-                position: relative;
-                z-index: 1;
-            }
-            #particles-js{
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-                background: transparent;
-                background-size: cover;
-                background-position: 50% 50%;
-                background-repeat: no-repeat;
-            }
+.fxt-form-content {
+    position: relative;
+    padding: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-            .text6 {
-                text-shadow: 0px 4px 3px rgba(0,0,0,0.4), 0px 8px 13px rgba(0,0,0,0.1), 0px 18px 23px rgba(0,0,0,0.1);
-                color: #fff;
-                font-size: 60px;
-                font-family: fangsong;
-            }
+/* Common styles for all borders */
+.fxt-form-content .border {
+    position: absolute;
+    height: 5px;
+    width: 50%;
+    background: linear-gradient(90deg, #FF4500, #FFA500);
+    box-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
+    animation: borderMove 3s linear infinite;
+}
+
+/* Top border - moves right */
+.fxt-form-content .border-top {
+    top: 0;
+    left: 50%;
+    transform-origin: left;
+}
+
+/* Bottom border - moves left */
+.fxt-form-content .border-bottom {
+    bottom: 0;
+    right: 50%;
+    transform-origin: right;
+    animation: borderMoveReverse 3s linear infinite;
+}
+
+/* Left border - moves up */
+.fxt-form-content .border-left {
+    width: 5px;
+    height: 50%;
+    left: 0;
+    bottom: 50%;
+    transform-origin: bottom;
+    animation: borderMoveVerticalReverse 3s linear infinite;
+}
+
+/* Right border - moves down */
+.fxt-form-content .border-right {
+    width: 5px;
+    height: 50%;
+    right: 0;
+    top: 50%;
+    transform-origin: top;
+    animation: borderMoveVertical 3s linear infinite;
+}
+
+/* Horizontal movement (Top moves right) */
+@keyframes borderMove {
+    0% { width: 0; left: 50%; }
+    50% { width: 50%; left: 50%; }
+    66% { width: 50%; left: 50%; } /* Pause for 1 sec */
+    100% { width: 0; left: 100%; }
+}
+
+/* Reverse for Bottom Border (moves left) */
+@keyframes borderMoveReverse {
+    0% { width: 0; right: 50%; }
+    50% { width: 50%; right: 50%; }
+    66% { width: 50%; right: 50%; } /* Pause for 1 sec */
+    100% { width: 0; right: 100%; }
+}
+
+/* Vertical movement (Right Border moves down) */
+@keyframes borderMoveVertical {
+    0% { height: 0; top: 50%; }
+    50% { height: 50%; top: 50%; }
+    66% { height: 50%; top: 50%; } /* Pause for 1 sec */
+    100% { height: 0; top: 100%; }
+}
+
+/* Reverse for Left Border (moves up) */
+@keyframes borderMoveVerticalReverse {
+    0% { height: 0; bottom: 50%; }
+    50% { height: 50%; bottom: 50%; }
+    66% { height: 50%; bottom: 50%; } /* Pause for 1 sec */
+    100% { height: 0; bottom: 100%; }
+}
         </style>
     </head>
 
@@ -57,74 +118,87 @@
             </div>
         </div>
 
-        <section class="fxt-template-animation fxt-template-layout9" data-bg-image="{{ asset('loginAssets/img/figure/bg9-l.jpg') }}">
-            <div id="particles-js"></div>
+        <section class="fxt-template-animation fxt-template-layout31">
+            <span class="fxt-shape fxt-animation-active"></span>
 
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/soft_logo') }}/{{ $global_setting->soft_logo ?? '' }}" alt="Logo" style="background: #fff; border-radius: 50px; width: 180px; padding: 10px; border: 5px solid #01A0DC;"></a>
+            <div class="fxt-content-wrap">
+                <div class="fxt-heading-content">
+                    <div class="fxt-inner-wrap">
+                        <div class="fxt-transformY-50 fxt-transition-delay-3">
+                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="Logo" style="max-width: 300px;"></a>
+                        </div>
 
-                        <h1 class='text6'>{{ $global_setting->title ?? 'Sixth Sense' }}</h1>
+                        <div class="fxt-transformY-50 fxt-transition-delay-4">
+                            <h1 class="fxt-main-title">{{ $global_setting->title }}</h1>
+                        </div>
+
+                        <div class="fxt-login-option">
+                            <ul>
+                                <li class="fxt-transformY-50 fxt-transition-delay-6"><a href="{{ route('login.google') }}"><img src="{{ asset('loginAssets/img/google-logo.png') }}" alt="Google Plus" style="max-width: 35px; margin-right: 5px;"> Sign in with Google</a></li>
+                                {{-- <li class="fxt-transformY-50 fxt-transition-delay-7"><a href="#">Sing in with Facebook</a></li> --}}
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
-                <div class="row align-items-center justify-content-center mt-3" style="border: solid 15px #ffffff0f; background: #0000002e;">
-                    <div class="col-lg-3">
-                        <div class="fxt-header">
-                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="Logo"></a>
-                        </div>
+                <div class="fxt-form-content">
+                    <div class="border border-top"></div>
+                    <div class="border border-bottom"></div>
+                    <div class="border border-left"></div>
+                    <div class="border border-right"></div>
+
+                    <div class="fxt-page-switcher">
+                        <h2 class="fxt-page-title mr-3">Login</h2>
+
+                        {{-- <ul class="fxt-switcher-wrap">
+                            <li><a href="login-31.html" class="fxt-switcher-btn active">Login</a></li>
+                            <li><a href="register-31.html" class="fxt-switcher-btn">Register</a></li>
+                        </ul> --}}
                     </div>
 
-                    <div class="col-lg-6">
-                        <div class="fxt-content">
+                    <div class="fxt-main-form">
+                        <div class="fxt-inner-wrap">
                             @include('alerts.alert')
-                            
-                            <h2>Login into your account</h2>
 
-                            <div class="fxt-form">
-                                <form action="{{ route('login') }}" method="POST">
-                                    @csrf
+                            <form id="loginForm" action="{{ route('login') }}" method="POST" autocomplete="off">
+                                @csrf
 
-                                    <div class="form-group">
-                                        <div class="fxt-transformY-50 fxt-transition-delay-1">
-                                            <input type="email" id="username" class="form-control" name="email" placeholder="Enter Email" required="required">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <input type="email" id="email" class="form-control" name="email" placeholder="Enter Email" required="required">
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <div class="fxt-transformY-50 fxt-transition-delay-2">
+                                    <div class="col-12">
+                                        <div class="form-group">
                                             <input id="password" type="password" class="form-control" name="password" placeholder="Enter Password" required="required">
                                             <i toggle="#password" class="fa fa-fw fa-eye toggle-password field-icon"></i>
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <div class="fxt-transformY-50 fxt-transition-delay-3">
-                                            <div class="fxt-checkbox-area">
-                                                {{-- <div class="checkbox">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <div class="fxt-checkbox-wrap">
+                                                <div class="fxt-checkbox-box mr-3">
                                                     <input id="checkbox1" type="checkbox">
-                                                    <label for="checkbox1">Keep me logged in</label>
-                                                </div> --}}
+                                                    <label for="checkbox1" class="ps-4">Remember Me</label>
+                                                </div>
 
-                                                <a href="{{ url('password/reset') }}" class="switcher-text">Forgot Password</a>
+                                                <a href="forgot-password-31.html" class="fxt-switcher-text">Forgot Password</a>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <div class="fxt-transformY-50 fxt-transition-delay-4">
+                                    <div class="col-12">
+                                        <div class="form-group">
                                             <button type="submit" class="fxt-btn-fill">Log in</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-
-                            {{-- <div class="fxt-footer">
-                                <div class="fxt-transformY-50 fxt-transition-delay-9">
-                                    <p>Don't have an account?<a href="register-9.html" class="switcher-text2 inline-text">Register</a></p>
                                 </div>
-                            </div> --}}
+                            </form>
+                            
+                            <div class="fxt-switcher-description">Don't have an account?<a href="{{ route('register') }}" class="fxt-switcher-text ms-1">Register</a></div>
                         </div>
                     </div>
                 </div>
@@ -142,19 +216,69 @@
         <!-- Custom Js -->
         <script src="{{ asset('loginAssets/js/main.js') }}"></script>
 
-        <script src="{{ asset('loginAssets/js/app.js') }}"></script>
-        <script src="{{ asset('loginAssets/js/stats.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
-            var count_particles, stats, update;
-            stats = new Stats;
-            stats.setMode(0);
-            stats.domElement.style.position = 'absolute';
-            stats.domElement.style.left = '0px';
-            stats.domElement.style.top = '0px';
-            document.body.appendChild(stats.domElement);
+            $(document).ready(function () {
+                $("#loginForm").on("submit", function (e) {
+                    e.preventDefault();
 
-            requestAnimationFrame(update);
+                    let email = $("#email").val().trim();
+                    let password = $("#password").val().trim();
+                    let submitButton = $("button[type='submit']");
+
+                    if (email === "" || password === "") {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Validation Error",
+                            text: "Email and Password are required!"
+                        });
+                        return;
+                    }
+
+                    submitButton.prop("disabled", true);
+                    submitButton.text("Logging in...");
+
+                    $.ajax({
+                        url: "{{ route('login') }}",
+                        method: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            email: email,
+                            password: password
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Login Successful",
+                                    text: response.message
+                                });
+
+                                window.location.href = response.redirect;
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Login Failed",
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: xhr.responseJSON.message || "An error occurred. Please try again."
+                            });
+                        },
+                        complete: function () {
+                            submitButton.prop("disabled", false);
+                            submitButton.text("Log in");
+                        }
+                    });
+                });
+            });
+
         </script>
     </body>
 </html>
