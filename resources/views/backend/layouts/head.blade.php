@@ -45,13 +45,25 @@
         {{-- <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link type="text/css" rel="stylesheet" href="{{ asset('backend-assets\assets\css\image-uploader.min.css') }}"> --}}
 
+        {{-- <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cambo&display=swap" rel="stylesheet"> --}}
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cambo&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
 
         <style>
+            .navbar-nav .nav-link:hover {
+                outline: 2px solid rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+    transition: all 0.3s ease-in-out;
+                background: none;
+                margin-left: 0;
+            }
             .navbar-menu .navbar-nav .nav-link {
-                font-family: "Cambo", serif;
+                font-family: "Merriweather", serif;
+                font-optical-sizing: auto;
             }
             .page-title-box {
                 z-index: 2;
@@ -94,7 +106,8 @@
                 src: url({{asset('font.Nikosh.ttf')}});
             }
             body {
-                font-family: "Cambo", serif;
+                font-family: "Merriweather", serif;
+                font-optical-sizing: auto;
                 font-style: normal;
                 font-size: 1.0em;
                 padding: 0;
@@ -195,7 +208,7 @@
             }
 
             #page-topbar {
-                background: linear-gradient(45deg,#9b430eb8,#0000ffb2);
+                background: linear-gradient(90deg, #0F2027, #203A43, #2C5364) !important;
                 /* background: url({{asset('assets/images/backgound_image.png')}}); */
                 margin: 8px;
                 border-radius: 10px;
@@ -205,7 +218,8 @@
                 background-size: cover; */
             }
             .app-menu {
-                background: linear-gradient(45deg, #3959d7cf,#d77439e5) !important;
+                /* background: linear-gradient(45deg, #3959d7cf,#d77439e5) !important; */
+                background: linear-gradient(90deg, #0F2027, #203A43, #2C5364) !important;
                 overflow: hidden;
             }
 
@@ -214,19 +228,12 @@
                 position: absolute;
                 top: -180px;
                 width: 180px;
-                background: linear-gradient(45deg, #224eb7b2,#f20d0d30);
+                /* background: linear-gradient(45deg, #224eb7b2,#f20d0d30); */
                 left: -124px;
                 height: 1000px;
                 border-radius: 0;
                 transform: rotate3d(1, 1, 1, 45deg);
                 z-index: -10;
-            }
-
-            @media screen and (min-width: 1030px) {
-                .app-menu {
-                    border: 9px solid white !important;
-                    border-radius: 20px !important;
-                }
             }
 
             .footer {
@@ -479,6 +486,19 @@
                 to {
                     transform: scale(20) rotate(960deg) translate(-50%, -50%);
                     opacity: 0;
+                }
+            }
+
+            @media screen and (min-width: 1030px) {
+                .app-menu {
+                    border: 9px solid white !important;
+                    border-radius: 20px !important;
+                }
+            }
+
+            @media screen and (min-width: 467px) {
+                .navbar-menu .navbar-nav .nav-link {
+                    padding-left: 15px;
                 }
             }
         </style>

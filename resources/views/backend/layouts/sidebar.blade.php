@@ -10,22 +10,22 @@
         <!-- Dark Logo-->
         <a href="{{ route('admin.home') }}" class="logo logo-dark mt-2">
             <span class="logo-sm">
-                <img src="{{ asset('storage/soft_logo') }}/{{ $global_setting->soft_logo ?? '' }}" alt="" height="50" style="background: #fff; border-radius: 5px; padding: 10px; border: 5px solid #01A0DC;">
+                <img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="" height="50">
             </span>
 
             <span class="logo-lg">
-                <img src="{{ asset('storage/soft_logo') }}/{{ $global_setting->soft_logo ?? '' }}" alt="" width="100" style="background: #fff; border-radius: 5px; padding: 10px; border: 5px solid #01A0DC;">
+                <img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="" width="100">
             </span>
         </a>
 
         <!-- Light Logo-->
         <a href="{{ route('admin.home') }}" class="logo logo-light mt-2">
             <span class="logo-sm">
-                <img src="{{ asset('storage/soft_logo') }}/{{ $global_setting->soft_logo ?? '' }}" alt="" height="50" style="background: #fff; border-radius: 5px; padding: 10px; border: 5px solid #01A0DC;">
+                <img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="" height="50">
             </span>
 
             <span class="logo-lg">
-                <img src="{{ asset('storage/soft_logo') }}/{{ $global_setting->soft_logo ?? '' }}" alt="" width="100" style="background: #fff; border-radius: 5px; padding: 10px; border: 5px solid #01A0DC;">
+                <img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="" width="100">
             </span>
         </a>
 

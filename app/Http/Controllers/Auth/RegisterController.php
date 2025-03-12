@@ -8,12 +8,26 @@ use Illuminate\Http\Request;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 /* included models */
 use App\Models\User;
+use App\Models\UserInfo;
 use App\Models\UserCategory;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\Setting;
+use App\Models\Notification;
+
+/* included mails */
+use App\Mail\UserRegistrationToAdminMail;
+use App\Mail\UserRegistrationToUserMail;
 
 class RegisterController extends Controller
 {
@@ -79,8 +93,111 @@ class RegisterController extends Controller
 
     public function register()
     {
-        $categorys = UserCategory::where('status', 1)->get();
+        $categorys = UserCategory::select('id', 'name')->where('status', 1)->get();
 
         return view('auth.register', compact('categorys'));
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name_en'           => 'required|string|max:255',
+            'user_category_id'  => 'required|exists:user_categories,id',
+            'organization'      => 'required|string|max:255',
+            'designation'       => 'required|string|max:255',
+            'email'             => 'required|email|unique:users,email',
+            'mobile'            => 'required|string|max:14|unique:users,mobile',
+            'password'          => 'required|min:6|confirmed',
+            'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        try {
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imagePath = $image->store('userImages', 'public');
+            } else {
+                $imagePath = null;
+            }
+
+            DB::beginTransaction();
+
+            $user = new User;
+            
+            $user->name_en           = $request->name_en;
+            $user->user_category_id  = $request->user_category_id;
+            $user->email             = $request->email;
+            $user->mobile            = $request->mobile;
+            $user->user_type         = 4;
+            $user->role_id           = 4;
+            $user->password          = Hash::make($request->password);
+
+            $user->save();
+
+            $userInfo = new UserInfo;
+
+            $userInfo->user_id      = $user->id;
+            $userInfo->organization = $request->organization;
+            $userInfo->designation  = $request->designation;
+            $userInfo->image        = $imagePath;
+            $userInfo->created_by   = Auth::id();
+
+            $userInfo->save();
+
+            $setting = Setting::first();
+            $admins = User::whereIn('role_id', [1, 2])->where('status', 1)->get();
+
+            if ($user) {
+                Mail::to($user->email)->send(new UserRegistrationToUserMail($setting, $user));
+
+                if (count($admins)) {
+                    foreach ($admins as $admin) {
+                        Mail::to($admin->email)->send(new UserRegistrationToAdminMail($setting, $user, $admin));
+
+                        $notification = new Notification;
+
+                        $notification->type             = 4;
+                        $notification->title            = 'New User Registration';
+                        $notification->message          = 'A new user has registered.';
+                        $notification->route_name       = route('admin.user.show', Crypt::encryptString($user->id));
+                        $notification->sender_role_id   = 4;
+                        $notification->sender_user_id   = $user->id;
+                        $notification->receiver_role_id = $admin->role_id;
+                        $notification->receiver_user_id = $admin->id;
+                        $notification->read_status      = 0;
+
+                        $notification->save();
+                    }
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Registration Successful! Please Wait for Approval.',
+                    'redirect' => route('register')
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Registration failed, please try again.'
+            ], 500);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            \Log::error($e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred. Please try again.',
+            ], 500);
+        }
     }
 }

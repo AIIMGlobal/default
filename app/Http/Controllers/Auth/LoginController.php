@@ -48,6 +48,11 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function loginPage()
+    {
+        return view('auth.login');
+    }
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [

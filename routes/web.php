@@ -75,18 +75,18 @@ Route::get('/link-storage', function() {
     return "Linked";
 });
 
+// Auth Routes
+Auth::routes();
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
-
-// Auth Routes
-Auth::routes();
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
 Route::get('/register', [RegisterController::class, 'register'])->name('register');
-Route::post('/register/store', [RegisterController::class, 'store'])->name('register.store');
+Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
 // ****************************************** Back-end Links *****************************************
 Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/admin', 'as' => 'admin.'], function() {

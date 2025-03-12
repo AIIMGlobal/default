@@ -4,13 +4,13 @@
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-        <title>Login | {{ $global_setting->title }}</title>
+        <title>Register | {{ $global_setting->title }}</title>
 
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <!-- Favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/css/bootstrap.min.css') }}">
         <!-- Fontawesome CSS -->
@@ -19,93 +19,98 @@
         <link rel="stylesheet" href="{{ asset('loginAssets/font/flaticon.css') }}">
         <!-- Google Web Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap" rel="stylesheet">
+
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/style.css') }}">
 
         <style>
-.fxt-form-content {
-    position: relative;
-    padding: 20px;
-    border-radius: 10px;
-    overflow: hidden;
-}
+            .fxt-form-content {
+                position: relative;
+                padding: 20px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
 
-/* Common styles for all borders */
-.fxt-form-content .border {
-    position: absolute;
-    height: 5px;
-    width: 50%;
-    background: linear-gradient(90deg, #FF4500, #FFA500);
-    box-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
-    animation: borderMove 3s linear infinite;
-}
+            .fxt-form-content .border {
+                position: absolute;
+                height: 5px;
+                width: 50%;
+                background: linear-gradient(90deg, #FF4500, #FFA500);
+                box-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
+                animation: borderMove 3s linear infinite;
+            }
 
-/* Top border - moves right */
-.fxt-form-content .border-top {
-    top: 0;
-    left: 50%;
-    transform-origin: left;
-}
+            .fxt-form-content .border-top {
+                top: 0;
+                left: 50%;
+                transform-origin: left;
+            }
 
-/* Bottom border - moves left */
-.fxt-form-content .border-bottom {
-    bottom: 0;
-    right: 50%;
-    transform-origin: right;
-    animation: borderMoveReverse 3s linear infinite;
-}
+            .fxt-form-content .border-bottom {
+                bottom: 0;
+                right: 50%;
+                transform-origin: right;
+                animation: borderMoveReverse 3s linear infinite;
+            }
 
-/* Left border - moves up */
-.fxt-form-content .border-left {
-    width: 5px;
-    height: 50%;
-    left: 0;
-    bottom: 50%;
-    transform-origin: bottom;
-    animation: borderMoveVerticalReverse 3s linear infinite;
-}
+            .fxt-form-content .border-left {
+                width: 5px;
+                height: 50%;
+                left: 0;
+                bottom: 50%;
+                transform-origin: bottom;
+                animation: borderMoveVerticalReverse 3s linear infinite;
+            }
 
-/* Right border - moves down */
-.fxt-form-content .border-right {
-    width: 5px;
-    height: 50%;
-    right: 0;
-    top: 50%;
-    transform-origin: top;
-    animation: borderMoveVertical 3s linear infinite;
-}
+            .fxt-form-content .border-right {
+                width: 5px;
+                height: 50%;
+                right: 0;
+                top: 50%;
+                transform-origin: top;
+                animation: borderMoveVertical 3s linear infinite;
+            }
 
-/* Horizontal movement (Top moves right) */
-@keyframes borderMove {
-    0% { width: 0; left: 50%; }
-    50% { width: 50%; left: 50%; }
-    66% { width: 50%; left: 50%; } /* Pause for 1 sec */
-    100% { width: 0; left: 100%; }
-}
+            @keyframes borderMove {
+                0% { width: 0; left: 50%; }
+                50% { width: 50%; left: 50%; }
+                66% { width: 50%; left: 50%; }
+                100% { width: 0; left: 100%; }
+            }
 
-/* Reverse for Bottom Border (moves left) */
-@keyframes borderMoveReverse {
-    0% { width: 0; right: 50%; }
-    50% { width: 50%; right: 50%; }
-    66% { width: 50%; right: 50%; } /* Pause for 1 sec */
-    100% { width: 0; right: 100%; }
-}
+            @keyframes borderMoveReverse {
+                0% { width: 0; right: 50%; }
+                50% { width: 50%; right: 50%; }
+                66% { width: 50%; right: 50%; }
+                100% { width: 0; right: 100%; }
+            }
 
-/* Vertical movement (Right Border moves down) */
-@keyframes borderMoveVertical {
-    0% { height: 0; top: 50%; }
-    50% { height: 50%; top: 50%; }
-    66% { height: 50%; top: 50%; } /* Pause for 1 sec */
-    100% { height: 0; top: 100%; }
-}
+            @keyframes borderMoveVertical {
+                0% { height: 0; top: 50%; }
+                50% { height: 50%; top: 50%; }
+                66% { height: 50%; top: 50%; }
+                100% { height: 0; top: 100%; }
+            }
 
-/* Reverse for Left Border (moves up) */
-@keyframes borderMoveVerticalReverse {
-    0% { height: 0; bottom: 50%; }
-    50% { height: 50%; bottom: 50%; }
-    66% { height: 50%; bottom: 50%; } /* Pause for 1 sec */
-    100% { height: 0; bottom: 100%; }
-}
+            @keyframes borderMoveVerticalReverse {
+                0% { height: 0; bottom: 50%; }
+                50% { height: 50%; bottom: 50%; }
+                66% { height: 50%; bottom: 50%; }
+                100% { height: 0; bottom: 100%; }
+            }
+
+            .select2-selection__rendered {
+                line-height: 50px !important;
+            }
+            .select2-container .select2-selection--single {
+                height: 50px !important;
+                border-color: #00563e7a;
+            }
+            .select2-selection__arrow {
+                height: 50px !important;
+            }
         </style>
     </head>
 
@@ -125,7 +130,7 @@
                 <div class="fxt-heading-content">
                     <div class="fxt-inner-wrap">
                         <div class="fxt-transformY-50 fxt-transition-delay-3">
-                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="Logo" style="max-width: 300px;"></a>
+                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}" alt="Logo" style="max-width: 300px;"></a>
                         </div>
 
                         <div class="fxt-transformY-50 fxt-transition-delay-4">
@@ -172,7 +177,7 @@
 
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <select name="user_category_id" id="user_category_id" class="form-control" required>
+                                            <select name="user_category_id" id="user_category_id" class="form-control select2" required>
                                                 <option value="">--Select User Category--</option>
 
                                                 @foreach ($categorys as $category)
@@ -184,13 +189,25 @@
 
                                     <div class="col-6">
                                         <div class="form-group">
+                                            <input type="text" id="organization" class="form-control" name="organization" placeholder="Enter Organization Name" required="required">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <input type="text" id="designation" class="form-control" name="designation" placeholder="Enter Desigantion" required="required">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
                                             <input type="email" id="email" class="form-control" name="email" placeholder="Enter Email" required="required">
                                         </div>
                                     </div>
 
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <input type="text" id="mobile" class="form-control" name="mobile" placeholder="Enter Mobile No." required="required" maxlength="11">
+                                            <input type="text" id="mobile" class="form-control" name="mobile" placeholder="Enter Mobile No." required="required" maxlength="14">
                                         </div>
                                     </div>
 
@@ -198,6 +215,19 @@
                                         <div class="form-group">
                                             <input id="password" type="password" class="form-control" name="password" placeholder="Enter Password" required="required">
                                             <i toggle="#password" class="fa fa-fw fa-eye toggle-password field-icon"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" placeholder="Re-Enter Password" required="required">
+                                            <i toggle="#password_confirmation" class="fa fa-fw fa-eye toggle-password field-icon"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <input type="file" id="image" class="form-control" name="image" required="required">
                                         </div>
                                     </div>
 
@@ -224,6 +254,9 @@
         <script src="{{ asset('loginAssets/js/imagesloaded.pkgd.min.js') }}"></script>
         <!-- Validator js -->
         <script src="{{ asset('loginAssets/js/validator.min.js') }}"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
         <!-- Custom Js -->
         <script src="{{ asset('loginAssets/js/main.js') }}"></script>
 
@@ -231,46 +264,36 @@
 
         <script>
             $(document).ready(function () {
+                $('.select2').select2();
+
                 $("#registerForm").on("submit", function (e) {
                     e.preventDefault();
 
-                    let email = $("#email").val().trim();
-                    let password = $("#password").val().trim();
+                    let formData = new FormData(this);
                     let submitButton = $("button[type='submit']");
 
-                    if (email === "" || password === "") {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Validation Error",
-                            text: "Email and Password are required!"
-                        });
-                        return;
-                    }
-
                     submitButton.prop("disabled", true);
-                    submitButton.text("Logging in...");
+                    submitButton.text("Registering...");
 
                     $.ajax({
-                        url: "{{ route('login') }}",
+                        url: "{{ route('register.store') }}",
                         method: "POST",
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            email: email,
-                            password: password
-                        },
+                        data: formData,
+                        processData: false,
+                        contentType: false,
                         success: function (response) {
                             if (response.success) {
                                 Swal.fire({
                                     icon: "success",
-                                    title: "Login Successful",
+                                    title: "Success",
                                     text: response.message
+                                }).then(() => {
+                                    window.location.href = response.redirect;
                                 });
-
-                                window.location.href = response.redirect;
                             } else {
                                 Swal.fire({
                                     icon: "error",
-                                    title: "Login Failed",
+                                    title: "Failed",
                                     text: response.message
                                 });
                             }
@@ -284,12 +307,11 @@
                         },
                         complete: function () {
                             submitButton.prop("disabled", false);
-                            submitButton.text("Log in");
+                            submitButton.text("Register");
                         }
                     });
                 });
             });
-
         </script>
     </body>
 </html>
