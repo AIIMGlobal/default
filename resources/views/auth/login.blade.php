@@ -10,7 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <!-- Favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/css/bootstrap.min.css') }}">
         <!-- Fontawesome CSS -->
@@ -23,89 +23,80 @@
         <link rel="stylesheet" href="{{ asset('loginAssets/style.css') }}">
 
         <style>
-.fxt-form-content {
-    position: relative;
-    padding: 20px;
-    border-radius: 10px;
-    overflow: hidden;
-}
+            .fxt-form-content {
+                position: relative;
+                padding: 20px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
 
-/* Common styles for all borders */
-.fxt-form-content .border {
-    position: absolute;
-    height: 5px;
-    width: 50%;
-    background: linear-gradient(90deg, #FF4500, #FFA500);
-    box-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
-    animation: borderMove 3s linear infinite;
-}
+            .fxt-form-content .border {
+                position: absolute;
+                height: 5px;
+                width: 50%;
+                background: linear-gradient(90deg, #FF4500, #FFA500);
+                box-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
+                animation: borderMove 3s linear infinite;
+            }
 
-/* Top border - moves right */
-.fxt-form-content .border-top {
-    top: 0;
-    left: 50%;
-    transform-origin: left;
-}
+            .fxt-form-content .border-top {
+                top: 0;
+                left: 50%;
+                transform-origin: left;
+            }
 
-/* Bottom border - moves left */
-.fxt-form-content .border-bottom {
-    bottom: 0;
-    right: 50%;
-    transform-origin: right;
-    animation: borderMoveReverse 3s linear infinite;
-}
+            .fxt-form-content .border-bottom {
+                bottom: 0;
+                right: 50%;
+                transform-origin: right;
+                animation: borderMoveReverse 3s linear infinite;
+            }
 
-/* Left border - moves up */
-.fxt-form-content .border-left {
-    width: 5px;
-    height: 50%;
-    left: 0;
-    bottom: 50%;
-    transform-origin: bottom;
-    animation: borderMoveVerticalReverse 3s linear infinite;
-}
+            .fxt-form-content .border-left {
+                width: 5px;
+                height: 50%;
+                left: 0;
+                bottom: 50%;
+                transform-origin: bottom;
+                animation: borderMoveVerticalReverse 3s linear infinite;
+            }
 
-/* Right border - moves down */
-.fxt-form-content .border-right {
-    width: 5px;
-    height: 50%;
-    right: 0;
-    top: 50%;
-    transform-origin: top;
-    animation: borderMoveVertical 3s linear infinite;
-}
+            .fxt-form-content .border-right {
+                width: 5px;
+                height: 50%;
+                right: 0;
+                top: 50%;
+                transform-origin: top;
+                animation: borderMoveVertical 3s linear infinite;
+            }
 
-/* Horizontal movement (Top moves right) */
-@keyframes borderMove {
-    0% { width: 0; left: 50%; }
-    50% { width: 50%; left: 50%; }
-    66% { width: 50%; left: 50%; } /* Pause for 1 sec */
-    100% { width: 0; left: 100%; }
-}
+            @keyframes borderMove {
+                0% { width: 0; left: 50%; }
+                50% { width: 50%; left: 50%; }
+                66% { width: 50%; left: 50%; }
+                100% { width: 0; left: 100%; }
+            }
 
-/* Reverse for Bottom Border (moves left) */
-@keyframes borderMoveReverse {
-    0% { width: 0; right: 50%; }
-    50% { width: 50%; right: 50%; }
-    66% { width: 50%; right: 50%; } /* Pause for 1 sec */
-    100% { width: 0; right: 100%; }
-}
+            @keyframes borderMoveReverse {
+                0% { width: 0; right: 50%; }
+                50% { width: 50%; right: 50%; }
+                66% { width: 50%; right: 50%; }
+                100% { width: 0; right: 100%; }
+            }
 
-/* Vertical movement (Right Border moves down) */
-@keyframes borderMoveVertical {
-    0% { height: 0; top: 50%; }
-    50% { height: 50%; top: 50%; }
-    66% { height: 50%; top: 50%; } /* Pause for 1 sec */
-    100% { height: 0; top: 100%; }
-}
+            @keyframes borderMoveVertical {
+                0% { height: 0; top: 50%; }
+                50% { height: 50%; top: 50%; }
+                66% { height: 50%; top: 50%; }
+                100% { height: 0; top: 100%; }
+            }
 
-/* Reverse for Left Border (moves up) */
-@keyframes borderMoveVerticalReverse {
-    0% { height: 0; bottom: 50%; }
-    50% { height: 50%; bottom: 50%; }
-    66% { height: 50%; bottom: 50%; } /* Pause for 1 sec */
-    100% { height: 0; bottom: 100%; }
-}
+            @keyframes borderMoveVerticalReverse {
+                0% { height: 0; bottom: 50%; }
+                50% { height: 50%; bottom: 50%; }
+                66% { height: 50%; bottom: 50%; }
+                100% { height: 0; bottom: 100%; }
+            }
         </style>
     </head>
 
@@ -125,7 +116,7 @@
                 <div class="fxt-heading-content">
                     <div class="fxt-inner-wrap">
                         <div class="fxt-transformY-50 fxt-transition-delay-3">
-                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}" alt="Logo" style="max-width: 300px;"></a>
+                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="Logo" style="max-width: 300px;"></a>
                         </div>
 
                         <div class="fxt-transformY-50 fxt-transition-delay-4">

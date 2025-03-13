@@ -9,7 +9,7 @@
         <title>Reset Password | SEBPO - Project Management Software</title>
 
         <!-- Favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/css/bootstrap.min.css') }}">
         <!-- Fontawesome CSS -->
@@ -70,7 +70,7 @@
                 <div class="row align-items-center justify-content-center mt-3" style="border: solid 15px #ffffff0f; background: #0000002e;">
                     <div class="col-lg-3">
                         <div class="fxt-header">
-                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="Logo"></a>
+                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}" alt="Logo"></a>
                         </div>
                     </div>
 

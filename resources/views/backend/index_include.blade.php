@@ -1,109 +1,89 @@
-<div class="col-xl-12">
-    <h4>Welcome to {{ $global_setting->title }} Dashboard!</h4>
+<div class="col-md-12">
+    <h3>Welcome to {{ $global_setting->title }} Dashboard</h3>
 
     <div class="row mt-4">
         @can('employee_count')
-            <div class="col-xl-3 col-md-6">
-                <a href="{{ route('admin.user.index') }}">
-                    <div class="card card-animate bg-success card-height-100" style="height: 150px; padding-top: 20px;">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-sm flex-shrink-0">
-                                    <span class="avatar-title bg-soft-light text-white rounded-2 fs-2">
-                                        <i class="bx bx-user"></i>
-                                    </span>
-                                </div>
+            <div class="col-md-3 col-sm-12">
+                <a href="{{ route('admin.user.index') }}" class="text-decoration-none">
+                    <div class="custom-card">
+                        <div class="custom-icon">
+                            <i class="bx bx-user"></i>
+                        </div>
+            
+                        <div class="custom-text">
+                            <p class="title">Total Users</p>
 
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="text-uppercase fw-medium text-white mb-3">Total Employees</p>
-
-                                    <h4 class="fs-4 mb-3 text-white"><span class="counter-value" data-target="{{ $employeesCount ?? 0 }}">{{ $employeesCount ?? 0 }}</span>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div><!-- end card body -->
+                            <h2 class="count">
+                                <span class="counter-value" data-target="{{ $employeesCount ?? 0 }}">{{ $employeesCount ?? 0 }}</span>
+                            </h2>
+                        </div>
                     </div>
                 </a>
-            </div> <!-- end col-->
+            </div>
         @endcan
 
-        @can('client_count')
-            <div class="col-xl-3 col-md-6">
-                <a href="{{ route('admin.user.client_list') }}">
-                    <div class="card card-animate bg-primary card-height-100" style="height: 150px; padding-top: 20px;">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-sm flex-shrink-0">
-                                    <span class="avatar-title bg-soft-light text-white rounded-2 fs-2">
-                                        <i class="bx bx-user"></i>
-                                    </span>
-                                </div>
+        @can('employee_count')
+            <div class="col-md-3 col-sm-12">
+                <a href="{{ route('admin.user.index') }}" class="text-decoration-none">
+                    <div class="custom-card">
+                        <div class="custom-icon">
+                            <i class="bx bx-id-card"></i>
+                        </div>
+            
+                        <div class="custom-text">
+                            <p class="title">Total Employees</p>
 
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="text-uppercase fw-medium text-white mb-3">Total Clients</p>
-
-                                    <h4 class="fs-4 mb-3 text-white"><span class="counter-value" data-target="{{ $clientsCount ?? 0 }}">{{ $clientsCount ?? 0 }}</span>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div><!-- end card body -->
+                            <h2 class="count">
+                                <span class="counter-value" data-target="{{ $employeesCount ?? 0 }}">{{ $employeesCount ?? 0 }}</span>
+                            </h2>
+                        </div>
                     </div>
                 </a>
-            </div> <!-- end col-->
+            </div>
         @endcan
 
         @can('project_count')
-            <div class="col-xl-3 col-md-6">
-                <a href="{{ route('admin.project.index') }}">
-                    <div class="card card-animate bg-danger card-height-100" style="height: 150px; padding-top: 20px;">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-sm flex-shrink-0">
-                                    <span class="avatar-title bg-soft-light text-white rounded-2 fs-2">
-                                        <i class="bx bx-task"></i>
-                                    </span>
-                                </div>
-
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="text-uppercase fw-medium text-white mb-3">Total Projects</p>
-
-                                    <h4 class="fs-4 mb-3 text-white"><span class="counter-value" data-target="{{ $projectsCount ?? 0 }}">{{ $projectsCount ?? 0 }}</span>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div><!-- end card body -->
+            <div class="col-md-3 col-sm-12">
+                <a href="{{ route('admin.project.index') }}" class="text-decoration-none">
+                    <div class="custom-card">
+                        <div class="custom-icon">
+                            <i class="bx bx-briefcase"></i>
+                        </div>
+            
+                        <div class="custom-text">
+                            <p class="title">Total Projects</p>
+                            
+                            <h2 class="count">
+                                <span class="counter-value" data-target="{{ $employeesCount ?? 0 }}">{{ $employeesCount ?? 0 }}</span>
+                            </h2>
+                        </div>
                     </div>
                 </a>
-            </div> <!-- end col-->
+            </div>
         @endcan
 
         @can('document_count')
-            <div class="col-xl-3 col-md-6">
-                <a href="{{ route('admin.document.index') }}">
-                    <div class="card card-animate bg-info card-height-100" style="height: 150px; padding-top: 20px;">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-sm flex-shrink-0">
-                                    <span class="avatar-title bg-soft-light text-white rounded-2 fs-2">
-                                        <i class="bx bx-file"></i>
-                                    </span>
-                                </div>
-
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="text-uppercase fw-medium text-white mb-3">Total Documents</p>
-
-                                    <h4 class="fs-4 mb-3 text-white"><span class="counter-value" data-target="{{ $documentsCount ?? 0 }}">{{ $documentsCount ?? 0 }}</span>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div><!-- end card body -->
+            <div class="col-md-3 col-sm-12">
+                <a href="{{ route('admin.document.index') }}" class="text-decoration-none">
+                    <div class="custom-card">
+                        <div class="custom-icon">
+                            <i class="bx bx-file"></i>
+                        </div>
+            
+                        <div class="custom-text">
+                            <p class="title">Total Contents</p>
+                            
+                            <h2 class="count">
+                                <span class="counter-value" data-target="{{ $employeesCount ?? 0 }}">{{ $employeesCount ?? 0 }}</span>
+                            </h2>
+                        </div>
                     </div>
                 </a>
-            </div> <!-- end col-->
+            </div>
         @endcan
     </div>
 
-    <div class="row">
+    <div class="row mt-4">
         @can('project_summary_graph')
             <div class="col-md-12">
                 <div class="card card-height-100" style="background: linear-gradient(45deg,#346c341c,#0000ff17);">
@@ -153,7 +133,7 @@
                         <div>
                             <div id="chartColumn" class="apex-charts" dir="ltr" style="background: #f3f6f9;"></div>
                         </div>
-                    </div><!-- end card body -->
+                    </div>
                 </div><!-- end card -->
             </div><!-- end col -->
         @endcan
@@ -217,7 +197,7 @@
                                 </tbody><!-- end tbody -->
                             </table><!-- end table -->
                         </div>
-                    </div><!-- end card body -->
+                    </div>
                 </div><!-- end card -->
             </div><!-- end col -->
         @endcan

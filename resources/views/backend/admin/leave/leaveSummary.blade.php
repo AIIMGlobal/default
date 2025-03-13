@@ -121,7 +121,7 @@
                                 <table class="table table-bordered table-striped align-middle mb-0">
                                     <thead>
                                         <tr style="border: none; display: none;" class="reportLogo">
-                                            <th colspan="8" style="border: none;"><img style="max-height: 60px;" src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt=""></th>
+                                            <th colspan="8" style="border: none;"><img style="max-height: 60px;" src="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}" alt=""></th>
                                         </tr>
 
                                         <tr>

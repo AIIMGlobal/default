@@ -1,31 +1,25 @@
 <div class="app-menu navbar-menu">
-{{-- <div class="app-menu navbar-menu" style="background: linear-gradient(45deg, #5f7ad0, #344681);"> --}}
-{{-- <div class="app-menu navbar-menu" style="background: linear-gradient(70deg, #24bbae, #02796f);"> --}}
-{{-- <div class="app-menu navbar-menu" style="background: linear-gradient(70deg, #ce9538, #a47427);"> --}}
-{{-- <div class="app-menu navbar-menu"> --}}
-{{-- <div class="app-menu navbar-menu" style="background: #b56b32;"> --}}
-
     <!-- LOGO -->
     <div class="navbar-brand-box">
         <!-- Dark Logo-->
         <a href="{{ route('admin.home') }}" class="logo logo-dark mt-2">
             <span class="logo-sm">
-                <img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="" height="50">
+                <img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="" height="50">
             </span>
 
             <span class="logo-lg">
-                <img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="" width="100">
+                <img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="" width="100">
             </span>
         </a>
 
         <!-- Light Logo-->
         <a href="{{ route('admin.home') }}" class="logo logo-light mt-2">
             <span class="logo-sm">
-                <img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="" height="50">
+                <img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="" height="50">
             </span>
 
             <span class="logo-lg">
-                <img src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt="" width="100">
+                <img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="" width="100">
             </span>
         </a>
 
@@ -61,7 +55,7 @@
                 <li></li> --}}
             </ul>
 
-            <ul class="navbar-nav mt-4" id="navbar-nav">
+            <ul class="navbar-nav mt-2" id="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('admin.home') }}">
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboard</span>

@@ -86,7 +86,7 @@
                             <table class="table mb-0" style="background: #fff !important;">
                                 <thead>
                                     <tr style="display: none;" class="head-logo">
-                                        <th><img style="max-height: 60px;" src="{{ asset('storage/logo') }}/{{ $global_setting->logo ?? '' }}" alt=""></th>
+                                        <th><img style="max-height: 60px;" src="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}" alt=""></th>
                                     </tr>
 
                                     <tr class="text-center plHeader" style="border: none;">

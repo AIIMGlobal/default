@@ -76,18 +76,6 @@
 
                                             <div class="col-md-6">
                                                 <div>
-                                                    <label for="logo" class="form-label">Company Logo: </label>
-
-                                                    <input type="file" class="form-control" name="logo" data-allow-reorder="true">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6 mt-4">
-                                                <img style="max-height: 60px; max-width:150px;" class="img-thumbnail" src="{{ asset('storage/logo') }}/{{ $setting->logo ?? '' }}" alt="">
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <div>
                                                     <label for="soft_logo" class="form-label">Software Logo: </label>
 
                                                     <input type="file" class="form-control" name="soft_logo" data-allow-reorder="true">
@@ -95,15 +83,28 @@
                                             </div>
 
                                             <div class="col-md-6 mt-4">
-                                                <img style="max-height: 60px; max-width:150px;" class="img-thumbnail" src="{{ asset('storage/soft_logo') }}/{{ $setting->soft_logo ?? '' }}" alt="">
+                                                <img style="max-height: 60px; max-width:150px;" class="img-thumbnail" src="{{ asset('storage/soft_logo') }}/{{ $setting->soft_logo ?? '' }}" alt="Logo">
                                             </div>
+
+                                            @if (Auth::user()->role_id == 1)
+                                                <div class="col-md-6">
+                                                    <div>
+                                                        <label for="logo" class="form-label">Logo: </label>
+
+                                                        <input type="file" class="form-control" name="logo" data-allow-reorder="true">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 mt-4">
+                                                    <img style="max-height: 60px; max-width:150px;" class="img-thumbnail" src="{{ asset('storage/logo/' . ($global_setting->logo ?? '')) }}" alt="Logo">
+                                                </div>
+                                            @endif
 
                                             <div class="col-md-12">
                                                 <div class="hstack gap-2 justify-content-end">
                                                     <button type="submit" class="btn btn-primary">Update</button>
                                                 </div>
                                             </div>
-                                            
                                         </div>
                                     </div>
                                 </div>
@@ -121,8 +122,3 @@
     </div>
     <!-- container-fluid -->
 @endsection
-{{-- @push('css')
-@endpush --}}
-{{-- @push('script')
-
-@endpush --}}

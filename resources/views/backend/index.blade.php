@@ -1,6 +1,7 @@
 @extends('backend.layouts.app')
 
-@section('title', ''.($global_setting->title ?? "").' | Dashboard')
+@section('title', 'Dashboard | '.($global_setting->title ?? ""))
+
 @section('content')
     <div class="page-content">
         <div class="container-fluid">

@@ -36,7 +36,7 @@
             </div>
 
             <div class="d-flex text-center">
-                <h3 class="text-white mt-2">
+                <h3 class="text-white mt-2" style="font-weight: 700; font-size: 30px; font-family: 'Merriweather', serif; font-optical-sizing: auto;">
                     {{ $global_setting->title ?? "" }}
                 </h3>
             </div>
@@ -60,11 +60,11 @@
                     </button>
                 </div>
 
-                <div class="ms-1 header-item d-none d-sm-flex">
+                {{-- <div class="ms-1 header-item d-none d-sm-flex">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode" title="Dark Mode">
                         <i class='bx bx-moon fs-22' style="color: white;"></i>
                     </button>
-                </div>
+                </div> --}}
 
                 @if(Auth::user() != NULL)
                     <x-notification/>
