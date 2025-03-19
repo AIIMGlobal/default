@@ -53,7 +53,7 @@ class IndexController extends Controller
     public function getDistrictsAJAX(Request $request)
     {
         $data = $request->all();
-        $districts = District::where('division_id', $data['division_id'])->select('id', 'name')->get();
+        $districts = District::where('division_id', $data['division_id'])->select('id', 'name_en')->get();
 
         return Response::json($districts);
     }
@@ -61,7 +61,7 @@ class IndexController extends Controller
     public function getUpazilasAJAX(Request $request)
     {
         $data = $request->all();
-        $upazilas = Upazila::where('district_id', $data['district_id'])->select('id', 'name')->get();
+        $upazilas = Upazila::where('district_id', $data['district_id'])->select('id', 'name_en')->get();
 
         return Response::json($upazilas);
     }

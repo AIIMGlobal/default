@@ -110,6 +110,8 @@ Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/admin', 
 
     Route::group(['prefix' => '/user', 'as' => 'user.'], function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/users', [UserController::class, 'researcherIndex'])->name('researcherIndex');
+
         Route::get('/create', [UserController::class, 'create'])->name('create');
         Route::post('/store', [UserController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');

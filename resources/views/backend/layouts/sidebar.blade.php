@@ -62,7 +62,7 @@
                     </a>
                 </li>
                 
-                @can('manage_role_permission')
+                @can('user_management')
                     <li class="nav-item first-dropdown">
                         <a class="nav-link menu-link" href="#rolePermission" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="rolePermission">
                             <i class="ri-shield-keyhole-line"></i> <span data-key="t-dashboards">User Management</span>
@@ -70,9 +70,15 @@
 
                         <div class="collapse menu-dropdown" id="rolePermission">
                             <ul class="nav nav-sm flex-column">
-                                @can('user_management')
+                                @can('user_list')
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.user.index') }}" class="nav-link">User List</a>
+                                        <a href="{{ route('admin.user.researcherIndex') }}" class="nav-link">User List</a>
+                                    </li>
+                                @endcan
+
+                                @can('employee_list')
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.user.index') }}" class="nav-link">Employee List</a>
                                     </li>
                                 @endcan
 
@@ -119,14 +125,14 @@
                 @can('office_management')
                     <li class="nav-item first-dropdown">
                         <a class="nav-link menu-link" href="#office" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="office">
-                            <i class="ri-building-line"></i> <span data-key="t-dashboards">Office Management</span>
+                            <i class="ri-building-line"></i> <span data-key="t-dashboards">Organization Management</span>
                         </a>
 
                         <div class="collapse menu-dropdown" id="office">
                             <ul class="nav nav-sm flex-column">
                                 @can('manage_office')
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.office.index') }}" class="nav-link" data-key="t-crm">Manage Offices</a>
+                                        <a href="{{ route('admin.office.index') }}" class="nav-link" data-key="t-crm">Manage Organizations</a>
                                     </li>
                                 @endcan
 

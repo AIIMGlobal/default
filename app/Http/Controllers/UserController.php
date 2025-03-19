@@ -88,6 +88,58 @@ class UserController extends Controller
         }
     }
 
+    public function researcherIndex(Request $request)
+    {
+        $user = Auth::user();
+
+        if (Gate::allows('user_management', $user)) {
+            $employees_query = User::with('userInfo');
+
+            if (($request->name != '') && ($request->name != '')) {
+                $searchQuery = $request->name;
+
+                $employees_query->where(function($query) use($searchQuery) {
+                    $query->where('name_en', 'like', '%'.$searchQuery.'%')
+                            ->orWhere('mobile', 'like', '%'.$searchQuery.'%')
+                            ->orWhere('email', 'like', '%'.$searchQuery.'%')
+                            ->orWhereHas('userInfo', function($query2) use($searchQuery) {
+                                $query2->where('employee_id', $searchQuery);
+                            });
+                });
+            }
+
+            if (!Gate::allows('access_all_employee', $user)) {
+                if ($user->user_type == 3) {
+                    $office_info = $user->userInfo->office ?? '';
+
+                    if (($office_info->head_office ?? 0) == 1) {
+                        $office_ids = $office_info->officeIds($office_info->division_id);
+
+                        if (count($office_ids) == 0) {
+                            $office_ids = [0];
+                        }
+                        
+                        if (Gate::allows('access_all_user_list', $user)) {
+                            $employees_query->whereHas('userInfo',function($new_query) use($office_ids) {
+                                $new_query->whereIn('office_id', $office_ids);
+                            });
+                        } else {
+                            $employees_query->where('id', $user->id);
+                        }
+                    } else {
+                        $employees_query->where('id', $user->id);
+                    }
+                }
+            }
+            
+            $employees = $employees_query->where('user_type', 3)->where('status', 1)->latest()->paginate(15);
+
+            return view('backend.admin.user.index', compact('employees'));
+        } else {
+            return abort(403, "You don't have permission..!");
+        }
+    }
+
     public function archive_list(Request $request)
     {
         $user = Auth::user();

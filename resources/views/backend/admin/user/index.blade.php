@@ -1,6 +1,7 @@
 @extends('backend.layouts.app')
 
-@section('title', ''.($global_setting->title ?? "").' | Employee List')
+@section('title', 'Employee List | '.($global_setting->title ?? ""))
+
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -8,7 +9,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Employee List</h4>
+                        {{-- <h4 class="mb-sm-0">Employee List</h4> --}}
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
@@ -46,7 +47,7 @@
                                 <div class="row g-3">
                                     <div class="col-xxl-2 col-sm-6">
                                         <div class="search-box">
-                                            <input @if(isset($_GET['name']) and $_GET['name']!='') value="{{ $_GET['name'] }}" @endif type="text" class="form-control search" name="name" placeholder="Search by EID/Name/Mobile/E-mail">
+                                            <input @if(isset($_GET['name']) and $_GET['name']!='') value="{{ $_GET['name'] }}" @endif type="text" class="form-control search" name="name" placeholder="Search by Name/Mobile/E-mail">
                                             <i class="ri-search-line search-icon"></i>
                                         </div>
                                     </div>
@@ -73,7 +74,7 @@
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped mb-0">
+                                <table class="table table-bordered table-striped mb-0" id="datatable">
                                     <thead>
                                         <tr>
                                             <th class="text-center">No</th>
@@ -91,7 +92,7 @@
                                     <tbody>
                                         @if ($employees->count() > 0)
                                             @php
-                                                $i = ($employees->perPage() * ($employees->currentPage() - 1) +1);
+                                                $i = 1;
                                             @endphp
 
                                             @foreach ($employees as $employee)
@@ -100,8 +101,9 @@
 
                                                     <td>
                                                         {{ $employee->name_en ?? '-' }}
-                                                        <br>
-                                                        (EID: {{ $employee->userInfo->employee_id ?? '' }})
+
+                                                        {{-- <br>
+                                                        (EID: {{ $employee->userInfo->employee_id ?? '' }}) --}}
                                                     </td>
 
                                                     <td>{{ $employee->email ?? '-' }}</td>
@@ -109,13 +111,14 @@
                                                     <td class="text-center">{{ $employee->mobile ?? '-' }}</td>
 
                                                     <td>{{ $employee->role->display_name ?? '-' }}</td>
+
                                                     <td>{{ $employee->userInfo->designation->name ?? '-' }}</td>
 
                                                     <td class="text-center">
                                                         @if ($employee->status == 1)
                                                             <span class="badge bg-success">Active</span>
                                                         @else
-                                                            <span class="badge bg-danger">Blocked</span>
+                                                            <span class="badge bg-danger">Archived</span>
                                                         @endif
                                                     </td>
 
@@ -132,15 +135,11 @@
                                                             <a href="{{ route('admin.user.edit', Crypt::encryptString($employee->id)) }}" title="Edit" class="btn btn-sm btn-primary btn-icon waves-effect waves-light">
                                                                 <i class="las la-edit" style="font-size: 1.6em;"></i>
                                                             </a>
-                                                        @elsecan('edit_user_minimum')
-                                                            <a href="{{ route('admin.user.editUserMinimum', $employee->id) }}" title="Edit" class="btn btn-sm btn-primary btn-icon waves-effect waves-light">
-                                                                <i class="las la-edit" style="font-size: 1.6em;"></i>
-                                                            </a>
                                                         @endcan
 
                                                         @can('block_user')
                                                             @if ($employee->status == 1)
-                                                                <a onclick="return confirm('Are you sure, you want to Archive the user?')" href="{{ route('admin.user.block', Crypt::encryptString($employee->id)) }}" title="Archive" class="btn btn-sm btn-warning btn-icon waves-effect waves-light">
+                                                                <a onclick="return confirm('Are you sure, you want to archive the user?')" href="{{ route('admin.user.block', Crypt::encryptString($employee->id)) }}" title="Archive" class="btn btn-sm btn-warning btn-icon waves-effect waves-light">
                                                                     <i class="las la-lock" style="font-size: 1.6em;"></i>
                                                                 </a>
                                                             @else
@@ -157,9 +156,9 @@
                                                 @endphp
                                             @endforeach
                                         @else
-                                            <tr>
+                                            {{-- <tr>
                                                 <td colspan="100%" class="text-center"><b>No Data Found</b></td>
-                                            </tr>
+                                            </tr> --}}
                                         @endif
                                     </tbody>
                                     <!-- end tbody -->
@@ -170,9 +169,9 @@
                         </div>
                         <!-- end card body -->
 
-                        <div class="card-footer">
+                        {{-- <div class="card-footer">
                             {{ $employees->appends($_GET)->links() }}
-                        </div>
+                        </div> --}}
                     </div>
                     <!-- end card -->
                 </div>

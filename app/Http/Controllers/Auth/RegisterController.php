@@ -108,7 +108,7 @@ class RegisterController extends Controller
             'email'             => 'required|email|unique:users,email',
             'mobile'            => 'required|string|max:14|unique:users,mobile',
             'password'          => 'required|min:6|confirmed',
-            'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image'             => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if ($validator->fails()) {

@@ -1,12 +1,8 @@
-                @php
-                    $year = date('Y');
-                @endphp
-
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-6">
-                                {{ $year }} © {{ $global_setting->title ?? "" }}
+                                {{ date('Y') }} © {{ $global_setting->title ?? "" }}
                             </div>
 
                             <div class="col-sm-6">
@@ -18,7 +14,7 @@
                     </div>
                 </footer>
             </div>
-        <!-- end main content-->
+            <!-- END main content-->
 
         </div>
         <!-- END layout-wrapper -->
@@ -33,6 +29,7 @@
 
         {{-- jquery --}}
         <script src="{{ asset('backend-assets/assets/js/jquery-3.6.0.min.js') }}"></script>
+
         {{-- select2 min js --}}
         <script src="{{ asset('backend-assets/assets/js/select2.min.js') }}"></script>
         <script src="{{ asset('backend-assets/assets/js/select2.init.js') }}"></script>
@@ -78,6 +75,27 @@
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
 
+        <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+
+        <script src="{{ asset('backend/assets/toastr/js/toastr.min.js') }}"></script>
+
+        <script>
+            $('#datatable').DataTable({
+                "pageLength": 100,
+                "lengthMenu": [ [10, 25, 50, 100], [10, 25, 50, 100] ],
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": false,
+                "info": false,
+                "autoWidth": false,
+                "responsive": false,
+                "columnDefs": [
+                    { "orderable": false, "targets": [-1] }
+                ]
+            });
+        </script>
+
         <script>
             $(document).ready(function() {
                 $('.select2').select2();
@@ -115,6 +133,5 @@
 
         {{-- stack script --}}
         @stack('script')
-
     </body>
 </html>

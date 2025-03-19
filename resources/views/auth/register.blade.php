@@ -213,21 +213,21 @@
 
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <input id="password" type="password" class="form-control" name="password" placeholder="Enter Password" required="required">
+                                            <input id="password" type="password" class="form-control" name="password" placeholder="Enter Password (Minimum 8 Digit)" minlength="8" required="required">
                                             <i toggle="#password" class="fa fa-fw fa-eye toggle-password field-icon"></i>
                                         </div>
                                     </div>
 
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" placeholder="Re-Enter Password" required="required">
+                                            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" placeholder="Re-Enter Password (Minimum 8 Digit)" minlength="8" required="required">
                                             <i toggle="#password_confirmation" class="fa fa-fw fa-eye toggle-password field-icon"></i>
                                         </div>
                                     </div>
 
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <input type="file" id="image" class="form-control" name="image" required="required">
+                                            <input type="file" id="image" class="form-control" name="image">
                                         </div>
                                     </div>
 

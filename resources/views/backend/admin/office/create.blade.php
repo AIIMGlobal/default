@@ -1,26 +1,28 @@
 @extends('backend.layouts.app')
-@section('title', ''.($global_setting->title ?? "").' | '.__('Add New Office'))
+
+@section('title', 'Add New Organization | '.($global_setting->title ?? ""))
+
 @section('content')
-<div class="page-content">
-    <div class="container-fluid">
+    <div class="page-content">
+        <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        {{-- <h4 class="mb-sm-0">Add New Organization</h4> --}}
 
-        <!-- start page title -->
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">{{__('pages.Add New Office')}}</h4>
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Dashboard</a></li>
 
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">{{__('menu.Dashboard')}}</a></li>
-                            <li class="breadcrumb-item active">{{__('pages.Add New Office')}}</li>
-                        </ol>
+                                <li class="breadcrumb-item active">Add New Organization</li>
+                            </ol>
+                        </div>
+
                     </div>
-
                 </div>
             </div>
-        </div>
-        <!-- end page title -->
+            <!-- end page title -->
 
             <div class="col-xxl-12">
 
@@ -28,18 +30,20 @@
 
                 <div class="card card-height-100">
                     <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">{{__('pages.Add New Office')}}</h4>
-                        <div class="flex-shrink-0">
-                            <a href="{{URL::previous()}}" class="btn btn-primary">{{__('pages.Back')}}</a>
-                        </div>
+                        <h4 class="card-title mb-0 flex-grow-1">Add New Organization</h4>
+
+                        @can('manage_office')
+                            <div class="flex-shrink-0">
+                                <a href="{{ route('admin.office.index') }}" class="btn btn-primary">Organization List</a>
+                            </div>
+                        @endcan
                     </div>
-                    
 
                     <div class="card-body">
-                        <form action="{{route('admin.office.store')}}" method="POST" enctype="multipart/form-data">
+                        <form id="createForm" action="{{ route('admin.office.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
+
                             <div class="row g-3">
-        
                                 <div class="col-md-4 col-sm-12">
                                     <div>
                                         <label for="name" class="form-label">{{__('pages.Office Name')}} <span style="color:red;">*</span></label>
@@ -95,17 +99,16 @@
 
     </div>
     <!-- container-fluid -->
-</div>
-
+    </div>
 @endsection
 
 @push('script')
     <script>
-        $('[href*="{{$menu_expand}}"]').addClass('active');
-        $('[href*="{{$menu_expand}}"]').closest('.menu-dropdown').addClass('show');
-        $('[href*="{{$menu_expand}}"]').closest('.menu-dropdown').parent().find('.nav-link').attr('aria-expanded','true');
-        $('[href*="{{$menu_expand}}"]').closest('.first-dropdown').find('.menu-link').attr('aria-expanded','true');
-        $('[href*="{{$menu_expand}}"]').closest('.first-dropdown').find('.menu-dropdown:first').addClass('show');
+        $('[href*="{{ $menu_expand }}"]').addClass('active');
+        $('[href*="{{ $menu_expand }}"]').closest('.menu-dropdown').addClass('show');
+        $('[href*="{{ $menu_expand }}"]').closest('.menu-dropdown').parent().find('.nav-link').attr('aria-expanded','true');
+        $('[href*="{{ $menu_expand }}"]').closest('.first-dropdown').find('.menu-link').attr('aria-expanded','true');
+        $('[href*="{{ $menu_expand }}"]').closest('.first-dropdown').find('.menu-dropdown:first').addClass('show');
     </script>
 
     <script>
@@ -173,6 +176,68 @@
                     });
                 }
 
+            });
+        });
+    </script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#createForm').on('submit', function(e) {
+                e.preventDefault();
+
+                $('#submitBtn').prop('disabled', true);
+                $('#submitBtn').html(`<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...`);
+
+                let form = $(this);
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function() {
+                        $("button[type='submit']").prop("disabled", true);
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: response.message,
+                            icon: 'success',
+                            showCancelButton: false,
+                        });
+
+                        form.trigger('reset');
+
+                        if ($('.select2').length > 0) {
+                            $('.select2').val('').trigger('change');
+                        }
+
+                        $('#submitBtn').prop('disabled', false);
+                        $('#submitBtn').html(`Submit`);
+                    },
+                    error: function(xhr) {
+                        $('#submitBtn').prop('disabled', false);
+                        $('#submitBtn').html(`Submit`);
+
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let errorMessages = "";
+
+                            $.each(errors, function(key, value) {
+                                errorMessages += value[0] + "\n";
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error!',
+                                text: errorMessages,
+                            });
+                        } else {
+                            toastr.error("Something went wrong. Please try again.");
+                        }
+                    }
+                });
             });
         });
     </script>

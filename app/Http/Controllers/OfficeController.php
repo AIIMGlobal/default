@@ -20,21 +20,34 @@ class OfficeController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        if(Gate::allows('manage_office', $user)){
-            if(($request->name != '') && ($request->name != NULL)){
-                $offices = Office::with('createdUser')->where('name', 'like', '%'.$request->name.'%')->where('status', '!=', 2)->latest()->paginate(15);
-            }else{
-                $offices = Office::with('createdUser',)->where('status', '!=', 2)->latest()->paginate(15);
-            }
+
+        if (Gate::allows('manage_office', $user)) {
+            $orgs = Office::where('status', '!=', 2)->orderBy('name', 'asc')->get();
             $divisions = Division::where('status', 1)->get();
             $districts = District::where('status', 1)->get();
             $upazilas = Upazila::where('status', 1)->get();
-            
-            return view('backend.admin.office.index', compact('offices', 'divisions', 'districts', 'upazilas'));
-        }else{
-            return abort(403, "You don't have permission..!");
-        }
 
+            $query = Office::query();
+
+            if (isset($request->office_id) && $request->office_id != '') {
+                $query->where('id', $request->office_id);
+            }
+
+            $offices = $query->where('status', '!=', 2)->orderBy('name', 'asc')->get();
+            
+            if ($request->ajax()) {
+                $html = view('backend.admin.office.table', compact('offices'))->render();
+
+                return response()->json([
+                    'success' => true,
+                    'html' => $html,
+                ]);
+            }
+
+            return view('backend.admin.office.index', compact('offices', 'divisions', 'districts', 'upazilas', 'orgs'));
+        } else {
+            return abort(403, "You don't have permission!");
+        }
     }
 
     public function archived()

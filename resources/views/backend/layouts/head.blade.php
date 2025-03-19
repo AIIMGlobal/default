@@ -24,8 +24,10 @@
         
         <!-- Icons Css -->
         <link href="{{ asset('backend-assets/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+
         <!-- App Css-->
         <link href="{{ asset('backend-assets/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
+        
         <!-- custom Css-->
         <link href="{{ asset('backend-assets/assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
 
@@ -33,9 +35,14 @@
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css" rel="stylesheet">
 
+        <link href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" rel="stylesheet">
+
         <!-- Filepond css -->
         <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
         <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+
+        {{-- toastr css link --}}
+        <link rel="stylesheet" href="{{ asset('backend/assets/css/toastr.min.css') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,7 +62,7 @@
                 font-family: "Merriweather", serif;
                 font-optical-sizing: auto;
                 font-style: normal;
-                font-size: 1.0em;
+                font-size: 0.8em;
                 padding: 0;
                 margin: 0;
                 background: #F5F5F5;
@@ -110,7 +117,7 @@
             .page-title-box {
                 z-index: 2;
                 position: relative;
-                margin: -10px -1.5rem 1.5rem -22px;
+                margin: -10px -1.5rem 5px -22px;
                 box-shadow: none;
                 background: #F5F5F5;
             }
