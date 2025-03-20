@@ -174,7 +174,7 @@ Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/admin', 
         Route::get('/show/{id}', [OfficeController::class, 'show'])->name('show');
         Route::get('/edit/{id}', [OfficeController::class, 'edit'])->name('edit');
         Route::post('/update/{id}', [OfficeController::class, 'update'])->name('update');
-        Route::get('/delete/{id}', [OfficeController::class, 'delete'])->name('delete');
+        Route::delete('/delete/{id}', [OfficeController::class, 'delete'])->name('delete');
     });
 
     Route::group(['prefix' => '/department', 'as' => 'department.'], function () {

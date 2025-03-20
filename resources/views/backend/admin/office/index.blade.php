@@ -60,7 +60,7 @@
 
                                     <div class="col-md-2 col-sm-4">
                                         <button type="button" class="btn btn-danger" id="resetButton"> 
-                                            <i class="ri-equalizer-fill me-1 align-bottom"></i>Reset
+                                            Reset
                                         </button>
                                     </div>
                                 </div>
@@ -73,10 +73,11 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center">#</th>
+                                            <th class="text-center">Organization Logo</th>
                                             <th>Organization Name</th>
                                             <th>Division</th>
-                                            <th>District</th>
-                                            <th>Upazila</th>
+                                            {{-- <th>District</th>
+                                            <th>Upazila</th> --}}
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -150,42 +151,39 @@
         }
     </script>
 
-    {{-- <script>
-        function deleteUom(Id) {
-            if (confirm('Are you sure, you want to delete?')) {
-                $.ajax({
-                    url: "{{ route('admin.gmItem.delete') }}",
-                    type: "DELETE",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        id: Id
-                    },
-                    beforeSend: function() {
-                        $('.btn-danger').prop('disabled', true);
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: response.message,
-                                icon: 'success',
-                                showCancelButton: false,
-                            });
+    <script>
+        $(document).on('click', '.destroy', function(e) {
+            e.preventDefault();
+            
+            let officeId = $(this).data('id');
+            let deleteUrl = "{{ route('admin.office.delete', ':id') }}".replace(':id', officeId);
 
-                            $('tr').filter('[data-id="' + Id + '"]').remove();
-                        } else {
-                            alert('An error occurred. Please try again.');
+            Swal.fire({
+                title: "Are you sure want to delete?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: deleteUrl,
+                        type: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            Swal.fire("Deleted!", response.message, "success")
+                                .then(() => location.reload());
+                        },
+                        error: function(xhr) {
+                            Swal.fire("Error!", xhr.responseJSON.message, "error");
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        // console.error('Error:', error);
-
-                        toastr.error('An unexpected error occurred. Please try again.');
-                    },
-                    complete: function() {
-                        $('.btn-danger').prop('disabled', false);
-                    }
-                });
-            }
-        }
-    </script> --}}
+                    });
+                }
+            });
+        });
+    </script>
 @endpush

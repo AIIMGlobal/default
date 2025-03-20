@@ -23,82 +23,113 @@
                 </div>
             </div>
             <!-- end page title -->
+            <div class="row">
+                <div class="col-md-12">
+                    @include('backend.admin.partials.alert')
 
-            <div class="col-xxl-12">
+                    <div class="card card-height-100">
+                        <div class="card-header align-items-center d-flex">
+                            <h4 class="card-title mb-0 flex-grow-1">Add New Organization</h4>
 
-                @include('backend.admin.partials.alert')
+                            @can('manage_office')
+                                <div class="flex-shrink-0">
+                                    <a href="{{ route('admin.office.index') }}" class="btn btn-primary">Organization List</a>
+                                </div>
+                            @endcan
+                        </div>
 
-                <div class="card card-height-100">
-                    <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Add New Organization</h4>
+                        <div class="card-body">
+                            <form id="createForm" action="{{ route('admin.office.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
 
-                        @can('manage_office')
-                            <div class="flex-shrink-0">
-                                <a href="{{ route('admin.office.index') }}" class="btn btn-primary">Organization List</a>
-                            </div>
-                        @endcan
-                    </div>
+                                <div class="row g-3">
+                                    <div class="col-md-4 col-sm-12">
+                                        <div>
+                                            <label for="name" class="form-label">Organization Name: <span style="color:red;">*</span></label>
 
-                    <div class="card-body">
-                        <form id="createForm" action="{{ route('admin.office.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
+                                            <input id="name" type="text" class="form-control" name="name" placeholder="Enter Organization Name" value="{{ old('name') }}" required>
+                                        </div>
+                                    </div>
 
-                            <div class="row g-3">
-                                <div class="col-md-4 col-sm-12">
+                                    <div class="col-md-4 col-sm-12">
+                                        <div>
+                                            <label for="short_name" class="form-label">Organization Short Name: </label>
+
+                                            <input id="short_name" type="text" class="form-control" name="short_name" placeholder="Enter Organization Short Name" value="{{ old('short_name') }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 col-sm-12">
+                                        <label for="division" class="form-label">Division: <span style="color:red;">*</span></label>
+
+                                        <select name="division" class="form-control division_id_0 select2" id="present_division_id" required>
+                                            <option value="">--Select Division--</option>
+
+                                            @foreach ($divisions as $division)
+                                                <option value="{{ $division->id }}">{{ $division->name_en }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <label for="district" class="form-label">District: </label>
+
+                                        <select name="district" class="form-control district_id_0 select2" id="present_district_id">
+                                            <option value="">--Select Division First--</option>
+
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <label for="upazila" class="form-label">Upazila/Thana: </label>
+
+                                        <select name="upazila" class="form-control upazila_id_0 select2" id="present_upazila_id">
+                                            <option value="">--Select District First--</option>
+
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <div>
+                                            <label for="website_url" class="form-label">Website URL: </label>
+
+                                            <textarea name="website_url" id="website_url" class="form-control" cols="30" rows="1" placeholder="Enter Website URL">{{ old('website_url') }}</textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <div>
+                                            <label for="logo" class="form-label">Organization Logo: </label>
+
+                                            <input id="logo" type="file" class="form-control" name="logo">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-12 mt-4">
+                                        <div class="switchery-demo">
+                                            <input type="checkbox" name="status" class="js-switch" value="1" checked> Status
+                                        </div>
+                                    </div>
+
                                     <div>
-                                        <label for="name" class="form-label">{{__('pages.Office Name')}} <span style="color:red;">*</span></label>
-                                        <input id="name" type="text" class="form-control" name="name" placeholder=" Office Name" required>
+                                        <div class="hstack gap-2 justify-content-end">
+                                            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+                                        </div>
                                     </div>
-                                </div><!--end col-->
-                                
-                                <div class="col-md-4 col-sm-12">
-                                    <label for="division" class="form-label">{{__('pages.Division')}}<span style="color:red;">*</span></label>
-                                    <select name="division" class="form-control division_id_0 select2" id="present_division_id" required>
-                                        <option value="">--{{__('pages.Division')}}--</option>
-                                        @foreach ($divisions as $division)
-                                            <option value="{{$division->id}}">{{$division->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div><!--end col-->
-                                <div class="col-md-4 col-sm-12">
-                                    <label for="district" class="form-label">{{__('pages.District')}}</label>
-                                    <select name="district" class="form-control district_id_0 select2" id="present_district_id">
-                                        <option value="">--{{__('pages.District')}}--</option>
-
-                                    </select>
-                                </div><!--end col-->
-                                <div class="col-md-4 col-sm-12">
-                                    <label for="upazila" class="form-label">{{__('pages.Upazila')}}</label>
-                                    <select name="upazila" class="form-control upazila_id_0 select2" id="present_upazila_id">
-                                        <option value="">--{{__('pages.Upazila')}}--</option>
-
-                                    </select>
-                                </div><!--end col-->
-                                
-                                <div class="col-md-4 col-sm-12 mt-4">
-                                    <div class="form-check form-switch form-switch-custom form-switch-success mt-4">
-                                        <input class="form-check-input" type="checkbox" role="switch" name="status" id="statusOption" checked value="1">
-                                        <label class="form-check-label" for="statusOption">{{__('pages.Status')}}</label>
-                                    </div>
-                                </div><!--end col-->
-                                <div>
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="submit" class="btn btn-primary">{{__('pages.Submit')}}</button>
-                                    </div>
-                                </div><!--end col-->
-                            </div><!--end row-->
-                        </form>
+                                </div><!--end row-->
+                            </form>
+                        </div>
+                        <!-- end card body -->
                     </div>
-                    <!-- end card body -->
+                    <!-- end card -->
                 </div>
-                <!-- end card -->
+                <!-- end col -->
             </div>
-            <!-- end col -->
+            <!-- end row -->
         </div>
-        <!-- end row -->
-
-    </div>
-    <!-- container-fluid -->
+        <!-- container-fluid -->
     </div>
 @endsection
 
@@ -111,74 +142,7 @@
         $('[href*="{{ $menu_expand }}"]').closest('.first-dropdown').find('.menu-dropdown:first').addClass('show');
     </script>
 
-    <script>
-        // dynamic address AJAX for present district
-        $("#present_division_id").on('change',function(e){
-            e.preventDefault();
-
-            let present_district_id = $("#present_district_id");
-            let present_upazila_id = $("#present_upazila_id");
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            $.ajax({
-                type: 'POST',
-                url: "{{route('admin.districts')}}",
-                data: {_token:$('input[name=_token]').val(),
-                division_id: $(this).val()},
-
-                success:function(response){
-                    $('option', present_district_id).remove();
-                    $('option', present_upazila_id).remove();
-                    $('#present_district_id').append('<option value="">--Select District--</option>');
-                    $('#present_upazila_id').append('<option value="">--Select Upazila/Thana--</option>');
-                    $.each(response, function(){
-                        $('<option/>', {
-                            'value': this.id,
-                            'text': this.name
-                        }).appendTo('#present_district_id');
-                    });
-                }
-
-            });
-        });
-
-        // dynamic address AJAX for present upazila/thana
-        $("#present_district_id").on('change',function(e){
-            e.preventDefault();
-
-            let present_upazila_id = $("#present_upazila_id");
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            $.ajax({
-                type: 'POST',
-                url: "{{route('admin.upazilas')}}",
-                data: {_token:$('input[name=_token]').val(),
-                district_id: $(this).val()},
-
-                success:function(response){
-                    $('option', present_upazila_id).remove();
-                    $('#present_upazila_id').append('<option value="">--Select Upazila/Thana--</option>');
-                    $.each(response, function(){
-                        $('<option/>', {
-                            'value': this.id,
-                            'text': this.name
-                        }).appendTo('#present_upazila_id');
-                    });
-                }
-
-            });
-        });
-    </script>
+    @include('backend.admin.partials.addressDynamic')
     
     <script>
         $(document).ready(function() {
@@ -234,6 +198,8 @@
                                 text: errorMessages,
                             });
                         } else {
+                            toastr.options.closeButton = true;
+                            toastr.options.timeOut = 1500;
                             toastr.error("Something went wrong. Please try again.");
                         }
                     }

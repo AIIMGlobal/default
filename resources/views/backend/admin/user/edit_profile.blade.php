@@ -563,7 +563,7 @@
                         $.each(response, function(){
                             $('<option/>', {
                                 'value': this.id,
-                                'text': this.name
+                                'text': this.name_en
                             }).appendTo('#present_district_id');
                         });
                     }
@@ -595,7 +595,7 @@
                         $.each(response, function(){
                             $('<option/>', {
                                 'value': this.id,
-                                'text': this.name
+                                'text': this.name_en
                             }).appendTo('#present_upazila_id');
                         });
                     }
@@ -630,7 +630,7 @@
                         $.each(response, function(){
                             $('<option/>', {
                                 'value': this.id,
-                                'text': this.name
+                                'text': this.name_en
                             }).appendTo('#permanent_district_id');
                         });
                     }
@@ -663,7 +663,7 @@
                         $.each(response, function(){
                             $('<option/>', {
                                 'value': this.id,
-                                'text': this.name
+                                'text': this.name_en
                             }).appendTo('#permanent_upazila_id');
                         });
                     }

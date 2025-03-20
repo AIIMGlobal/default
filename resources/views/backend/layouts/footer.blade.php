@@ -76,8 +76,16 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
 
         <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+        <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
 
-        <script src="{{ asset('backend/assets/toastr/js/toastr.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.js"></script>
+
+        <script>
+            let elem = document.querySelector('.js-switch');
+            let switchery = new Switchery(elem, { disabled: false, disabledOpacity: 0.75 });
+        </script>
 
         <script>
             $('#datatable').DataTable({
@@ -87,7 +95,7 @@
                 "lengthChange": true,
                 "searching": true,
                 "ordering": false,
-                "info": false,
+                "info": true,
                 "autoWidth": false,
                 "responsive": false,
                 "columnDefs": [
@@ -95,6 +103,8 @@
                 ]
             });
         </script>
+
+        {{-- @include('backend.admin.partials.toastr') --}}
 
         <script>
             $(document).ready(function() {

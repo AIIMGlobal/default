@@ -34,7 +34,8 @@
                 position: absolute;
                 height: 5px;
                 width: 50%;
-                background: linear-gradient(90deg, #FF4500, #FFA500);
+                /* background: linear-gradient(90deg, #FF4500, #FFA500); */
+                background: linear-gradient(315deg, #03a9f4, #ff0058);
                 box-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
                 animation: borderMove 3s linear infinite;
             }

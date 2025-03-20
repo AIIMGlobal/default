@@ -35,14 +35,16 @@
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css" rel="stylesheet">
 
-        <link href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" rel="stylesheet">
-
         <!-- Filepond css -->
         <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
         <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
 
         {{-- toastr css link --}}
-        <link rel="stylesheet" href="{{ asset('backend/assets/css/toastr.min.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.css"/>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,7 +64,7 @@
                 font-family: "Merriweather", serif;
                 font-optical-sizing: auto;
                 font-style: normal;
-                font-size: 0.8em;
+                font-size: 14px;
                 padding: 0;
                 margin: 0;
                 background: #F5F5F5;
