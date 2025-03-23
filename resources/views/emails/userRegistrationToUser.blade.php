@@ -160,10 +160,10 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
                                                                         <td style="padding-right: 0px;padding-left: 0px;" align="center">
-                                                                            @if (env('APP_URL') != 'http://localhost')
-                                                                                <img align="center" border="0" src="{{ asset('storage/logo/' . $setting->logo) }}" alt="Logo" title="BARC Repository Software" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 29%;max-width: 168.2px;" width="168.2" />
+                                                                            @if ($setting->soft_logo)
+                                                                                <img align="center" border="0" src="{{ asset('storage/soft_logo/' . $setting->soft_logo) }}" alt="Logo" title="BARC Repository Software" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 29%;max-width: 168.2px;" width="168.2" />
                                                                             @else
-                                                                                <img align="center" border="0" src="https://pms.sebpobd.net/storage/logo/FBJn76CnImPzGDdQ2lLcDOIjAqksI1IvH7K4ZB1p.png" alt="Logo" title="BARC Repository Software" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 29%;max-width: 168.2px;" width="168.2" />
+                                                                                <img align="center" border="0" src="https://repository.barc.sebpobd.net/storage/soft_logo/WuC7ti4AsvrvYDeDKEZRuwxEiGBIIJViZ1Kasg2e.png" alt="Logo" title="BARC Repository Software" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 29%;max-width: 168.2px;" width="168.2" />
                                                                             @endif
                                                                         </td>
                                                                     </tr>

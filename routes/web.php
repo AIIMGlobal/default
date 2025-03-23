@@ -41,6 +41,7 @@ use App\Http\Controllers\{
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +88,9 @@ Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('
 Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
 Route::get('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+Route::get('/verification/{id}', [VerificationController::class, 'verify'])->name('verify');
+Route::get('/email-verify/{id}', [VerificationController::class, 'emailVerify'])->name('emailVerify');
+Route::post('/resend-mail/{id}', [VerificationController::class, 'resendMail'])->name('resendMail'); 
 
 // ****************************************** Back-end Links *****************************************
 Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/admin', 'as' => 'admin.'], function() {

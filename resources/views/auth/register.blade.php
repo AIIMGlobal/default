@@ -179,7 +179,7 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <select name="user_category_id" id="user_category_id" class="form-control select2" required>
-                                                <option value="">--Select User Category--</option>
+                                                <option value="">--Select Account Type--</option>
 
                                                 @foreach ($categorys as $category)
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -190,7 +190,13 @@
 
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <input type="text" id="organization" class="form-control" name="organization" placeholder="Enter Organization Name" required="required">
+                                            <select name="office_id" id="office_id" class="form-control select2" required>
+                                                <option value="">--Select Organization--</option>
+
+                                                @foreach ($orgs as $org)
+                                                    <option value="{{ $org->id }}">{{ $org->name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
 
@@ -288,9 +294,9 @@
                                     icon: "success",
                                     title: "Success",
                                     text: response.message
-                                }).then(() => {
-                                    window.location.href = response.redirect;
                                 });
+
+                                window.location.href = response.redirect;
                             } else {
                                 Swal.fire({
                                     icon: "error",

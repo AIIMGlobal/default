@@ -24,10 +24,10 @@ use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Setting;
 use App\Models\Notification;
+use App\Models\Office;
 
 /* included mails */
-use App\Mail\UserRegistrationToAdminMail;
-use App\Mail\UserRegistrationToUserMail;
+use App\Mail\EmailVerificationMail;
 
 class RegisterController extends Controller
 {
@@ -93,9 +93,10 @@ class RegisterController extends Controller
 
     public function register()
     {
-        $categorys = UserCategory::select('id', 'name')->where('status', 1)->get();
+        $categorys = UserCategory::select('id', 'name')->where('status', 1)->orderBy('name', 'asc')->get();
+        $orgs = Office::select('id', 'name')->where('status', 1)->orderBy('name', 'asc')->get();
 
-        return view('auth.register', compact('categorys'));
+        return view('auth.register', compact('categorys', 'orgs'));
     }
 
     public function store(Request $request)
@@ -103,7 +104,7 @@ class RegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'name_en'           => 'required|string|max:255',
             'user_category_id'  => 'required|exists:user_categories,id',
-            'organization'      => 'required|string|max:255',
+            'office_id'         => 'required|exists:offices,id',
             'designation'       => 'required|string|max:255',
             'email'             => 'required|email|unique:users,email',
             'mobile'            => 'required|string|max:14|unique:users,mobile',
@@ -137,13 +138,14 @@ class RegisterController extends Controller
             $user->user_type         = 4;
             $user->role_id           = 4;
             $user->password          = Hash::make($request->password);
+            $user->status            = 4;
 
             $user->save();
 
             $userInfo = new UserInfo;
 
             $userInfo->user_id      = $user->id;
-            $userInfo->organization = $request->organization;
+            $userInfo->office_id    = $request->office_id;
             $userInfo->designation  = $request->designation;
             $userInfo->image        = $imagePath;
             $userInfo->created_by   = Auth::id();
@@ -151,37 +153,18 @@ class RegisterController extends Controller
             $userInfo->save();
 
             $setting = Setting::first();
-            $admins = User::whereIn('role_id', [1, 2])->where('status', 1)->get();
+
+            $verifyLink = url('email-verify/' . Crypt::encryptString($user->id));
 
             if ($user) {
-                Mail::to($user->email)->send(new UserRegistrationToUserMail($setting, $user));
-
-                if (count($admins)) {
-                    foreach ($admins as $admin) {
-                        Mail::to($admin->email)->send(new UserRegistrationToAdminMail($setting, $user, $admin));
-
-                        $notification = new Notification;
-
-                        $notification->type             = 4;
-                        $notification->title            = 'New User Registration';
-                        $notification->message          = 'A new user has registered.';
-                        $notification->route_name       = route('admin.user.show', Crypt::encryptString($user->id));
-                        $notification->sender_role_id   = 4;
-                        $notification->sender_user_id   = $user->id;
-                        $notification->receiver_role_id = $admin->role_id;
-                        $notification->receiver_user_id = $admin->id;
-                        $notification->read_status      = 0;
-
-                        $notification->save();
-                    }
-                }
+                Mail::to($user->email)->send(new EmailVerificationMail($setting, $user, $verifyLink));
 
                 DB::commit();
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Registration Successful! Please Wait for Approval.',
-                    'redirect' => route('register')
+                    'message' => 'Registration is in progress. Please verify your email.',
+                    'redirect' => route('verify', Crypt::encryptString($user->id))
                 ]);
             }
 

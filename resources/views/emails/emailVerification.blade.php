@@ -11,7 +11,7 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!--<![endif]-->
 
-        <title>New User Registration</title>
+        <title>Eamil Verification</title>
 
         <!--[if !mso]><!-->
         <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
@@ -229,16 +229,33 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
                                                         <tr>
                                                             <td style="overflow-wrap:break-word;word-break:break-word;padding:40px 40px 30px;font-family:'Lato',sans-serif;" align="left">
                                                                 <div style="color: #000000; line-height: 140%; text-align: left; word-wrap: break-word;">
-                                                                    <p style="font-size: 14px; line-height: 140%;">
-                                                                        <span style="font-size: 18px; line-height: 25.2px; color: #666666;">Hello {{ $admin->name_en ?? '' }}, </span>
+                                                                    <p style="font-size: 14px; line-height: 80%;">
+                                                                        <span style="font-size: 14px; line-height: 25.2px; color: #000;">Hello {{ $user->name_en }},</span>
                                                                     </p>
 
-                                                                    <p style="font-size: 14px; line-height: 140%;">&nbsp;
+                                                                    <p style="font-size: 14px; line-height: 80%;">&nbsp;
                                                                     </p>
 
                                                                     <p style="font-size: 14px; line-height: 140%;">
-                                                                        <span style="font-size: 14px; line-height: 25.2px; color: #000;">{{ $user->name_en }} has registered for a new account. Please review and take action according.</span>
+                                                                        <span style="font-size: 14px; line-height: 25.2px; color: #000;">Please click on the "Verify Email" button to verify your email:</span>
                                                                     </p>
+
+                                                                    <p style="font-size: 14px; line-height: 160%;">&nbsp;
+                                                                    </p>
+
+                                                                    <a href="{{ $verifyLink }}" style="font-size: 20px; background: #000; color: #fff; padding: 5px 40px; text-align: center; text-decoration: none">Verify Email</a>
+
+                                                                    <p style="font-size: 14px; line-height: 100%;">&nbsp;
+                                                                    </p>
+
+                                                                    <p style="font-size: 14px; line-height: 100%;">
+                                                                        <span style="font-size: 14px; line-height: 25.2px; color: #000;">or copy and paste the below URL in the browser.</span>
+                                                                    </p>
+
+                                                                    <p style="font-size: 14px; line-height: 80%;">&nbsp;
+                                                                    </p>
+
+                                                                    <a href="{{ $verifyLink }}" style="font-size: 14px; text-decoration: underline; color: blue; line-height: 20px;">{{ $verifyLink }}</a>
                                                                 </div>
                                                             </td>
                                                         </tr>

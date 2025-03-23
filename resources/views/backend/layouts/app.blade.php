@@ -3,9 +3,9 @@
 
     <!-- Begin page -->
     <div id="layout-wrapper">
-        <div class="bbs-loader-wrapper" id="loader-1">
+        {{-- <div class="bbs-loader-wrapper" id="loader-1">
             <div id="loader" style="background-image: url({{ asset('loader.png') }}); background-repeat: no-repeat; background-position: center;"></div>
-        </div>
+        </div> --}}
 
         {{-- Top bar section --}}
         @include('backend.layouts.topbar')

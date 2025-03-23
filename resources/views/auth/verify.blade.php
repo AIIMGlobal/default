@@ -1,30 +1,214 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Verify Your Name</div>
+        <title>Verification | {{ $global_setting->title }}</title>
 
-                <div class="card-body">
-                    @if (session('resent'))
-                        <div class="alert alert-success" role="alert">
-                            A fresh verification link has been sent to your email address.
-                        </div>
-                    @endif
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{{ asset('loginAssets/css/bootstrap.min.css') }}">
+        <!-- Fontawesome CSS -->
+        <link rel="stylesheet" href="{{ asset('loginAssets/css/fontawesome-all.min.css') }}">
+        <!-- Flaticon CSS -->
+        <link rel="stylesheet" href="{{ asset('loginAssets/font/flaticon.css') }}">
+        <!-- Google Web Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ asset('loginAssets/style.css') }}">
 
-                    Before proceeding, please check your email for a verification link.
-                    If you did not receive the email,
+        <style>
+            .fxt-form-content {
+                position: relative;
+                padding: 20px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
 
-                    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
-                        @csrf
+            .fxt-form-content .border {
+                position: absolute;
+                height: 5px;
+                width: 50%;
+                /* background: linear-gradient(90deg, #FF4500, #FFA500); */
+                background: linear-gradient(315deg, #03a9f4, #ff0058);
+                box-shadow: 0 0 10px rgba(30, 144, 255, 0.8);
+                animation: borderMove 3s linear infinite;
+            }
 
-                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">click here for new verification link.</button>
-                    </form>
-                </div>
+            .fxt-form-content .border-top {
+                top: 0;
+                left: 50%;
+                transform-origin: left;
+            }
+
+            .fxt-form-content .border-bottom {
+                bottom: 0;
+                right: 50%;
+                transform-origin: right;
+                animation: borderMoveReverse 3s linear infinite;
+            }
+
+            .fxt-form-content .border-left {
+                width: 5px;
+                height: 50%;
+                left: 0;
+                bottom: 50%;
+                transform-origin: bottom;
+                animation: borderMoveVerticalReverse 3s linear infinite;
+            }
+
+            .fxt-form-content .border-right {
+                width: 5px;
+                height: 50%;
+                right: 0;
+                top: 50%;
+                transform-origin: top;
+                animation: borderMoveVertical 3s linear infinite;
+            }
+
+            @keyframes borderMove {
+                0% { width: 0; left: 50%; }
+                50% { width: 50%; left: 50%; }
+                66% { width: 50%; left: 50%; }
+                100% { width: 0; left: 100%; }
+            }
+
+            @keyframes borderMoveReverse {
+                0% { width: 0; right: 50%; }
+                50% { width: 50%; right: 50%; }
+                66% { width: 50%; right: 50%; }
+                100% { width: 0; right: 100%; }
+            }
+
+            @keyframes borderMoveVertical {
+                0% { height: 0; top: 50%; }
+                50% { height: 50%; top: 50%; }
+                66% { height: 50%; top: 50%; }
+                100% { height: 0; top: 100%; }
+            }
+
+            @keyframes borderMoveVerticalReverse {
+                0% { height: 0; bottom: 50%; }
+                50% { height: 50%; bottom: 50%; }
+                66% { height: 50%; bottom: 50%; }
+                100% { height: 0; bottom: 100%; }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="preloader" class="preloader">
+            <div class='inner'>
+                <div class='line1'></div>
+                <div class='line2'></div>
+                <div class='line3'></div>
             </div>
         </div>
-    </div>
-</div>
-@endsection
+
+        <section class="fxt-template-animation fxt-template-layout31">
+            <span class="fxt-shape fxt-animation-active"></span>
+
+            <div class="fxt-content-wrap">
+                <div class="fxt-heading-content">
+                    <div class="fxt-inner-wrap">
+                        <div class="fxt-transformY-50 fxt-transition-delay-3">
+                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="Logo" style="max-width: 300px;"></a>
+                        </div>
+
+                        <div class="fxt-transformY-50 fxt-transition-delay-4">
+                            <h1 class="fxt-main-title">{{ $global_setting->title }}</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fxt-form-content">
+                    <div class="border border-top"></div>
+                    <div class="border border-bottom"></div>
+                    <div class="border border-left"></div>
+                    <div class="border border-right"></div>
+
+                    <div class="fxt-page-switcher">
+                        <h2 class="fxt-page-title mr-3">Verification</h2>
+
+                        {{-- <ul class="fxt-switcher-wrap">
+                            <li><a href="login-31.html" class="fxt-switcher-btn active">Login</a></li>
+                            <li><a href="register-31.html" class="fxt-switcher-btn">Register</a></li>
+                        </ul> --}}
+                    </div>
+
+                    <div class="fxt-main-form">
+                        <div class="fxt-inner-wrap text-center" style="max-width: 100%;">
+                            @include('alerts.alert')
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="mb-0">To complete registration, please verify your email. We just sent an verification link to: </p>
+
+                                    <a href="mailto:{{ $user->email }}" style="font-size: 20px; text-decoration: underline;">{{ $user->email }}</a>
+                                </div>
+                            </div>
+
+                            <div class="fxt-switcher-description mt-5">Didn't receive an email? Please check your spam folder or <a href="javascript:void(0);" data-id="{{ Crypt::encryptString($user->id) }}" class="fxt-switcher-text ms-1" id="resendEmail">Resend Email</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- jquery-->
+        <script src="{{ asset('loginAssets/js/jquery.min.js') }}"></script>
+        <!-- Bootstrap js -->
+        <script src="{{ asset('loginAssets/js/bootstrap.min.js') }}"></script>
+        <!-- Imagesloaded js -->
+        <script src="{{ asset('loginAssets/js/imagesloaded.pkgd.min.js') }}"></script>
+        <!-- Validator js -->
+        <script src="{{ asset('loginAssets/js/validator.min.js') }}"></script>
+        <!-- Custom Js -->
+        <script src="{{ asset('loginAssets/js/main.js') }}"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            $(document).ready(function () {
+                $("#resendEmail").on("click", function (e) {
+                    e.preventDefault();
+
+                    let userId = $(this).data('id');
+                    let resendUrl = "{{ route('resendMail', ':id') }}".replace(':id', userId);
+
+                    Swal.fire({
+                        title: "Resend Email?",
+                        // text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: resendUrl,
+                                type: "POST",
+                                data: {
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                success: function(response) {
+                                    Swal.fire("Email Resend!", response.message, "success")
+                                        .then(() => location.reload());
+                                },
+                                error: function(xhr) {
+                                    Swal.fire("Error!", xhr.responseJSON.message, "error");
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

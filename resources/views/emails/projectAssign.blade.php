@@ -187,7 +187,7 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
                                                                         <td style="padding-right: 0px;padding-left: 0px;"
                                                                             align="center">
 
-                                                                            @if (env('APP_URL') != 'http://localhost')
+                                                                            @if ($setting->logo)
                                                                                 <img align="center" border="0" src="{{ asset('storage/logo/' . $setting->logo) }}" alt="Sixth Sense" title="Sixth Sense" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 29%;max-width: 168.2px;" width="168.2" />
                                                                             @else
                                                                                 <img align="center" border="0" src="https://pms.sebpobd.net/storage/logo/FBJn76CnImPzGDdQ2lLcDOIjAqksI1IvH7K4ZB1p.png" alt="Sixth Sense" title="Sixth Sense" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 29%;max-width: 168.2px;" width="168.2" />
