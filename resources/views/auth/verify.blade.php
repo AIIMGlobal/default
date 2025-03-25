@@ -17,6 +17,9 @@
         <link rel="stylesheet" href="{{ asset('loginAssets/css/fontawesome-all.min.css') }}">
         <!-- Flaticon CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/font/flaticon.css') }}">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
         <!-- Google Web Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap" rel="stylesheet">
         <!-- Custom CSS -->
@@ -134,11 +137,6 @@
 
                     <div class="fxt-page-switcher">
                         <h2 class="fxt-page-title mr-3">Verification</h2>
-
-                        {{-- <ul class="fxt-switcher-wrap">
-                            <li><a href="login-31.html" class="fxt-switcher-btn active">Login</a></li>
-                            <li><a href="register-31.html" class="fxt-switcher-btn">Register</a></li>
-                        </ul> --}}
                     </div>
 
                     <div class="fxt-main-form">
@@ -173,6 +171,8 @@
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
         <script>
             $(document).ready(function () {
                 $("#resendEmail").on("click", function (e) {
@@ -181,30 +181,35 @@
                     let userId = $(this).data('id');
                     let resendUrl = "{{ route('resendMail', ':id') }}".replace(':id', userId);
 
-                    Swal.fire({
-                        title: "Resend Email?",
-                        // text: "You won't be able to revert this!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#d33",
-                        cancelButtonColor: "#3085d6",
-                        confirmButtonText: "Yes"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: resendUrl,
-                                type: "POST",
-                                data: {
-                                    _token: "{{ csrf_token() }}"
-                                },
-                                success: function(response) {
-                                    Swal.fire("Email Resend!", response.message, "success")
-                                        .then(() => location.reload());
-                                },
-                                error: function(xhr) {
-                                    Swal.fire("Error!", xhr.responseJSON.message, "error");
-                                }
-                            });
+                    $.ajax({
+                        url: "{{ route('register.store') }}",
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Success",
+                                    text: response.message
+                                });
+
+                                window.location.href = response.redirect;
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Failed",
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            toastr.error("An error occurred. Please try again.");
+                        },
+                        complete: function () {
+                            submitButton.prop("disabled", false);
+                            submitButton.text("Register");
                         }
                     });
                 });

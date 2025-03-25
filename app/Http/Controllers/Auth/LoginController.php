@@ -73,12 +73,12 @@ class LoginController extends Controller
                 'message' => 'Login successful!',
                 'redirect' => route('admin.home'),
             ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid email or password.',
+            ], 401);
         }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Invalid email or password.',
-        ], 401);
     }
 
     public function redirectToGoogle()
@@ -113,6 +113,8 @@ class LoginController extends Controller
                 return redirect()->back()->with('error', 'No Account Found. Please register first!');
             }
         } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+
             return redirect()->route('login')->withErrors('Something went wrong');
         }
     }

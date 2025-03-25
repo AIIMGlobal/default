@@ -903,6 +903,7 @@
                     },
                     error: function(xhr) {
                         $("button[type='submit']").prop("disabled", false);
+                        
                         if (xhr.status === 422) {
                             let errors = xhr.responseJSON.errors;
                             let errorMessages = "";

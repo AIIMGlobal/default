@@ -42,6 +42,7 @@ use App\Http\Controllers\{
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,6 +92,9 @@ Route::post('/register', [RegisterController::class, 'store'])->name('register.s
 Route::get('/verification/{id}', [VerificationController::class, 'verify'])->name('verify');
 Route::get('/email-verify/{id}', [VerificationController::class, 'emailVerify'])->name('emailVerify');
 Route::post('/resend-mail/{id}', [VerificationController::class, 'resendMail'])->name('resendMail'); 
+Route::get('/forgot-password', [ForgotPasswordController::class, 'forgotPasswordPage'])->name('forgotPasswordPage'); 
+Route::post('/forgot-password', [ForgotPasswordController::class, 'forgotPassword'])->name('forgotPassword'); 
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('resetPassword'); 
 
 // ****************************************** Back-end Links *****************************************
 Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/admin', 'as' => 'admin.'], function() {

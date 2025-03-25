@@ -17,6 +17,9 @@
         <link rel="stylesheet" href="{{ asset('loginAssets/css/fontawesome-all.min.css') }}">
         <!-- Flaticon CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/font/flaticon.css') }}">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
         <!-- Google Web Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap" rel="stylesheet">
 
@@ -137,13 +140,6 @@
                         <div class="fxt-transformY-50 fxt-transition-delay-4">
                             <h1 class="fxt-main-title">{{ $global_setting->title }}</h1>
                         </div>
-
-                        {{-- <div class="fxt-login-option">
-                            <ul>
-                                <li class="fxt-transformY-50 fxt-transition-delay-6"><a href="{{ route('login.google') }}"><img src="{{ asset('loginAssets/img/google-logo.png') }}" alt="Google Plus" style="max-width: 35px; margin-right: 5px;"> Sign in with Google</a></li>
-                                <li class="fxt-transformY-50 fxt-transition-delay-7"><a href="#">Sing in with Facebook</a></li>
-                            </ul>
-                        </div> --}}
                     </div>
                 </div>
 
@@ -155,11 +151,6 @@
 
                     <div class="fxt-page-switcher">
                         <h2 class="fxt-page-title mr-3">Register</h2>
-
-                        {{-- <ul class="fxt-switcher-wrap">
-                            <li><a href="login-31.html" class="fxt-switcher-btn active">Login</a></li>
-                            <li><a href="register-31.html" class="fxt-switcher-btn">Register</a></li>
-                        </ul> --}}
                     </div>
 
                     <div class="fxt-main-form">
@@ -269,6 +260,8 @@
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
         <script>
             $(document).ready(function () {
                 $('.select2').select2();
@@ -306,11 +299,7 @@
                             }
                         },
                         error: function (xhr) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: xhr.responseJSON.message || "An error occurred. Please try again."
-                            });
+                            toastr.error("An error occurred. Please try again.");
                         },
                         complete: function () {
                             submitButton.prop("disabled", false);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Crypt;
 /* included models */
 use App\Models\User;
 use App\Models\Setting;
+use App\Models\Notification;
 
 /* included mails */
 use App\Mail\UserRegistrationToAdminMail;
@@ -70,77 +72,91 @@ class VerificationController extends Controller
         $id = Crypt::decryptString($id);
         $user = User::where('id', $id)->first();
 
-        if (!empty($user)) {
-            if ($user->status == 4) {
-                $user->status               = 0;
-                $user->email_verified_at    = now();
+        try {
+            DB::beginTransaction();
 
-                $user->save();
+            if (!empty($user)) {
+                if ($user->status == 4) {
+                    $user->status               = 0;
+                    $user->email_verified_at    = now();
 
-                $admins = User::whereIn('role_id', [1, 2])->where('status', 1)->get();
+                    $user->save();
 
-                if ($user) {
-                    Mail::to($user->email)->send(new UserRegistrationToUserMail($setting, $user));
+                    $setting = Setting::first();
+                    $admins = User::whereIn('role_id', [1, 2])->where('status', 1)->get();
 
-                    if (count($admins)) {
-                        foreach ($admins as $admin) {
-                            Mail::to($admin->email)->send(new UserRegistrationToAdminMail($setting, $user, $admin));
+                    if ($user) {
+                        Mail::to($user->email)->send(new UserRegistrationToUserMail($setting, $user));
 
-                            $notification = new Notification;
+                        if (count($admins)) {
+                            foreach ($admins as $admin) {
+                                Mail::to($admin->email)->send(new UserRegistrationToAdminMail($setting, $user, $admin));
 
-                            $notification->type             = 4;
-                            $notification->title            = 'New User Registration';
-                            $notification->message          = 'A new user has registered.';
-                            $notification->route_name       = route('admin.user.show', Crypt::encryptString($user->id));
-                            $notification->sender_role_id   = 4;
-                            $notification->sender_user_id   = $user->id;
-                            $notification->receiver_role_id = $admin->role_id;
-                            $notification->receiver_user_id = $admin->id;
-                            $notification->read_status      = 0;
+                                $notification = new Notification;
 
-                            $notification->save();
+                                $notification->type             = 4;
+                                $notification->title            = 'New User Registration';
+                                $notification->message          = 'A new user has registered.';
+                                $notification->route_name       = route('admin.user.show', Crypt::encryptString($user->id));
+                                $notification->sender_role_id   = 4;
+                                $notification->sender_user_id   = $user->id;
+                                $notification->receiver_role_id = $admin->role_id;
+                                $notification->receiver_user_id = $admin->id;
+                                $notification->read_status      = 0;
+
+                                $notification->save();
+                            }
                         }
-                    }
 
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Email verification completed. Your have successfully registered in BARC Repository Software! Please wait for account approval.',
-                        'redirect' => route('register')
-                    ]);
+                        DB::commit();
+
+                        return redirect()->route('login')->with('success', 'Email verification completed. Your have successfully registered in BARC Repository Software! Please wait for account approval.');
+                    }
+                } else {
+                    DB::commit();
+
+                    return redirect()->route('login')->with('warning', 'Email Already Verified!');
                 }
             } else {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Email Already Verified!',
-                    'redirect' => route('register')
-                ]);
+                DB::commit();
+
+                return redirect()->route('login')->with('warning', 'Not a valid user!');
             }
-        } else {
-            return response()->json([
-                'success' => true,
-                'message' => 'Not a valid user!',
-                'redirect' => route('register')
-            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            \Log::error($e->getMessage());
+
+            return redirect()->route('login')->with('error', 'An unexpected error occurred. Please try again.');
         }
     }
 
     public function resendMail($id)
     {
-        $id = Crypt::decryptString($id);
-        $user = User::where('id', $id)->where('status', 4)->first();
+        try {
+            $id = Crypt::decryptString($id);
+            $user = User::where('id', $id)->where('status', 4)->first();
 
-        $setting = Setting::first();
+            $setting = Setting::first();
 
-        $verifyLink = url('email-verify/' . Crypt::encryptString($user->id));
+            $verifyLink = url('email-verify/' . Crypt::encryptString($user->id));
 
-        if ($user) {
-            Mail::to($user->email)->send(new EmailVerificationMail($setting, $user, $verifyLink));
+            if ($user) {
+                Mail::to($user->email)->send(new EmailVerificationMail($setting, $user, $verifyLink));
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Verification email resent.'
-            ]);
-        } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Verification email resent.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No user account found by this email!'
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'An unexpected error occurred. Please try again.'

@@ -17,6 +17,9 @@
         <link rel="stylesheet" href="{{ asset('loginAssets/css/fontawesome-all.min.css') }}">
         <!-- Flaticon CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/font/flaticon.css') }}">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
         <!-- Google Web Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap" rel="stylesheet">
         <!-- Custom CSS -->
@@ -177,7 +180,7 @@
                                                     <label for="checkbox1" class="ps-4">Remember Me</label>
                                                 </div>
 
-                                                <a href="forgot-password-31.html" class="fxt-switcher-text">Forgot Password</a>
+                                                <a href="{{ route('forgotPasswordPage') }}" class="fxt-switcher-text">Forgot Password</a>
                                             </div>
                                         </div>
                                     </div>
@@ -210,6 +213,8 @@
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
         <script>
             $(document).ready(function () {
                 $("#loginForm").on("submit", function (e) {
@@ -225,6 +230,7 @@
                             title: "Validation Error",
                             text: "Email and Password are required!"
                         });
+
                         return;
                     }
 
@@ -257,11 +263,7 @@
                             }
                         },
                         error: function (xhr) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: xhr.responseJSON.message || "An error occurred. Please try again."
-                            });
+                            toastr.error("An error occurred. Please try again.");
                         },
                         complete: function () {
                             submitButton.prop("disabled", false);
