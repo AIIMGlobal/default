@@ -4,22 +4,38 @@
         <!-- Dark Logo-->
         <a href="{{ route('admin.home') }}" class="logo logo-dark mt-2">
             <span class="logo-sm">
-                <img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="" height="50">
+                <img src="@if($global_setting->soft_logo && Storage::exists('public/soft_logo/' . $global_setting->soft_logo))
+    {{ asset('storage/soft_logo/' . $global_setting->soft_logo) }}
+@else
+    {{ 'https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg' }}
+@endif" alt="" height="50">
             </span>
 
             <span class="logo-lg">
-                <img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="" width="100">
+                <img src="@if($global_setting->soft_logo && Storage::exists('public/soft_logo/' . $global_setting->soft_logo))
+    {{ asset('storage/soft_logo/' . $global_setting->soft_logo) }}
+@else
+    {{ 'https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg' }}
+@endif" alt="" width="100">
             </span>
         </a>
 
         <!-- Light Logo-->
         <a href="{{ route('admin.home') }}" class="logo logo-light mt-2">
             <span class="logo-sm">
-                <img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="" height="50">
+                <img src="@if($global_setting->soft_logo && Storage::exists('public/soft_logo/' . $global_setting->soft_logo))
+    {{ asset('storage/soft_logo/' . $global_setting->soft_logo) }}
+@else
+    {{ 'https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg' }}
+@endif" alt="" height="50">
             </span>
 
             <span class="logo-lg">
-                <img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="" width="100">
+                <img src="@if($global_setting->soft_logo && Storage::exists('public/soft_logo/' . $global_setting->soft_logo))
+    {{ asset('storage/soft_logo/' . $global_setting->soft_logo) }}
+@else
+    {{ 'https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg' }}
+@endif" alt="" width="100">
             </span>
         </a>
 

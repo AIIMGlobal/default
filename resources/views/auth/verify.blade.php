@@ -10,7 +10,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <!-- Favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}">
+        @if($global_setting->soft_logo && Storage::exists('public/soft_logo/' . $global_setting->soft_logo))
+            <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/soft_logo/' . $global_setting->soft_logo) }}">
+        @else
+            <link rel="shortcut icon" type="image/x-icon" href="{{ 'https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg' }}">
+        @endif
+
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ asset('loginAssets/css/bootstrap.min.css') }}">
         <!-- Fontawesome CSS -->
@@ -120,7 +125,11 @@
                 <div class="fxt-heading-content">
                     <div class="fxt-inner-wrap">
                         <div class="fxt-transformY-50 fxt-transition-delay-3">
-                            <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/soft_logo/' . ($global_setting->soft_logo ?? '')) }}" alt="Logo" style="max-width: 300px;"></a>
+                            @if($global_setting->soft_logo && Storage::exists('public/soft_logo/' . $global_setting->soft_logo))
+                                <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ asset('storage/soft_logo/' . $global_setting->soft_logo) }}" alt="Logo" style="max-width: 300px;"></a>
+                            @else
+                                <a href="{{ route('admin.home') }}" class="fxt-logo"><img src="{{ 'https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg' }}" alt="Logo" style="max-width: 300px;"></a>
+                            @endif
                         </div>
 
                         <div class="fxt-transformY-50 fxt-transition-delay-4">
