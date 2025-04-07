@@ -36,6 +36,11 @@ class UserInfo extends Model
         return $this->belongsTo(Designation::class, 'designation_id', 'id');
     }
 
+    public function post()
+    {
+        return $this->belongsTo(Designation::class, 'designation_id', 'id');
+    }
+
     public function division()
     {
         return $this->belongsTo(Division::class, 'division_id', 'id');

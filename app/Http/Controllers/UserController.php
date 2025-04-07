@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 /* included models */
 use App\Models\UserInfo;
@@ -41,48 +41,24 @@ class UserController extends Controller
         $user = Auth::user();
 
         if (Gate::allows('user_management', $user)) {
-            $employees_query = User::with('userInfo');
+            $query = User::with('userInfo');
 
-            if (($request->name != '') && ($request->name != '')) {
-                $searchQuery = $request->name;
-
-                $employees_query->where(function($query) use($searchQuery) {
-                    $query->where('name_en', 'like', '%'.$searchQuery.'%')
-                            ->orWhere('mobile', 'like', '%'.$searchQuery.'%')
-                            ->orWhere('email', 'like', '%'.$searchQuery.'%')
-                            ->orWhereHas('userInfo', function($query2) use($searchQuery) {
-                                $query2->where('employee_id', $searchQuery);
-                            });
-                });
-            }
-
-            if (!Gate::allows('access_all_employee', $user)) {
-                if ($user->user_type == 3) {
-                    $office_info = $user->userInfo->office ?? '';
-
-                    if (($office_info->head_office ?? 0) == 1) {
-                        $office_ids = $office_info->officeIds($office_info->division_id);
-
-                        if (count($office_ids) == 0) {
-                            $office_ids = [0];
-                        }
-                        
-                        if (Gate::allows('access_all_user_list', $user)) {
-                            $employees_query->whereHas('userInfo',function($new_query) use($office_ids) {
-                                $new_query->whereIn('office_id', $office_ids);
-                            });
-                        } else {
-                            $employees_query->where('id', $user->id);
-                        }
-                    } else {
-                        $employees_query->where('id', $user->id);
-                    }
-                }
+            if ($request->filled('user_id')) {
+                $query->where('id', $request->user_id);
             }
             
-            $employees = $employees_query->where('user_type', 3)->where('status', 1)->latest()->paginate(15);
+            $users = $query->where('role_id', '!=', 1)->whereNotIn('status', [3,5])->latest()->get();
 
-            return view('backend.admin.user.index', compact('employees'));
+            if ($request->ajax()) {
+                $html = view('backend.admin.user.table', compact('users'))->render();
+
+                return response()->json([
+                    'success' => true,
+                    'html' => $html,
+                ]);
+            }
+
+            return view('backend.admin.user.index', compact('users'));
         } else {
             return abort(403, "You don't have permission..!");
         }
@@ -93,46 +69,13 @@ class UserController extends Controller
         $user = Auth::user();
 
         if (Gate::allows('user_management', $user)) {
-            $employees_query = User::with('userInfo');
+            $query = User::with('userInfo');
 
-            if (($request->name != '') && ($request->name != '')) {
-                $searchQuery = $request->name;
-
-                $employees_query->where(function($query) use($searchQuery) {
-                    $query->where('name_en', 'like', '%'.$searchQuery.'%')
-                            ->orWhere('mobile', 'like', '%'.$searchQuery.'%')
-                            ->orWhere('email', 'like', '%'.$searchQuery.'%')
-                            ->orWhereHas('userInfo', function($query2) use($searchQuery) {
-                                $query2->where('employee_id', $searchQuery);
-                            });
-                });
-            }
-
-            if (!Gate::allows('access_all_employee', $user)) {
-                if ($user->user_type == 3) {
-                    $office_info = $user->userInfo->office ?? '';
-
-                    if (($office_info->head_office ?? 0) == 1) {
-                        $office_ids = $office_info->officeIds($office_info->division_id);
-
-                        if (count($office_ids) == 0) {
-                            $office_ids = [0];
-                        }
-                        
-                        if (Gate::allows('access_all_user_list', $user)) {
-                            $employees_query->whereHas('userInfo',function($new_query) use($office_ids) {
-                                $new_query->whereIn('office_id', $office_ids);
-                            });
-                        } else {
-                            $employees_query->where('id', $user->id);
-                        }
-                    } else {
-                        $employees_query->where('id', $user->id);
-                    }
-                }
+            if ($request->filled('company_id')) {
+                $query->where('company_id', $request->company_id);
             }
             
-            $employees = $employees_query->where('user_type', 3)->where('status', 1)->latest()->paginate(15);
+            $employees = $query->where('user_type', 3)->where('status', 1)->latest()->paginate(15);
 
             return view('backend.admin.user.index', compact('employees'));
         } else {
@@ -217,38 +160,76 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $user = Auth::user();
+        DB::beginTransaction();
 
-        if(Gate::allows('add_user', $user)){
+        try {
+            $user = Auth::user();
 
-            DB::transaction(function () use ($request,$user) {
+            if (Gate::allows('add_user', $user)) {
+                if ($request->user_type == 4) {
+                    $this->validate($request, [
+                        // 'name_bn' => 'required',
+                        'name_en'               => 'required',
+                        'user_type'             => 'required',
+                        'mobile'                => 'unique:users|required',
+                        'email'                 => 'unique:users|required',
+                        'password'              => 'required',
+                        'role_id'               => 'required',
+                        // 'employee_id'           => 'required',
+                        'department_id'         => 'required',
+                        'designation'           => 'required',
+                        'office_id'             => 'required',
+                        // 'present_division_id'   => 'required',
+                        // 'present_district_id'   => 'required',
+                        // 'present_upazila_id'    => 'required',
+                    ]);
+                } else {
+                    $this->validate($request, [
+                        // 'name_bn' => 'required',
+                        'name_en'               => 'required',
+                        'user_type'             => 'required',
+                        'mobile'                => 'unique:users|required',
+                        'email'                 => 'unique:users|required',
+                        'password'              => 'required',
+                        'role_id'               => 'required',
+                        // 'employee_id'           => 'required',
+                        'department_id'         => 'required',
+                        'designation_id'        => 'required',
+                        'office_id'             => 'required',
+                        // 'present_division_id'   => 'required',
+                        // 'present_district_id'   => 'required',
+                        // 'present_upazila_id'    => 'required',
+                    ]);
+                }
+            
                 $this->validate($request, [
                     // 'name_bn' => 'required',
                     'name_en'               => 'required',
+                    'user_type'             => 'required',
                     'mobile'                => 'unique:users|required',
                     'email'                 => 'unique:users|required',
                     'password'              => 'required',
                     'role_id'               => 'required',
-                    'employee_id'           => 'required',
+                    // 'employee_id'           => 'required',
                     'department_id'         => 'required',
                     'designation_id'        => 'required',
-                    'office_id'             => 'required',
+                    // 'office_id'             => 'required',
                     // 'present_division_id'   => 'required',
                     // 'present_district_id'   => 'required',
                     // 'present_upazila_id'    => 'required',
                 ]);
 
                 $newUser = new User;
-                // $newUser->name_bn = $request->name_bn;
-                $newUser->name_en   = $request->name_en;
-                $newUser->email     = $request->email;
-                $newUser->mobile    = $request->mobile;
-                $newUser->user_type = 3;
-                $newUser->role_id   = $request->role_id;
-                $newUser->team_id   = $request->team_id;
-                $newUser->status    = 1;
-                $newUser->user_category_id    = $request->user_category_id;
-                $newUser->password  = Hash::make($request->password);
+
+                // $newUser->name_bn           = $request->name_bn;
+                $newUser->name_en           = $request->name_en;
+                $newUser->email             = $request->email;
+                $newUser->mobile            = $request->mobile;
+                $newUser->user_type         = $request->user_type;
+                $newUser->role_id           = $request->role_id;
+                $newUser->status            = 1;
+                $newUser->user_category_id  = $request->user_category_id;
+                $newUser->password          = Hash::make($request->password);
 
                 $newUser->save();
 
@@ -279,12 +260,13 @@ class UserController extends Controller
                 $userInfo->office_id            = $request->office_id;
                 $userInfo->employee_id          = $request->employee_id;
                 $userInfo->gender               = $request->gender;
+                $userInfo->religion             = $request->religion;
                 $userInfo->dob                  = $request->dob;
                 $userInfo->nid_no               = $request->nid_no;
                 $userInfo->driving_license_no   = $request->driving_license_no;
                 $userInfo->passport_no          = $request->passport_no;
                 $userInfo->marital_status       = $request->marital_status;
-                $userInfo->birth_certificate_no    = $request->birth_certificate_no;
+                $userInfo->birth_certificate_no = $request->birth_certificate_no;
                 $userInfo->availablity          = $request->availablity ?? 0;
                 $userInfo->created_by           = $user->id;
                 $userInfo->visitor_organization = $request->visitor_organization;
@@ -310,7 +292,7 @@ class UserController extends Controller
                     }
                 }
 
-                if($request->image){
+                if ($request->image) {
                     $cp = $request->file('image');
                     $extension = strtolower($cp->getClientOriginalExtension());
                     $randomFileName = 'userImage'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
@@ -319,7 +301,7 @@ class UserController extends Controller
                     $userInfo->image = $randomFileName;
                 }
                 
-                if($request->signature){
+                if ($request->signature) {
                     $cp = $request->file('signature');
                     $extension = strtolower($cp->getClientOriginalExtension());
                     $signature = 'signature'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
@@ -366,11 +348,28 @@ class UserController extends Controller
                         }
                     }
                 }
-            });
 
-            return redirect()->route('admin.user.index')->with('success', "New Employee added successfully..!");
-        } else {
-            return abort(403, "You don't have permission..!");
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'New User Created Successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => "You don't have permission!",
+                ], 403);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            \Log::error($e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred:' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -400,11 +399,11 @@ class UserController extends Controller
             $durations = Duration::where('status', 1)->get();
             $posts = Post::where('status', 1)->get();
 
-            $presentDistricts = District::where('division_id', $userAddress->present_division_id)->get();
-            $presentUpazilas = Upazila::where('district_id', $userAddress->present_district_id)->get();
+            $presentDistricts = District::where('division_id', ($userAddress->present_division_id ?? 0))->get();
+            $presentUpazilas = Upazila::where('district_id', ($userAddress->present_district_id ?? 0))->get();
 
-            $permanentDistricts = District::where('division_id', $userAddress->permanent_division_id)->get();
-            $permanentUpazilas = Upazila::where('district_id', $userAddress->permanent_district_id)->get();
+            $permanentDistricts = District::where('division_id', ($userAddress->permanent_division_id ?? 0))->get();
+            $permanentUpazilas = Upazila::where('district_id', ($userAddress->permanent_district_id ?? 0))->get();
 
             $docs = UserCompanyDoc::where('user_id', $id)->get();
 
@@ -704,38 +703,6 @@ class UserController extends Controller
 
             return redirect()->route('admin.user.index')->with('success', "Employee information updated successfully..!");
         } else {
-            return abort(403, "You don't have permission..!");
-        }
-    }
-
-    public function block($id)
-    {
-        $currentUser = Auth::user();
-        $id = Crypt::decryptString($id);
-
-        if (Gate::allows('block_user', $currentUser)) {
-            $user = User::where('id', $id)->first();
-
-            $user->status = 2;
-
-            $user->save();
-
-            return redirect()->route('admin.user.index')->with('success', 'Employee Blocked successfully..!');
-        } else {
-            return abort(403, "You don't have permission..!");
-        }
-    }
-
-    public function active($id)
-    {
-        $id = Crypt::decryptString($id);
-        $currentUser = Auth::user();
-        if(Gate::allows('block_user', $currentUser)){
-            $user = User::where('id', $id)->first();
-            $user->status = 1;
-            $user->save();
-            return redirect()->route('admin.user.index')->with('success', 'Employee Un-blocked successfully..!');
-        }else{
             return abort(403, "You don't have permission..!");
         }
     }
@@ -1216,5 +1183,132 @@ class UserController extends Controller
         $documentInfo->delete();
 
         return redirect()->back()->with('success', 'Document deleted.');
+    }
+
+    public function block(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!(Gate::allows('block_user', $user))) {
+            return abort(403, "You don't have permission!");
+        } else {
+            $user = User::where('id', $request->id)->first();
+
+            if ($user) {
+                $user->status = 3;
+
+                $user->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User Archived Successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User Not Found!'
+                ]);
+            }
+        }
+    }
+
+    public function active($id)
+    {
+        $id = Crypt::decryptString($id);
+
+        $currentUser = Auth::user();
+
+        if(Gate::allows('block_user', $currentUser)){
+            $user = User::where('id', $id)->first();
+            $user->status = 1;
+            $user->save();
+            return redirect()->route('admin.user.index')->with('success', 'Employee Un-blocked successfully..!');
+        }else{
+            return abort(403, "You don't have permission..!");
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!(Gate::allows('delete_user', $user))) {
+            return abort(403, "You don't have permission!");
+        } else {
+            $user = User::where('id', $request->id)->first();
+
+            if ($user) {
+                $user->status = 5;
+
+                $user->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User Deleted Successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User Not Found!'
+                ]);
+            }
+        }
+    }
+
+    public function approve(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!(Gate::allows('approve_user', $user))) {
+            return abort(403, "You don't have permission!");
+        } else {
+            $user = User::where('id', $request->id)->first();
+
+            if ($user) {
+                $user->status = 1;
+
+                $user->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User Approved Successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User Not Found!'
+                ]);
+            }
+        }
+    }
+
+    public function decline(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!(Gate::allows('decline_user', $user))) {
+            return abort(403, "You don't have permission!");
+        } else {
+            $user = User::where('id', $request->id)->first();
+
+            if ($user) {
+                $user->status = 2;
+
+                $user->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User Declined Successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User Not Found!'
+                ]);
+            }
+        }
     }
 }

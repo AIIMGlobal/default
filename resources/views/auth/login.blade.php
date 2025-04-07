@@ -259,7 +259,7 @@
                             if (response.success) {
                                 Swal.fire({
                                     icon: "success",
-                                    title: "Success",
+                                    title: "Success!",
                                     text: response.message
                                 });
 
@@ -267,14 +267,19 @@
                             } else {
                                 Swal.fire({
                                     icon: "error",
-                                    title: "Failed",
+                                    title: "Failed!",
                                     text: response.message
                                 });
                             }
                         },
                         error: function (xhr) {
-                            console.log(xhr);
-                            toastr.error("An error occurred: "+xhr.responseJSON.message);
+                            // toastr.error("An error occurred: "+xhr.responseJSON.message);
+                            
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error!",
+                                text: xhr.responseJSON.message
+                            });
                         },
                         complete: function () {
                             submitButton.prop("disabled", false);

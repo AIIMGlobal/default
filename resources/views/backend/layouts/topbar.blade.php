@@ -92,7 +92,7 @@
                         </button>
 
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="@if(auth()->user()->user_type == 4) {{ route('admin.visitor.edit', Crypt::encryptString((auth()->user()->userInfo->id ?? 0))) }} @else {{ route('admin.edit_profile') }} @endif">
+                            <a class="dropdown-item" href="{{ route('admin.edit_profile') }}">
                                 <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> 
                                 <span class="align-middle">Profile</span>
                             </a>

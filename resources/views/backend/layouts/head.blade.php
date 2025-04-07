@@ -119,7 +119,7 @@
             .page-title-box {
                 z-index: 2;
                 position: relative;
-                margin: -10px -1.5rem 5px -22px;
+                margin: -10px -1.5rem 5px -24px;
                 box-shadow: none;
                 background: #F5F5F5;
             }
@@ -287,7 +287,8 @@
                 background: url('{{asset("frontend/img/background-image2.jpg")}}');
             }
             .profile-wid-bg::before {
-                background: linear-gradient(45deg, #d48154, #6176d8) !important;
+                /* background: linear-gradient(45deg, #d48154, #6176d8) !important; */
+                background: linear-gradient(90deg, #0F2027, #203A43, #2C5364) !important;
             }
             .logo-sm img {
                 width: 100% !important;

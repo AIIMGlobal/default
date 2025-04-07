@@ -1,8 +1,23 @@
+@push('css')
+    <style>
+        .barChart-container {
+            width: 100%;
+            height: 400px;
+        }
+        .pieChart-container {
+            max-width: 100%;
+            max-height: 400px;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+@endpush
+
 <div class="col-md-12">
     <h3>Welcome to {{ $global_setting->title }} Dashboard</h3>
 
     <div class="row mt-4">
-        @can('employee_count')
+        @can('user_count')
             <div class="col-md-3 col-sm-12">
                 <a href="{{ route('admin.user.index') }}" class="text-decoration-none">
                     <div class="custom-card">
@@ -11,10 +26,10 @@
                         </div>
             
                         <div class="custom-text">
-                            <p class="title">Total Users</p>
+                            <p class="title">Registererd Users</p>
 
                             <h2 class="count">
-                                <span class="counter-value" data-target="{{ $employeesCount ?? 0 }}">{{ $employeesCount ?? 0 }}</span>
+                                <span class="counter-value" data-target="{{ $usersCount ?? 0 }}">{{ $usersCount ?? 0 }}</span>
                             </h2>
                         </div>
                     </div>
@@ -84,6 +99,33 @@
     </div>
 
     <div class="row mt-4">
+        <div class="col-md-4">
+            <h4>Content Graph</h4>
+
+            <div class="barChart-container">
+                <canvas id="barChart" width="500" height="500"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h4>User Status</h4>
+
+            <div class="pieChart-container">
+                {{-- <canvas id="pieChart" width="500" height="500"></canvas> --}}
+                <canvas id="lineChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h4>Category Record</h4>
+
+            <div class="pieChart-container">
+                <canvas id="pieChartCategory" width="500" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {{-- <div class="row mt-4">
         @can('project_summary_graph')
             <div class="col-md-12">
                 <div class="card card-height-100" style="background: linear-gradient(45deg,#346c341c,#0000ff17);">
@@ -144,10 +186,10 @@
                     <div class="card-header d-flex align-items-center">
                         <h4 class="card-title flex-grow-1 mb-0">Active Projects</h4>
 
-                        {{-- <div class="flex-shrink-0">
+                        <div class="flex-shrink-0">
                             <a href="javascript:void(0);" class="btn btn-soft-info btn-sm">Export Report</a>
-                        </div> --}}
-                    </div><!-- end cardheader -->
+                        </div>
+                    </div>
 
                     <div class="card-body">
                         <div class="table-responsive table-card">
@@ -201,51 +243,302 @@
                 </div><!-- end card -->
             </div><!-- end col -->
         @endcan
-    </div>
+    </div> --}}
 </div>
 
 @push('script')
     <script>
         var options = {
-            series: [{
-            data: [@foreach($projects as $project) {{ $project->amount }},  @endforeach]
-        }],
-        chart: {
-            height: 350,
-            type: 'bar',
-            events: {
-                click: function(chart, w, e) {
-                // console.log(chart, w, e)
+                series: [{
+                data: [@foreach($projects as $project) {{ $project->amount }},  @endforeach]
+            }],
+            chart: {
+                height: 350,
+                type: 'bar',
+                events: {
+                    click: function(chart, w, e) {
+                    // console.log(chart, w, e)
+                    }
                 }
-            }
-        },
-        plotOptions: {
-            bar: {
-                columnWidth: '10%',
-                distributed: false,
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        legend: {
-            show: false
-        },
-        xaxis: {
-            categories: [
-                @foreach($projects as $project) 
-                    ['{!! Str::limit($project->name, 20, " ...") !!}'],  
-                @endforeach
-            ],
-            labels: {
-                style: {
-                    fontSize: '12px'
+            },
+            plotOptions: {
+                bar: {
+                    columnWidth: '10%',
+                    distributed: false,
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            legend: {
+                show: false
+            },
+            xaxis: {
+                categories: [
+                    @foreach($projects as $project) 
+                        ['{!! Str::limit($project->name, 20, " ...") !!}'],  
+                    @endforeach
+                ],
+                labels: {
+                    style: {
+                        fontSize: '12px'
+                    }
                 }
             }
         }
-        };
 
         var chart = new ApexCharts(document.querySelector("#chartColumn"), options);
+
         chart.render();
+    </script>
+
+    <script>
+        var ctx = document.getElementById('barChart').getContext('2d');
+
+        var gradientGreen = ctx.createLinearGradient(0, 0, 400, 400);
+        gradientGreen.addColorStop(0, '#3ACB3B');
+        gradientGreen.addColorStop(1, '#0F4010');
+
+        var gradientRed = ctx.createLinearGradient(0, 0, 400, 400);
+        gradientRed.addColorStop(0, '#FF0000');
+        gradientRed.addColorStop(1, '#800000');
+
+        var gradientBlue = ctx.createLinearGradient(0, 0, 400, 200);
+        gradientBlue.addColorStop(0, '#E4F2FD');
+        gradientBlue.addColorStop(1, '#0D47A1');
+
+        var gradientDark = ctx.createLinearGradient(0, 0, 100, 500);
+        gradientDark.addColorStop(0, '#00A3AA');
+        gradientDark.addColorStop(1, '#023B46');
+
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April'],
+                datasets: [{
+                    label: '',
+                    data: [12, 19, 18, 15],
+                    backgroundColor: [
+                        gradientGreen,
+                        gradientRed,
+                        gradientBlue,
+                        gradientDark
+                    ],
+                    borderColor: [
+                        'rgba(24, 124, 25, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(9, 0, 136, 1)',
+                        'rgba(15, 32, 39, 1)'
+                    ],
+                    borderWidth: 1,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                responsive: true
+            }
+        });
+    </script>
+
+    <script>
+        var ctx = document.getElementById('pieChartCategory').getContext('2d');
+
+        var gradientGreen = ctx.createLinearGradient(0, 0, 400, 400);
+        gradientGreen.addColorStop(0, '#3ACB3B');
+        gradientGreen.addColorStop(1, '#0F4010');
+
+        var gradientRed = ctx.createLinearGradient(0, 0, 100, 500);
+        gradientRed.addColorStop(0, '#FF0000');
+        gradientRed.addColorStop(1, '#800000');
+
+        var gradientBlue = ctx.createLinearGradient(0, 0, 400, 500);
+        gradientBlue.addColorStop(0, '#0B48A1');
+        gradientBlue.addColorStop(1, '#0D47A1');
+
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Approved', 'Inactive', 'Pending'],
+                datasets: [{
+                    // label: 'User Status',
+                    data: [65, 25, 10],
+                    backgroundColor: [
+                        gradientGreen,
+                        gradientRed,
+                        gradientBlue,
+                    ],
+                    borderColor: [
+                        'rgba(24, 124, 25, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(9, 0, 136, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    {{-- <script>
+        var ctx = document.getElementById('pieChart').getContext('2d');
+
+        var gradientGreen = ctx.createLinearGradient(0, 0, 400, 400);
+        gradientGreen.addColorStop(0, '#3ACB3B');
+        gradientGreen.addColorStop(1, '#0F4010');
+
+        var gradientRed = ctx.createLinearGradient(0, 0, 100, 500);
+        gradientRed.addColorStop(0, '#FF0000');
+        gradientRed.addColorStop(1, '#800000');
+
+        var gradientBlue = ctx.createLinearGradient(0, 0, 400, 500);
+        gradientBlue.addColorStop(0, '#0B48A1');
+        gradientBlue.addColorStop(1, '#0D47A1');
+
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Approved', 'Inactive', 'Pending'],
+                datasets: [{
+                    // label: 'User Status',
+                    data: [15, 35, 20],
+                    backgroundColor: [
+                        gradientGreen,
+                        gradientRed,
+                        gradientBlue,
+                    ],
+                    borderColor: [
+                        'rgba(24, 124, 25, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(9, 0, 136, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script> --}}
+
+    <script>
+        var ctx = document.getElementById('lineChart').getContext('2d');
+
+        // Create gradients for the area under the line
+        var gradientGreen = ctx.createLinearGradient(0, 0, 0, 200);
+        gradientGreen.addColorStop(0, 'rgba(15, 64, 16, 0.6)');  // Deep green
+        gradientGreen.addColorStop(1, 'rgba(58, 203, 59, 0.2)'); // Light green
+
+        var gradientRed = ctx.createLinearGradient(0, 0, 0, 200);
+        gradientRed.addColorStop(0, 'rgba(128, 0, 0, 0.6)');     // Deep red
+        gradientRed.addColorStop(1, 'rgba(255, 102, 102, 0.2)'); // Light red
+
+        var gradientBlue = ctx.createLinearGradient(0, 0, 0, 200);
+        gradientBlue.addColorStop(0, 'rgba(5, 0, 68, 0.6)');     // Deep blue
+        gradientBlue.addColorStop(1, 'rgba(51, 51, 255, 0.2)');  // Light blue
+
+        var gradientDark = ctx.createLinearGradient(0, 0, 0, 200);
+        gradientDark.addColorStop(0, 'rgba(10, 23, 28, 0.6)');   // Deep dark teal
+        gradientDark.addColorStop(1, 'rgba(44, 83, 100, 0.2)');  // Light teal-blue
+
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April'],
+                datasets: [
+                    {
+                        data: [50, 75, 60, 90], // Demo data for visitors
+                        backgroundColor: gradientGreen, // Area under the line
+                        borderColor: 'rgba(24, 124, 25, 1)', // Green line
+                        borderWidth: 2,
+                        fill: true, // Fill the area under the line
+                        tension: 0.4 // Smooth the line (0 = straight, 0.4 = curved)
+                    },
+                    {
+                        data: [30, 45, 55, 70], // Second demo dataset
+                        backgroundColor: gradientRed,
+                        borderColor: 'rgba(255, 0, 0, 1)', // Red line
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        data: [20, 35, 25, 50], // Third demo dataset
+                        backgroundColor: gradientBlue,
+                        borderColor: 'rgba(9, 0, 136, 1)', // Blue line
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        data: [10, 25, 15, 40], // Fourth demo dataset
+                        backgroundColor: gradientDark,
+                        borderColor: 'rgba(15, 32, 39, 1)', // Dark teal line
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Visitors'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months'
+                        }
+                    }
+                },
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false // Hide legend since no labels are specified
+                    }
+                }
+            }
+        });
     </script>
 @endpush

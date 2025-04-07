@@ -1,6 +1,6 @@
 @extends('backend.layouts.app')
 
-@section('title', 'Employee List | '.($global_setting->title ?? ""))
+@section('title', 'User List | '.($global_setting->title ?? ""))
 
 @section('content')
     <div class="page-content">
@@ -9,13 +9,13 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        {{-- <h4 class="mb-sm-0">Employee List</h4> --}}
+                        {{-- <h4 class="mb-sm-0">User List</h4> --}}
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Dashboard</a></li>
 
-                                <li class="breadcrumb-item active">Employee List</li>
+                                <li class="breadcrumb-item active">User List</li>
                             </ol>
                         </div>
                     </div>
@@ -29,7 +29,7 @@
 
                     <div class="card card-height-100">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Employee List</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">User List</h4>
 
                             <div class="flex-shrink-0">
                                 @can('archive_list')
@@ -37,7 +37,7 @@
                                 @endcan
 
                                 @can('add_user')
-                                    <a href="{{ route('admin.user.create') }}" class="btn btn-primary">Add New Employee</a>
+                                    <a href="{{ route('admin.user.create') }}" class="btn btn-primary">Add New User</a>
                                 @endcan
                             </div>
                         </div>
@@ -45,26 +45,28 @@
                         <div class="card-body border border-dashed border-end-0 border-start-0">
                             <form>
                                 <div class="row g-3">
-                                    <div class="col-xxl-2 col-sm-6">
+                                    <div class="col-md-3 col-sm-6 col-12 pt-1">
                                         <div class="search-box">
-                                            <input @if(isset($_GET['name']) and $_GET['name']!='') value="{{ $_GET['name'] }}" @endif type="text" class="form-control search" name="name" placeholder="Search by Name/Mobile/E-mail">
-                                            <i class="ri-search-line search-icon"></i>
+                                            <div>
+                                                <select class="form-control select2" name="user_id" id="user_id">
+                                                    <option value="">--Search by User--</option>
+
+                                                    @foreach ($users as $user)
+                                                        <option @if (isset($_GET['user_id']) && $_GET['user_id'] == $user->id) selected @endif
+                                                        value="{{ $user->id }}">{{ $user->name_en }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-xxl-1 col-sm-4">
-                                        <div>
-                                            <button style="max-width: 150px;" type="submit" class="btn btn-primary w-100"> 
-                                                <i class="ri-equalizer-fill me-1 align-bottom"></i>Filter
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xxl-2 col-sm-4">
-                                        <div>
-                                            <a style="max-width: 150px;" href="{{ route('admin.user.index') }}" class="btn btn-danger w-100"> 
-                                                <i class="ri-restart-line me-1 align-bottom"></i>Reset
-                                            </a>
+                                    <div class="col-md-1 col-sm-4 col-6 pt-1">
+                                        <div class="d-flex flex-row bd-highlight mb-0">
+                                            <div class="pl-1 bd-highlight">
+                                                <a id="resetButton" style="max-width: 150px; border-radius: 5px" href="javascript:void(0)" class="btn btn-danger">
+                                                    <i class="ri-restart-line align-bottom"></i> Reset
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -81,85 +83,16 @@
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th class="text-center">Mobile</th>
+                                            <th>User Type</th>
                                             <th>Role</th>
                                             <th>Designation</th>
                                             <th class="text-center">Status</th>
-                                            {{-- <th>Office</th> --}}
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
-                                        @if ($employees->count() > 0)
-                                            @php
-                                                $i = 1;
-                                            @endphp
-
-                                            @foreach ($employees as $employee)
-                                                <tr>
-                                                    <td class="text-center">{{ $i }}</td>
-
-                                                    <td>
-                                                        {{ $employee->name_en ?? '-' }}
-
-                                                        {{-- <br>
-                                                        (EID: {{ $employee->userInfo->employee_id ?? '' }}) --}}
-                                                    </td>
-
-                                                    <td>{{ $employee->email ?? '-' }}</td>
-
-                                                    <td class="text-center">{{ $employee->mobile ?? '-' }}</td>
-
-                                                    <td>{{ $employee->role->display_name ?? '-' }}</td>
-
-                                                    <td>{{ $employee->userInfo->designation->name ?? '-' }}</td>
-
-                                                    <td class="text-center">
-                                                        @if ($employee->status == 1)
-                                                            <span class="badge bg-success">Active</span>
-                                                        @else
-                                                            <span class="badge bg-danger">Archived</span>
-                                                        @endif
-                                                    </td>
-
-                                                    {{-- <td>{{ $employee->officeName($employee->userInfo->office_id) }}</td> --}}
-
-                                                    <td class="text-center">
-                                                        @can('view_user')
-                                                            <a href="{{ route('admin.user.show', Crypt::encryptString($employee->id)) }}" title="Show" class="btn btn-sm btn-info btn-icon waves-effect waves-light">
-                                                                <i class="las la-eye" style="font-size: 1.6em;"></i>
-                                                            </a>
-                                                        @endcan
-                                                        
-                                                        @can('edit_user')
-                                                            <a href="{{ route('admin.user.edit', Crypt::encryptString($employee->id)) }}" title="Edit" class="btn btn-sm btn-primary btn-icon waves-effect waves-light">
-                                                                <i class="las la-edit" style="font-size: 1.6em;"></i>
-                                                            </a>
-                                                        @endcan
-
-                                                        @can('block_user')
-                                                            @if ($employee->status == 1)
-                                                                <a onclick="return confirm('Are you sure, you want to archive the user?')" href="{{ route('admin.user.block', Crypt::encryptString($employee->id)) }}" title="Archive" class="btn btn-sm btn-warning btn-icon waves-effect waves-light">
-                                                                    <i class="las la-lock" style="font-size: 1.6em;"></i>
-                                                                </a>
-                                                            @else
-                                                                <a onclick="return confirm('Are you sure, you want to Un-Archive the user?')" href="{{ route('admin.user.active', Crypt::encryptString($employee->id)) }}" title="Un-Archive" class="btn btn-sm btn-success btn-icon waves-effect waves-light">
-                                                                    <i class="las la-lock-open" style="font-size: 1.6em;"></i>
-                                                                </a>
-                                                            @endif
-                                                        @endcan
-                                                    </td>
-                                                </tr>
-
-                                                @php
-                                                    $i++;
-                                                @endphp
-                                            @endforeach
-                                        @else
-                                            {{-- <tr>
-                                                <td colspan="100%" class="text-center"><b>No Data Found</b></td>
-                                            </tr> --}}
-                                        @endif
+                                        @include('backend.admin.user.table')
                                     </tbody>
                                     <!-- end tbody -->
                                 </table>
@@ -168,10 +101,6 @@
                             <!-- end table responsive -->
                         </div>
                         <!-- end card body -->
-
-                        {{-- <div class="card-footer">
-                            {{ $employees->appends($_GET)->links() }}
-                        </div> --}}
                     </div>
                     <!-- end card -->
                 </div>
@@ -183,3 +112,151 @@
     </div>
 @endsection
 
+@push('script')
+    <script>
+        $('#searchText, #user_id').on('change keyup', function () {
+            fetchFilteredData();
+        });
+
+        $('#resetButton').on('click', function () {
+            // $('#searchText').val('');
+            $('#user_id').val('').trigger('change');
+
+            fetchFilteredData();
+        });
+
+        function fetchFilteredData() {
+            // const searchText = $('#searchText').val();
+            const user_id = $('#user_id').val();
+
+            $.ajax({
+                url: "{{ route('admin.user.index') }}",
+                type: "GET",
+                data: {
+                    // searchText: searchText,
+                    user_id: user_id,
+                },
+                beforeSend: function () {
+                    $('#datatable tbody').html('<tr><td colspan="8" class="text-center">Loading...</td></tr>');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        if (response.html != '') {
+                            $('#datatable tbody').html(response.html);
+                        } else{
+                            $('#datatable tbody').html('<tr><td colspan="8" class="text-center">No data found</td></tr>');
+                        }
+                    } else {
+                        $('#datatable tbody').html('<tr><td colspan="8" class="text-center">No data found</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('#datatable tbody').html('<tr><td colspan="8" class="text-center text-danger">An error occurred</td></tr>');
+                },
+            });
+        }
+
+        // fetchFilteredData();
+    </script>
+
+    <script>
+        function archive(Id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You want to archive this user?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Archive'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.user.block') }}",
+                        type: "GET",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: Id
+                        },
+                        beforeSend: function() {
+                            $('.btn-danger').prop('disabled', true);
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: response.message,
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                });
+
+                                setTimeout(() => window.location.reload(), 1000);
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'An error occurred. Please try again.',
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire('Error', xhr.responseJSON.message || 'An error occurred.', 'error');
+                        },
+                        complete: function() {
+                            $('.btn-danger').prop('disabled', false);
+                        }
+                    });
+                }
+            });
+        }
+
+        function destroy(Id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You want to delete this user?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff0000',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Delete'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.user.delete') }}",
+                        type: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: Id
+                        },
+                        beforeSend: function() {
+                            $('.btn-danger').prop('disabled', true);
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: response.message,
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                });
+
+                                // $('tr').filter('[data-id="' + Id + '"]').remove();
+                                setTimeout(() => window.location.reload(), 1000);
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'An error occurred. Please try again.',
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire('Error', xhr.responseJSON.message || 'An error occurred.', 'error');
+                        },
+                        complete: function() {
+                            $('.btn-danger').prop('disabled', false);
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+@endpush

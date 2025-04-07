@@ -36,6 +36,7 @@
 
         <!-- apexcharts -->
         <script src="{{ asset('backend-assets/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <!-- Dashboard init -->
         <script src="{{ asset('backend-assets/assets/js/pages/dashboard-crm.init.js') }}"></script>

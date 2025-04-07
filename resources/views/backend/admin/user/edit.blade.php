@@ -1,6 +1,7 @@
 @extends('backend.layouts.app')
 
-@section('title', ''.($global_setting->title ?? "").' | '.__('pages.Update Employee'))
+@section('title', 'Update User Information | '.($global_setting->title ?? ""))
+
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -8,12 +9,13 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">{{__('pages.Update Employee')}}</h4>
+                        <h4 class="mb-sm-0">Update User Information</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">{{ __('menu.Dashboard') }}</a></li>
-                                <li class="breadcrumb-item active">{{ __('pages.Update Employee') }}</li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Dashboard</a></li>
+
+                                <li class="breadcrumb-item active">Update User Information</li>
                             </ol>
                         </div>
                     </div>
@@ -27,15 +29,15 @@
 
                     <div class="card card-height-100">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">{{ __('pages.Update Employee Information') }}</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">Update User Information</h4>
 
                             <div class="flex-shrink-0">
-                                <a href="{{ URL::previous() }}" class="btn btn-primary">{{__('pages.Back')}}</a>
+                                <a href="{{ route('admin.user.index') }}" class="btn btn-primary">User List</a>
                             </div>
                         </div>
 
                         <div class="card-body">
-                            <form action="{{route('admin.user.update')}}" method="POST" enctype="multipart/form-data" autocapitalize="off">
+                            <form action="{{ route('admin.user.update') }}" method="POST" enctype="multipart/form-data" autocapitalize="off">
                                 @csrf
                                 
                                 {{-- <input type="hidden" value="1" name="availablity"> --}}
@@ -43,33 +45,117 @@
                                 <input type="hidden" name="user_info_id" value="{{ $employee->userInfo->id ?? 0 }}">
                                 
                                 <div class="row g-3">
-                                    <div class="col-md-4 col-sm-6 col-xsm-12">
-                                        <div>
-                                            <label for="name_en" class="form-label">{{ __('pages.Full Name') }}<span style="color:red;">*</span></label>
+                                    <div class="col-md-12">
+                                        <label for="user_type" class="form-label mr-2">User Type: <span style="color:red;">*</span></label>
 
-                                            <input type="text" class="form-control" name="name_en" id="name_en" placeholder="Enter Your Name in English" value="{{ $employee->name_en }}" required>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input user_type" type="radio" name="user_type" id="user_type4" value="4" {{ $employee->user_type == 4 ? 'checked' : '' }}>
+
+                                            <label class="form-check-label" for="user_type4">User</label>
+                                        </div>
+                                        
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input user_type" type="radio" name="user_type" id="user_type3" value="3" {{ $employee->user_type == 3 ? 'checked' : '' }}>
+
+                                            <label class="form-check-label" for="user_type3">Employee</label>
                                         </div>
                                     </div>
 
                                     <div class="col-md-4 col-sm-6 col-xsm-12">
+                                        <div>
+                                            <label for="name_en" class="form-label">Full Name: <span style="color:red;">*</span></label>
+
+                                            <input type="text" class="form-control" name="name_en" id="name_en" placeholder="Enter Your Full Name" value="{{ $employee->name_en }}" required>
+                                        </div>
+                                    </div>
+
+                                    {{-- <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
                                             <label for="employee_id" class="form-label">Employee ID: <span style="color:red;">*</span></label>
 
                                             <input type="text" class="form-control" name="employee_id" id="employee_id" placeholder="Enter Your Employee ID" value="{{ $employee->userInfo->employee_id ?? '' }}" required>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
-                                            <label for="email" class="form-label">{{__('pages.Email')}}<span style="color:red;">*</span></label>
+                                            <label for="email" class="form-label">Email: <span style="color:red;">*</span></label>
 
-                                            <input type="email" class="form-control" name="email" id="mother_name_bn" placeholder="Enter mail" value="{{ $employee->email }}" required>
+                                            <input type="email" class="form-control" name="email" id="email" placeholder="Enter Email" value="{{ $employee->email }}" required>
                                         </div>
                                     </div>
 
                                     <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
-                                            <label for="dob" class="form-label">{{__('pages.Date of Birth')}}</label>
+                                            <label for="mobile" class="form-label">Mobile Number: <span style="color:red;">*</span></label>
+
+                                            <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Enter Valid Mobile Number" value="{{ $employee->mobile ?? 'N/A' }}" minlength="11" maxlength="14" required>
+                                        </div>
+                                    </div>
+
+                                    @can('change_role')
+                                        <div class="col-md-4 col-sm-6 col-xsm-12">
+                                            <div>
+                                                <label for="role_id" class="form-label">Role: <span style="color:red;">*</span></label>
+
+                                                <select  class="form-control" name="role_id" id="role_id" required>
+                                                    <option value="">--Select Role--</option>
+                                                    
+                                                    @foreach ($roles as $role)
+                                                        <option @if ($employee->role_id == $role->id) selected @endif value="{{ $role->id }}">{{ $role->name_en }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <input type="hidden" name="role_id" value="{{ $employee->role_id }}">
+                                    @endcan
+
+                                    <div class="col-md-4 col-sm-6 col-xsm-12">
+                                        <div>
+                                            <label for="office_id" class="form-label">Organization: <span style="color:red;">*</span></label>
+
+                                            <select class="form-control select2" name="office_id" id="office_id" required>
+                                                <option value="">--Select Organization--</option>
+
+                                                @foreach ($offices as $office)
+                                                    <option value="{{ $office->id }}" {{ $office->id == ($employee->userInfo->office_id ?? 0) ? 'selected' : '' }}>{{ $office->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-6 col-xsm-12">
+                                        <div>
+                                            <label for="department_id" class="form-label">Department: <span style="color:red;">*</span></label>
+
+                                            <select  class="form-control" name="department_id" id="department_id" required>
+                                                <option value="">--Select Department--</option>
+
+                                                @foreach ($departments as $department)
+                                                    <option @if (($employee->userInfo->department_id ?? 0) == $department->id) selected @endif value="{{ $department->id }}">{{$department->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 col-sm-6 col-xsm-12">
+                                        <div>
+                                            <label for="designation_id" class="form-label">Designation: <span style="color:red;">*</span></label>
+
+                                            <select  class="form-control" name="designation_id" id="designation_id" required>
+                                                <option value="">--Select Designation--</option>
+
+                                                @foreach ($designations as $designation)
+                                                    <option @if (($employee->userInfo->designation_id ?? 0) == $designation->id) selected @endif value="{{ $designation->id }}">{{ $designation->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-6 col-xsm-12">
+                                        <div>
+                                            <label for="dob" class="form-label">Date of Birth: </label>
 
                                             <input type="date" class="form-control" name="dob" id="dob" placeholder="Date of birth" value="{{ $employee->userInfo->dob ?? '' }}">
                                         </div>
@@ -77,7 +163,7 @@
 
                                     <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
-                                            <label for="gender" class="form-label">{{__('pages.Gender')}}</label>
+                                            <label for="gender" class="form-label">Gender: </label>
 
                                             <select  class="form-control" name="gender" id="gender">
                                                 <option value="">--Select Gender--</option>
@@ -91,7 +177,7 @@
 
                                     <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
-                                            <label for="religion" class="form-label">{{__('pages.Religion')}}</label>
+                                            <label for="religion" class="form-label">Religion: </label>
 
                                             <select  class="form-control" name="religion" id="religion">
                                                 <option value="">--Select Religion--</option>
@@ -105,7 +191,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 col-sm-6 col-xsm-12">
+                                    {{-- <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
                                             <label for="birth_certificate_no" class="form-label">{{__('pages.Birth Certificate')}}</label>
 
@@ -148,82 +234,14 @@
                                                 <option @if(($employee->userInfo->marital_status ?? '') == 'Single') selected @endif value="Single">Single</option>
                                             </select>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-sm-6 col-xsm-12">
-                                        <div>
-                                            <label for="mobile" class="form-label">{{__('pages.Mobile Number')}}<span style="color:red;">*</span></label>
-
-                                            <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Enter Valid Mobile Number" value="{{ $employee->mobile ?? 'N/A' }}" minlength="11" maxlength="14" required>
-                                        </div>
-                                    </div>
-
-                                    @can('change_role')
-                                        <div class="col-md-4 col-sm-6 col-xsm-12">
-                                            <div>
-                                                <label for="mobile" class="form-label">{{__('pages.Employee Role')}}<span style="color:red;">*</span></label>
-
-                                                <select  class="form-control" name="role_id" id="role_id" required>
-                                                    <option value="">--Select Role--</option>
-                                                    
-                                                    @foreach ($roles as $role)
-                                                        <option @if($employee->role_id == $role->id) selected @endif value="{{$role->id}}">{{$role->name_en}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <input type="hidden" name="role_id" value="{{$employee->role_id}}">
-                                    @endcan
-
-                                    <div class="col-md-4 col-sm-6 col-xsm-12">
-                                        <div>
-                                            <label for="mobile" class="form-label">{{__('pages.Employee Department')}}<span style="color:red;">*</span></label>
-
-                                            <select  class="form-control" name="department_id" id="department_id" required>
-                                                <option value="">--Select Department--</option>
-
-                                                @foreach ($departments as $department)
-                                                    <option @if(($employee->userInfo->department_id ?? 0) == $department->id) selected @endif value="{{$department->id}}">{{$department->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+                                    </div> --}}
                                     
                                     <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
-                                            <label for="mobile" class="form-label">{{__('pages.Employee Designation')}}<span style="color:red;">*</span></label>
-
-                                            <select  class="form-control" name="designation_id" id="designation_id" required>
-                                                <option value="">--Select Designation--</option>
-
-                                                @foreach ($designations as $designation)
-                                                    <option @if(($employee->userInfo->designation_id ?? 0) == $designation->id) selected @endif value="{{$designation->id}}">{{$designation->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-4 col-sm-6 col-xsm-12">
-                                        <div>
-                                            <label for="mobile" class="form-label">{{__('pages.Employee Office')}}<span style="color:red;">*</span></label>
-
-                                            <select  class="form-control" name="office_id" id="office_id" required>
-                                                <option value="">--Select Office--</option>
-                                                
-                                                @foreach ($offices as $office)
-                                                    <option @if($office->id == ($employee->userInfo->office_id ?? 0)) selected @endif value="{{ $office->id }}">{{ $office->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-4 col-sm-6 col-xsm-12">
-                                        <div>
-                                            <label for="user_category_id" class="form-label">Employee Category<span style="color:red;">*</span></label>
+                                            <label for="user_category_id" class="form-label">User Category: <span style="color:red;">*</span></label>
 
                                             <select  class="form-control" name="user_category_id" id="user_category_id" required>
-                                                <option value="">--Select Employee Category--</option>
+                                                <option value="">--Select User Category--</option>
                                                 
                                                 @foreach ($user_categories as $user_category)
                                                     <option @if($user_category->id == $employee->user_category_id) selected @endif value="{{ $user_category->id }}">{{ $user_category->name }}</option>
@@ -232,7 +250,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4 col-sm-6 col-xsm-12">
+                                    {{-- <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
                                             <label for="team_id" class="form-label">Team:</label>
 
@@ -244,17 +262,17 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
-                                    <div class="col-md-4 col-sm-6 col-xsm-12">
+                                    {{-- <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
                                             <label for="mobile" class="form-label">Joining Date</label>
 
                                             <input type="date" class="form-control" name="start" id="start" placeholder="Enter Date" value="{{ $employee->userInfo->start ?? 'N/A' }}">
                                         </div>
-                                    </div>
+                                    </div> --}}
 
-                                    @if (count($docs) > 0)
+                                    {{-- @if (count($docs) > 0)
                                         <div class="col-md-12 col-sm-12">
                                             <div class="col-md-12">
                                                 <div class="card">
@@ -331,9 +349,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
 
-                                    <div class="col-lg-12">
+                                    {{-- <div class="col-lg-12">
                                         <div class="row mt-2">
                                             <div class="col-md-12">
                                                 <div class="form-check form-switch form-switch-custom form-switch-success mb-3">
@@ -360,71 +378,79 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="row mt-4">
                                         <div class="col-md-6 col-sm-12">
                                             <div class="card">
                                                 <div class="card-header align-items-center d-flex">
-                                                    <h4 class="card-title mb-0 flex-grow-1">{{__('pages.Present Address')}}<span style="color:red;">*</span></h4>
+                                                    <h4 class="card-title mb-0 flex-grow-1">Present Address: </h4>
                                                 </div>
 
                                                 <div class="card-body">
-
                                                     <div class="col-12">
                                                         <div>
-                                                            <label for="present_division_id" class="form-label">{{__('pages.Division')}}<span style="color:red;">*</span></label>
-                                                            <select  class="form-control select2" name="present_division_id" id="present_division_id">
+                                                            <label for="present_division_id" class="form-label">Division: </label>
+
+                                                            <select class="form-control select2" name="present_division_id" id="present_division_id">
                                                                 <option value="">--Select Division--</option>
+
                                                                 @foreach ($divisions as $division)
-                                                                    <option @if(($employee->userAddress->present_division_id ?? '') == $division->id) selected @endif value="{{$division->id}}">{{$division->name}}</option>
+                                                                    <option @if(($employee->userAddress->present_division_id ?? '') == $division->id) selected @endif value="{{ $division->id }}">{{ $division->name_en }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="present_district_id" class="form-label">{{__('pages.District')}}<span style="color:red;">*</span></label>
-                                                            <select  class="form-control select2" name="present_district_id" id="present_district_id" required>
+                                                            <label for="present_district_id" class="form-label">District: </label>
+
+                                                            <select  class="form-control select2" name="present_district_id" id="present_district_id">
                                                                 <option value="">--Select District--</option>
+
                                                                 @foreach ($presentDistricts as $pd)
-                                                                    <option @if(($employee->userAddress->present_district_id ?? '') == $pd->id) selected @endif value="{{$pd->id}}">{{$pd->name}}</option>
+                                                                    <option @if(($employee->userAddress->present_district_id ?? '') == $pd->id) selected @endif value="{{ $pd->id }}">{{ $pd->name_en }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3 mt-3">
                                                         <div>
-                                                            <label for="present_upazila_id" class="form-label">{{__('pages.Thana/Upazila')}}<span style="color:red;">*</span></label>
-                                                            <select  class="form-control select2" name="present_upazila_id" id="present_upazila_id" required>
+                                                            <label for="present_upazila_id" class="form-label">Thana/Upazila: </label>
+
+                                                            <select  class="form-control select2" name="present_upazila_id" id="present_upazila_id">
                                                                 <option value="">--Select Thana/Upazila--</option>
+
                                                                 @foreach ($presentUpazilas as $pu)
-                                                                    <option @if(($employee->userAddress->present_upazila_id ?? '') == $pu->id) selected @endif value="{{$pu->id}}">{{$pu->name}}</option>
+                                                                    <option @if(($employee->userAddress->present_upazila_id ?? '') == $pu->id) selected @endif value="{{ $pu->id }}">{{ $pu->name_en }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="post_office" class="form-label">{{__('pages.Post Office')}}</label>
-                                                            <input type="text" class="form-control" name="present_post_office" id="post_office" placeholder="Enter your post office name" value="{{$employee->userAddress->present_post_office ?? ''}}">
+                                                            <label for="post_office" class="form-label">Post Office: </label>
+
+                                                            <input type="text" class="form-control" name="present_post_office" id="post_office" placeholder="Enter your post office name" value="{{ $employee->userAddress->present_post_office ?? '' }}">
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="post_code" class="form-label">{{__('pages.Post Code')}}</label>
-                                                            <input type="number" class="form-control" name="present_post_code" id="post_code" placeholder="Four digits code" value="{{$employee->userAddress->present_post_code ?? ''}}">
+                                                            <label for="post_code" class="form-label">Post Code: </label>
+
+                                                            <input type="number" class="form-control" name="present_post_code" id="post_code" placeholder="Four digits code" value="{{ $employee->userAddress->present_post_code ?? '' }}">
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="village_road" class="form-label">{{__('pages.Village/Road')}}</label>
-                                                            <textarea class="form-control" name="present_village_road" id="village_road" cols="30" rows="4">{{$employee->userAddress->present_address ?? ''}}</textarea>
+                                                            <label for="village_road" class="form-label">Village/Road: </label>
+
+                                                            <textarea class="form-control" name="present_village_road" id="village_road" cols="30" rows="4">{{ $employee->userAddress->present_address ?? '' }}</textarea>
                                                         </div>
                                                     </div>
 
@@ -436,82 +462,84 @@
                                             <div class="card">
 
                                                 <div class="card-header align-items-center d-flex">
-                                                    <h4 class="card-title mb-0 flex-grow-1">
-                                                        {{__('pages.Permanent Address')}}<span style="color:red;">*</span>
-                                                        <input @if(($employee->userAddress->same_as_present_address ?? '') == 1) checked @endif type="checkbox" name="same_as_present_address" id="same_as_present_address">
-                                                        <small style="font-weight: 400; font-size: 0.8em;">{{__('pages.Same as present address')}}</small>
+                                                    <h4 class="card-title mb-0 flex-grow-1">Permanent Address: 
+                                                        <input type="checkbox" name="same_as_present_address" id="same_as_present_address" @if(($employee->userAddress->same_as_present_address ?? '') == 1) checked @endif>
+                                                        <small style="font-weight: 400; font-size: 0.8em;">Same as Present Address</small>
                                                     </h4>
                                                 </div>
 
                                                 <div class="card-body">
-
                                                     <div class="col-12">
                                                         <div>
-                                                            <label for="permanent_division_id" class="form-label">{{__('pages.Division')}}<span style="color:red;">*</span></label>
-                                                            <select  class="form-control select2" name="permanent_division_id" id="permanent_division_id" required>
+                                                            <label for="permanent_division_id" class="form-label">Division: </label>
+
+                                                            <select  class="form-control select2" name="permanent_division_id" id="permanent_division_id" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'disabled' : '' }}>
                                                                 <option value="">--Select Division--</option>
+
                                                                 @foreach ($divisions as $division)
-                                                                    <option @if(($division->id == ($employee->userAddress->permanent_division_id ?? ''))) selected @endif value="{{$division->id}}">{{$division->name}}</option>
+                                                                    <option @if(($division->id == ($employee->userAddress->permanent_division_id ?? ''))) selected @endif value="{{ $division->id }}">{{ $division->name_en }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="permanent_district_id" class="form-label">{{__('pages.District')}}<span style="color:red;">*</span></label>
-                                                            <select  class="form-control select2" name="permanent_district_id" id="permanent_district_id" required>
+                                                            <label for="permanent_district_id" class="form-label">District: </label>
+
+                                                            <select  class="form-control select2" name="permanent_district_id" id="permanent_district_id" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'disabled' : '' }}>
                                                                 <option value="">--Select District--</option>
+
                                                                 @foreach ($permanentDistricts as $district)
-                                                                    <option @if(($district->id == ($employee->userAddress->permanent_district_id ?? ''))) selected @endif value="{{$district->id}}">{{$district->name}}</option>
+                                                                    <option @if(($district->id == ($employee->userAddress->permanent_district_id ?? ''))) selected @endif value="{{ $district->id }}">{{ $district->name_en }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="permanent_upazila_id" class="form-label">{{__('pages.Thana/Upazila')}}<span style="color:red;">*</span></label>
-                                                            <select  class="form-control select2" name="permanent_upazila_id" id="permanent_upazila_id" required>
+                                                            <label for="permanent_upazila_id" class="form-label">Thana/Upazila</label>
+
+                                                            <select  class="form-control select2" name="permanent_upazila_id" id="permanent_upazila_id" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'disabled' : '' }}>
                                                                 <option value="">--Select Thana/Upazila--</option>
+
                                                                 @foreach ($permanentUpazilas as $upazila)
-                                                                    <option @if(($upazila->id == ($employee->userAddress->permanent_upazila_id ?? ''))) selected @endif value="{{$upazila->id}}">{{$upazila->name}}</option>
+                                                                    <option @if(($upazila->id == ($employee->userAddress->permanent_upazila_id ?? ''))) selected @endif value="{{ $upazila->id }}">{{ $upazila->name_en }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="post_office" class="form-label">{{__('pages.Post Office')}}</label>
-                                                            <input type="text" class="form-control" name="permanent_post_office" id="post_office" placeholder="Enter your post office name" value="{{$employee->userAddress->permanent_post_office ?? 'N/A'}}">
+                                                            <label for="post_office" class="form-label">Post Office: </label>
+
+                                                            <input type="text" class="form-control" name="permanent_post_office" id="permanent_post_office" placeholder="Enter your post office name" value="{{ $employee->userAddress->permanent_post_office ?? 'N/A' }}" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="post_code" class="form-label">{{__('pages.Post Code')}}</label>
-                                                            <input type="number" class="form-control" name="permanent_post_code" id="post_code" placeholder="Four digits code" value="{{$employee->userAddress->permanent_post_code ?? 'N/A'}}">
+                                                            <label for="post_code" class="form-label">Post Code: </label>
+
+                                                            <input type="number" class="form-control" name="permanent_post_code" id="permanent_post_code" placeholder="Four digits code" value="{{ $employee->userAddress->permanent_post_code ?? 'N/A' }}" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <div>
-                                                            <label for="village_road" class="form-label">{{__('pages.Village/Road')}}</label>
-                                                            <textarea class="form-control" name="permanent_village_road" id="village_road" cols="30" rows="4">{{$employee->userAddress->permanent_address ?? 'N/A'}}</textarea>
+                                                            <label for="village_road" class="form-label">Village/Road: </label>
+
+                                                            <textarea class="form-control" name="permanent_village_road" id="permanent_village_road" cols="30" rows="4" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>{{ $employee->userAddress->permanent_address ?? 'N/A' }}</textarea>
                                                         </div>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
 
-                                    
-
-                                    <div class="row mt-4">
-
+                                    {{-- <div class="row mt-4">
                                         <div class="col-12">
                                             <div class="card">
                                                 <div class="card-header align-items-center">
@@ -521,17 +549,16 @@
                                                             @foreach ($exam_forms as $exam_form)
                                                                 @php
                                                                     $user_record = $exam_form->userAcademicRecord($employee->id,$exam_form->id);
-                                                                    // dd($exam_form->id);
                                                                 @endphp
+
                                                                 <div class="col-md-6">
-                                                                    {{-- {{$user_record}} --}}
                                                                     <table class="table table-borderless">
                                                                         <thead>
                                                                             <tr>
                                                                                 @if ($user_record)
                                                                                     <th colspan="2">
                                                                                         <input autocomplete="off" type="checkbox" @if(($user_record->status ?? 0) == 1) checked @endif value="1" name="academic_exam_form_id_data[{{$exam_form->id}}]">
-                                                                                        {{-- {{$exam_form->name_en}} --}}
+                                                                                        
                                                                                         <input type="hidden" value="{{$exam_form->id}}" name="academic_exam_form_id[{{$exam_form->id}}]">
                                                                                         <input readonly style="border:none" type="text" value="{{$exam_form->name_en}}" name="academic_exam_form_name[{{$exam_form->id}}]">
                                                                                     </th>
@@ -607,10 +634,9 @@
                                                                                         <select onchange="get_exam(this)" data-form_id="{{$exam_form->id}}" name="exam_id[{{$exam_form->id}}]" class="form-control">
                                                                                             <option value="">Select</option>
                                                                                             @foreach ($exam_form->examInfos($exam_form->examCategoryInfo->exam_ids ?? '') as $exam)
-                                                                                                {{-- @if (in_array($institute->id,explode(',',$exam_form->institute_ids))) --}}
-                                                                                                    <option @if(($user_record->exam_id ?? 0) == $exam->id) selected @endif value="{{$exam->id}}">{{$exam->name_en}}</option>
-                                                                                                {{-- @endif --}}
+                                                                                                <option @if(($user_record->exam_id ?? 0) == $exam->id) selected @endif value="{{$exam->id}}">{{$exam->name_en}}</option>
                                                                                             @endforeach
+
                                                                                             @if ($exam_form->exam_name == 1)
                                                                                                 <option @if(($user_record->exam_id ?? 10) == 0) selected @endif value="0">Others</option>
                                                                                             @endif
@@ -662,11 +688,11 @@
                                                                                     <td>
                                                                                         <select onchange="get_subject(this)" data-form_id="{{$exam_form->id}}" name="subject_id[{{$exam_form->id}}]" class="form-control">
                                                                                             <option value="">Select</option>
+
                                                                                             @foreach ($exam_form->subjectInfos(($exam_form->subjectCategoryInfo->subject_ids ?? '')) as $subject)
-                                                                                                {{-- @if (in_array($institute->id,explode(',',$exam_form->institute_ids))) --}}
-                                                                                                    <option @if(($user_record->subject_id ?? 0) == $subject->id) selected @endif value="{{$subject->id}}">{{$subject->name_en}}</option>
-                                                                                                {{-- @endif --}}
+                                                                                                <option @if(($user_record->subject_id ?? 0) == $subject->id) selected @endif value="{{$subject->id}}">{{$subject->name_en}}</option>
                                                                                             @endforeach
+
                                                                                             @if ($exam_form->subject_name == 1)
                                                                                                 <option @if(($user_record->subject_id ?? 10) == 0) selected @endif value="0">Others</option>
                                                                                             @endif
@@ -720,9 +746,7 @@
                                                                                             <option value="">Select Duration</option>
 
                                                                                             @foreach ($durations as $duration)
-                                                                                                {{-- @if (in_array($institute->id,explode(',',$exam_form->institute_ids))) --}}
-                                                                                                    <option @if(($user_record->duration_id ?? 0) == $duration->id) selected @endif value="{{ $duration->id }}">{{ $duration->name_en }}</option>
-                                                                                                {{-- @endif --}}
+                                                                                                <option @if(($user_record->duration_id ?? 0) == $duration->id) selected @endif value="{{ $duration->id }}">{{ $duration->name_en }}</option>
                                                                                             @endforeach
                                                                                         </select>
                                                                                     </td>
@@ -748,11 +772,14 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div> --}}
+
+                                    <div class="row mt-4">
                                         <div class="col-12">
                                             <div class="card">
 
                                                 <div class="card-header align-items-center d-flex">
-                                                    <h4 class="card-title mb-0 flex-grow-1">{{__('pages.Photo and Signature Upload')}}</h4>
+                                                    <h4 class="card-title mb-0 flex-grow-1">Photo and Signature Upload</h4>
                                                 </div>
 
                                                 <div class="card-body">
@@ -761,14 +788,14 @@
                                                         <div class="col-7">
                                                             <div class="col-12">
                                                                 <div>
-                                                                    <label for="image" class="form-label">{{__('pages.Photo')}}</label>
+                                                                    <label for="image" class="form-label">Photo</label>
                                                                     <input type="file" class="form-control" name="image" id="image">
                                                                 </div>
                                                             </div>
             
                                                             <div class="col-12 mt-4">
                                                                 <div>
-                                                                    <label for="signature" class="form-label">{{__('pages.Signature')}}</label>
+                                                                    <label for="signature" class="form-label">Signature</label>
                                                                     <input type="file" class="form-control" name="signature" id="signature" >
                                                                 </div>
                                                             </div>
@@ -777,13 +804,21 @@
                                                         <div class="col-5">
                                                             <div class="col-12">
                                                                 <div>
-                                                                    <img id="image_preview" src="{{asset('storage/userImages')}}/{{$employee->userInfo->image ?? ''}}" alt="User Image" width="120px;">
+                                                                    @if ($employee->userInfo && Storage::exists('public/userImages/' . $employee->userInfo->image))
+                                                                        <img id="image_preview" src="{{ asset('storage/userImages/' . ($employee->userInfo->image ?? '')) }}" alt="User Image" width="120px;">
+                                                                    @else
+                                                                        <img id="image_preview" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png" alt="User Image" width="120px;">
+                                                                    @endif
                                                                 </div>
                                                             </div>
             
                                                             <div class="col-12 mt-4">
                                                                 <div>
-                                                                    <img id="signature_preview" src="{{asset('storage/signature')}}/{{$employee->userInfo->signature ?? ''}}" alt="" width="150px;">
+                                                                    @if ($employee->userInfo && Storage::exists('public/signature/' . $employee->userInfo->signature))
+                                                                        <img id="signature_preview" src="{{ asset('storage/signature/' . ($employee->userInfo->signature ?? '')) }}" alt="" width="120px;">
+                                                                    @else
+                                                                        <img id="signature_preview" src="https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg" alt="" width="120px;">
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -795,23 +830,16 @@
 
                                     <div class="col-lg-12">
                                         <div class="hstack gap-2 justify-content-end">
-                                            <button type="submit" class="btn btn-primary">{{__('pages.Update')}}</button>
+                                            <button type="submit" class="btn btn-primary">Update</button>
                                         </div>
-                                    </div><!--end col-->
-
-                                </div><!--end row-->
+                                    </div>
+                                </div>
                             </form>
                         </div>
-                        <!-- end card body -->
                     </div>
-                    <!-- end card -->
                 </div>
-                <!-- end col -->
             </div>
-            <!-- end row -->
-
         </div>
-        <!-- container-fluid -->
     </div>
 @endsection
 
@@ -834,13 +862,14 @@
     </script>
 
     <script type="text/javascript">
-      
         $(document).ready(function (e) {
-            $('#image').change(function(){
+            $('#image').change(function() {
                 let reader = new FileReader();
+
                 reader.onload = (e) => { 
-                $('#image_preview').attr('src', e.target.result); 
+                    $('#image_preview').attr('src', e.target.result); 
                 }
+
                 reader.readAsDataURL(this.files[0]); 
             });
 
@@ -852,9 +881,8 @@
                 reader.readAsDataURL(this.files[0]); 
             });
 
-
             // dynamic address AJAX for present district
-        $("#present_division_id").on('change',function(e){
+            $("#present_division_id").on('change',function(e){
                 e.preventDefault();
 
                 let present_district_id = $("#present_district_id");
@@ -955,7 +983,6 @@
                 });
             });
 
-
             // dynamic address AJAX for permanent upazila/thana
             $("#permanent_district_id").on('change',function(e){
                 e.preventDefault();
@@ -989,7 +1016,7 @@
             });
 
             // if checkbox is checked for same present and permanent address
-            $('#same_as_present_address').click(function(){
+            $('#same_as_present_address').click(function() {
                 if($(this).prop("checked") == true){
                     
                     let present_division_id = $("#present_division_id").val();
@@ -1005,34 +1032,33 @@
                     $('#permanent_upazila_id').removeAttr('required');
 
                     let present_post_office = $("#present_post_office").val();
-                    $('#permanent_post_office').prop('disabled', 'disabled');
+                    $('#permanent_post_office').prop('readonly', 'readonly');
                     // $('#permanent_post_office').removeAttr('required');
 
                     let present_post_code = $("#present_post_code").val();
-                    $('#permanent_post_code').prop('disabled', 'disabled');
+                    $('#permanent_post_code').prop('readonly', 'readonly');
                     // $('#permanent_post_code').removeAttr('required');
 
                     let present_village_road = $("#present_village_road").val();
-                    $('#permanent_village_road').prop('disabled', 'disabled');
+                    $('#permanent_village_road').prop('readonly', 'readonly');
                     // $('#permanent_village_road').removeAttr('required');
-
-                }else if($(this).prop("checked") == false){
+                } else if ($(this).prop("checked") == false) {
                     $("#permanent_division_id").prop('disabled', false);
-                    $('#permanent_division_id').prop('required',true);
+                    // $('#permanent_division_id').prop('required',true);
 
                     $("#permanent_district_id").prop('disabled', false);
-                    $('#permanent_district_id').prop('required',true);
+                    // $('#permanent_district_id').prop('required',true);
 
                     $("#permanent_upazila_id").prop('disabled', false);
-                    $('#permanent_upazila_id').prop('required',true);
+                    // $('#permanent_upazila_id').prop('required',true);
 
-                    $("#permanent_post_office").prop('disabled', false);
+                    $("#permanent_post_office").prop('readonly', false);
                     // $('#permanent_post_office').prop('required',true);
 
-                    $("#permanent_post_code").prop('disabled', false);
+                    $("#permanent_post_code").prop('readonly', false);
                     // $('#permanent_post_code').prop('required',true);
 
-                    $("#permanent_village_road").prop('disabled', false);
+                    $("#permanent_village_road").prop('readonly', false);
                     // $('#permanent_village_road').prop('required',true);
                 }
             });
@@ -1052,9 +1078,8 @@
             } else {
                 $('.exam_name'+form_id).addClass('d-none');
             }
-        };
-        
-        
+        }
+    
         function get_subject(that){
             let form_id = $(that).attr('data-form_id');
 
@@ -1069,7 +1094,7 @@
             } else {
                 $('.subject_name'+form_id).addClass('d-none');
             }
-        };
+        }
         function result_type(that){
             let form_id = $(that).attr('data-form_id');
 
@@ -1085,7 +1110,7 @@
             } else {
                 $('.result_'+form_id).addClass('d-none');
             }
-        };
+        }
 
         $('input').attr('autocomplete','off');
         $('select').attr('autocomplete','off');

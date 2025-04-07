@@ -28,6 +28,7 @@ class IndexController extends Controller
         $documentsCount = Document::where('type', 1)->count();
         $clientsCount = User::where('user_type', 7)->where('status', 1)->count();
         $employeesCount = User::where('user_type', 3)->where('status', 1)->count();
+        $usersCount = User::where('user_type', 4)->where('status', 1)->count();
 
         $latestProjects = Project::where('end_date', '>=', $now)->orderByRaw('ISNULL(end_date), end_date ASC')->take(5)->get();
 
@@ -47,7 +48,7 @@ class IndexController extends Controller
 
         $projects = $query->get();
 
-        return view('backend.index', compact('employeesCount', 'projectsCount', 'clientsCount', 'documentsCount', 'latestProjects', 'projects'));
+        return view('backend.index', compact('employeesCount', 'projectsCount', 'clientsCount', 'documentsCount', 'latestProjects', 'projects', 'usersCount'));
     }
 
     public function getDistrictsAJAX(Request $request)

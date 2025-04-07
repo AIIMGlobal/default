@@ -59,20 +59,31 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
+        
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
             ], 422);
         }
-
+        
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Login successful!',
-                'redirect' => route('admin.home'),
-            ]);
+            $user = Auth::user();
+            
+            if ($user->status == 1) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful!',
+                    'redirect' => route('admin.home'),
+                ]);
+            } else {
+                Auth::logout();
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login fail. Your Account is not authorized.',
+                ], 403);
+            }
         } else {
             return response()->json([
                 'success' => false,

@@ -1,6 +1,6 @@
 @extends('backend.layouts.app')
 
-@section('title', 'Add New Employee | '.($global_setting->title ?? ""))
+@section('title', 'Add New User | '.($global_setting->title ?? ""))
 
 @section('content')
     <div class="page-content">
@@ -9,13 +9,13 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        {{-- <h4 class="mb-sm-0">Add New Employee</h4> --}}
+                        {{-- <h4 class="mb-sm-0">Add New User</h4> --}}
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Dashboard</a></li>
 
-                                <li class="breadcrumb-item active">Add New Employee</li>
+                                <li class="breadcrumb-item active">Add New User</li>
                             </ol>
                         </div>
                     </div>
@@ -29,10 +29,10 @@
 
                     <div class="card card-height-100">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Add New Employee</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">Add New User</h4>
 
                             <div class="flex-shrink-0">
-                                <a href="{{ route('admin.user.index') }}" class="btn btn-primary">Employee List</a>
+                                <a href="{{ route('admin.user.index') }}" class="btn btn-primary">User List</a>
                             </div>
                         </div>
 
@@ -41,11 +41,27 @@
                                 @csrf
 
                                 <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label for="user_type" class="form-label mr-2">User Type: <span style="color:red;">*</span></label>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input user_type" type="radio" name="user_type" id="user_type4" value="4">
+
+                                            <label class="form-check-label" for="user_type4">User</label>
+                                        </div>
+                                        
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input user_type" type="radio" name="user_type" id="user_type3" value="3">
+
+                                            <label class="form-check-label" for="user_type3">Employee</label>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
                                             <label for="name_en" class="form-label">Full Name: <span style="color:red;">*</span></label>
 
-                                            <input type="text" class="form-control" name="name_en" id="name_en" placeholder="Enter Your Name in English" value="{{ old('name_en') }}" required>
+                                            <input type="text" class="form-control" name="name_en" id="name_en" placeholder="Enter Your Full Name" value="{{ old('name_en') }}" required>
                                         </div>
                                     </div>
 
@@ -77,11 +93,25 @@
                                         <div>
                                             <label for="role_id" class="form-label">Role: <span style="color:red;">*</span></label>
 
-                                            <select id="my-select" class="form-control" name="role_id" id="role_id" required>
+                                            <select class="form-control" name="role_id" id="role_id" required>
                                                 <option value="">--Select Role--</option>
 
                                                 @foreach ($roles as $role)
                                                     <option value="{{ $role->id }}">{{ $role->name_en }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-6 col-xsm-12">
+                                        <div>
+                                            <label for="office_id" class="form-label">Organization: <span style="color:red;">*</span></label>
+
+                                            <select class="form-control select2" name="office_id" id="office_id" required>
+                                                <option value="">--Select Organization--</option>
+
+                                                @foreach ($offices as $office)
+                                                    <option value="{{ $office->id }}">{{ $office->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -91,7 +121,7 @@
                                         <div>
                                             <label for="department_id" class="form-label">Department: <span style="color:red;">*</span></label>
 
-                                            <select id="my-select" class="form-control" name="department_id" id="department_id" required>
+                                            <select class="form-control" name="department_id" id="department_id" required>
                                                 <option value="">--Select Department--</option>
 
                                                 @foreach ($departments as $department)
@@ -105,13 +135,17 @@
                                         <div>
                                             <label for="designation_id" class="form-label">Designation: <span style="color:red;">*</span></label>
 
-                                            <select id="my-select" class="form-control" name="designation_id" id="designation_id" required>
-                                                <option value="">--Select Designation--</option>
+                                            @if ($employee->user_type == 4)
+                                                <input type="text" class="form-control" name="designation" id="designation" placeholder="Enter Designation" value="{{ old('designation') }}">
+                                            @else
+                                                <select class="form-control" name="designation_id" id="designation_id" required>
+                                                    <option value="">--Select Designation--</option>
 
-                                                @foreach ($designations as $designation)
-                                                    <option value="{{ $designation->id }}">{{ $designation->name }}</option>
-                                                @endforeach
-                                            </select>
+                                                    @foreach ($designations as $designation)
+                                                        <option value="{{ $designation->id }}">{{ $designation->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -127,7 +161,7 @@
                                         <div>
                                             <label for="gender" class="form-label">Gender: </label>
 
-                                            <select id="my-select" class="form-control" name="gender" id="gender">
+                                            <select class="form-control" name="gender" id="gender">
                                                 <option value="">--Select Gender--</option>
 
                                                 <option value="Male">Male</option>
@@ -141,7 +175,7 @@
                                         <div>
                                             <label for="religion" class="form-label">Religion: </label>
 
-                                            <select id="my-select" class="form-control" name="religion" id="religion">
+                                            <select class="form-control" name="religion" id="religion">
                                                 <option value="">--Select Religion--</option>
 
                                                 <option value="Islam">Islam</option>
@@ -189,7 +223,7 @@
                                         <div>
                                             <label for="marital_status" class="form-label">Marital Status: </label>
 
-                                            <select id="my-select" class="form-control" name="marital_status" id="marital_status" >
+                                            <select class="form-control" name="marital_status" id="marital_status" >
                                                 <option value="">--Select Marital Status--</option>
 
                                                 <option value="Married">Married</option>
@@ -199,25 +233,11 @@
                                         </div>
                                     </div> --}}
                                     
-                                    {{-- <div class="col-md-4 col-sm-6 col-xsm-12">
-                                        <div>
-                                            <label for="office_id" class="form-label">Office: <span style="color:red;">*</span></label>
-
-                                            <select id="my-select" class="form-control" name="office_id" id="office_id" required>
-                                                <option value="">--Select Office--</option>
-
-                                                @foreach ($offices as $office)
-                                                    <option value="{{ $office->id }}">{{ $office->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div> --}}
-                                    
                                     <div class="col-md-4 col-sm-6 col-xsm-12">
                                         <div>
                                             <label for="user_category_id" class="form-label">User Category: <span style="color:red;">*</span></label>
 
-                                            <select id="my-select" class="form-control" name="user_category_id" id="user_category_id" required>
+                                            <select class="form-control" name="user_category_id" id="user_category_id" required>
                                                 <option value="">--Select User Category--</option>
 
                                                 @foreach ($user_categories as $user_category)
@@ -574,7 +594,7 @@
                                                 <h4 class="card-title mb-0 flex-grow-1">Permanent Address
                                                     <input type="checkbox" name="same_as_present_address" id="same_as_present_address">
 
-                                                    <small style="font-weight: 400; font-size: 0.8em;">Same as present address</small>
+                                                    <small style="font-weight: 400; font-size: 0.8em;">Same as Present Address</small>
                                                 </h4>
                                             </div>
 
@@ -643,6 +663,361 @@
                                     </div>
                                 </div>
 
+                                {{-- <div class="row mt-4">
+                                    <div class="col-12">
+                                        <h4 class="card-title">{{__('Educational information')}}</h4>
+
+                                        <div class="row">
+                                            @foreach ($exam_forms as $exam_form)
+                                                <div class="col-md-6">
+                                                    <table class="table table-borderless">
+                                                        <thead>
+                                                            <tr>
+                                                            <th colspan="2">
+                                                                <label>
+                                                                    <input autocomplete="off" type="checkbox" value="1" name="academic_exam_form_id_data[{{$exam_form->id}}]"> {{$exam_form->name_en}}
+                                                                </label>
+                                                                <input type="hidden" value="{{$exam_form->id}}" name="academic_exam_form_id[{{$exam_form->id}}]">
+                                                                <input type="hidden" value="{{$exam_form->name_en}}" name="academic_exam_form_name[{{$exam_form->id}}]">
+                                                            </th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                            @if ($exam_form->roll == 1)
+                                                                <tr>
+                                                                    <td>{{__('Roll No')}}</td>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" placeholder="Enter roll" name="roll[{{$exam_form->id}}]">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                            @if ($exam_form->reg_no == 1)
+                                                                <tr>
+                                                                    <td>{{__('Registration No')}}</td>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" placeholder="Enter no" name="reg_no[{{$exam_form->id}}]">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+
+                                                            @if ($exam_form->pass_year == 1)
+                                                                <tr>
+                                                                    <td>{{__('Passing year')}}</td>
+                                                                    <td>
+                                                                        <select name="pass_year[{{$exam_form->id}}]" class="form-control">
+                                                                            <option value="">Select</option>
+                                                                            @for ($x = 1950; $x <= date('Y'); $x++)
+                                                                                <option value="{{$x}}">{{$x}}</option>
+                                                                            @endfor
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                            @if ($exam_form->institute_ids)
+                                                                <tr>
+                                                                    <td>{{__('Institute')}}</td>
+                                                                    <td>
+                                                                        <select onchange="get_institute(this)" data-form_id="{{$exam_form->id}}" name="institute_id[{{$exam_form->id}}]" class="form-control">
+                                                                            <option value="">Select</option>
+                                                                            @foreach ($institutes as $institute)
+                                                                                @if (in_array($institute->id,explode(',',$exam_form->institute_ids)))
+                                                                                    <option value="{{$institute->id}}">{{$institute->name_en}}</option>
+                                                                                @endif
+                                                                            @endforeach
+                                                                            @if ($exam_form->institute_name == 1)
+                                                                                <option value="0">Others</option>
+                                                                            @endif
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                            @if ($exam_form->institute_name == 1)
+                                                                <tr  class="@if($exam_form->institute_ids) d-none @endif institute_name_{{$exam_form->id}}">
+                                                                    <td>{{__('Institute Name')}}</td>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" placeholder="Enter name" name="institute_name[{{$exam_form->id}}]">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+
+                                                            @if ($exam_form->exam_category_id > 0)
+                                                                <tr>
+                                                                    <td>{{__('Exam')}}</td>
+                                                                    <td>
+                                                                        <select onchange="get_exam(this)" data-form_id="{{$exam_form->id}}" name="exam_id[{{$exam_form->id}}]" class="form-control">
+                                                                            <option value="">Select</option>
+
+                                                                            @foreach ($exam_form->examInfos($exam_form->examCategoryInfo->exam_ids ?? '') as $exam)
+                                                                                <option value="{{$exam->id}}">{{$exam->name_en}}</option>
+                                                                            @endforeach
+
+                                                                            @if ($exam_form->exam_name == 1)
+                                                                                <option value="0">Others</option>
+                                                                            @endif
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                            @if ($exam_form->exam_name == 1)
+                                                                <tr  class="@if($exam_form->exam_category_id) d-none @endif exam_name{{$exam_form->id}}">
+                                                                    <td>{{__('Exam Name')}}</td>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" placeholder="SSC/HSC/BSC/MSC/Others" name="exam_name[{{$exam_form->id}}]">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+
+                                                            @if ($exam_form->board_ids)
+                                                                <tr>
+                                                                    <td>{{__('Board')}}</td>
+                                                                    <td>
+                                                                        <select onchange="get_board(this)" data-form_id="{{$exam_form->id}}" name="board_id[{{$exam_form->id}}]" class="form-control">
+                                                                            <option value="">Select</option>
+                                                                            @foreach ($boards as $board)
+                                                                                @if (in_array($board->id,explode(',',$exam_form->board_ids)))
+                                                                                    <option value="{{$board->id}}">{{$board->name_en}}</option>
+                                                                                @endif
+                                                                            @endforeach
+                                                                            @if ($exam_form->board_name == 1)
+                                                                                <option value="0">Others</option>
+                                                                            @endif
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                            @if ($exam_form->board_name == 1)
+                                                                <tr  class="@if($exam_form->board_ids) d-none @endif board_name{{$exam_form->id}}">
+                                                                    <td>{{__('Board Name')}}</td>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" placeholder="Enter name" name="board_name[{{$exam_form->id}}]">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+
+                                                            @if ($exam_form->subject_category_id > 0)
+                                                                <tr>
+                                                                    <td>{{__('Subject')}}</td>
+                                                                    <td>
+                                                                        <select onchange="get_subject(this)" data-form_id="{{$exam_form->id}}" name="subject_id[{{$exam_form->id}}]" class="form-control">
+                                                                            <option value="">Select</option>
+                                                                            @foreach ($exam_form->subjectInfos(($exam_form->subjectCategoryInfo->subject_ids ?? '')) as $subject)
+                                                                                <option value="{{$subject->id}}">{{$subject->name_en}}</option>
+                                                                            @endforeach
+
+                                                                            @if ($exam_form->subject_name == 1)
+                                                                                <option value="0">Others</option>
+                                                                            @endif
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                            @if ($exam_form->subject_name == 1)
+                                                                <tr  class="@if($exam_form->subject_category_id) d-none @endif subject_name{{$exam_form->id}}">
+                                                                    <td>{{__('Subject Name')}}</td>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" placeholder="SSC/HSC/BSC/MSC/Others Subject Name" name="subject_name[{{$exam_form->id}}]">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                            @if ($exam_form->result_type == 1)
+                                                                <tr  class="">
+                                                                    <td>{{__('Result Type')}}</td>
+                                                                    <td>
+                                                                        <select onchange="result_type(this)" data-form_id="{{$exam_form->id}}" name="result_type[{{$exam_form->id}}]" class="form-control">
+                                                                            <option value="">Select</option>
+                                                                            @foreach (result_types() as $index => $result_types)
+                                                                                <option value="{{$index}}">{{$result_types}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr  class="d-none result_{{$exam_form->id}}">
+                                                                    <td>{{__('Result')}}</td>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" placeholder="Enter result" name="result[{{$exam_form->id}}]">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+
+                                                            @if ($exam_form->duration_id > 0)
+                                                                <tr>
+                                                                    <td>{{__('Duration')}}</td>
+                                                                    <td>
+                                                                        <select name="duration_id[{{$exam_form->id}}]" class="form-control">
+                                                                            <option value="">Select</option>
+
+                                                                            @foreach ($durations as $duration)
+                                                                                <option value="{{$duration->id}}">{{$duration->name_en}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+
+                                                            @if ($exam_form->certificate_file == 1)
+                                                                <tr>
+                                                                    <td>Certificate File <small>(Image/ PDF)</small></td>
+                                                                    <td>
+                                                                        <input type="file" name="certificate_file[{{$exam_form->id}}]" class="form-control">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                        </tbody>
+                                                        </table>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="card">
+                                            <div class="card-header align-items-center d-flex">
+                                                <h4 class="card-title mb-0 flex-grow-1">Present Address: </h4>
+                                            </div>
+
+                                            <div class="card-body">
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="present_division_id" class="form-label">Division: </label>
+
+                                                        <select class="form-control select2" name="present_division_id" id="present_division_id">
+                                                            <option value="">--Select Division--</option>
+
+                                                            @foreach ($divisions as $division)
+                                                                <option value="{{ $division->id }}">{{ $division->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="present_district_id" class="form-label">District: <span style="color:red;">*</span></label>
+
+                                                        <select class="form-control select2" name="present_district_id" id="present_district_id">
+                                                            <option value="">--Select Division First--</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="present_upazila_id" class="form-label">Thana/Upazila</label>
+
+                                                        <select class="form-control select2" name="present_upazila_id" id="present_upazila_id">
+                                                            <option value="">--Select District First--</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="present_post_office" class="form-label">Post Office: </label>
+
+                                                        <input type="text" class="form-control" name="present_post_office" id="present_post_office" placeholder="Enter your post office name" value="{{ old('present_post_office') }}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="present_post_code" class="form-label">Post Code: </label>
+                                                        
+                                                        <input type="number" class="form-control" name="present_post_code" id="present_post_code" placeholder="Four digits code" value="{{ old('present_post_code') }}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="present_village_road" class="form-label">Village/Road: </label>
+
+                                                        <textarea class="form-control" name="present_village_road" id="present_village_road" cols="30" rows="4"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="card">
+
+                                            <div class="card-header align-items-center d-flex">
+                                                <h4 class="card-title mb-0 flex-grow-1">Permanent Address
+                                                    <input type="checkbox" name="same_as_present_address" id="same_as_present_address">
+                                                    <small style="font-weight: 400; font-size: 0.8em;">Same as present address</small>
+                                                </h4>
+                                            </div>
+
+                                            <div class="card-body">
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="permanent_division_id" class="form-label">Division: </label>
+
+                                                        <select class="form-control select2" name="permanent_division_id" id="permanent_division_id">
+                                                            <option value="">--Select Division--</option>
+
+                                                            @foreach ($divisions as $division)
+                                                                <option value="{{ $division->id }}">{{ $division->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="permanent_district_id" class="form-label">District: </label>
+
+                                                        <select class="form-control select2" name="permanent_district_id" id="permanent_district_id">
+                                                            <option value="">--Select Division First--</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="permanent_upazila_id" class="form-label">Thana/Upazila: </label>
+
+                                                        <select class="form-control select2" name="permanent_upazila_id" id="permanent_upazila_id">
+                                                            <option value="">--Select District First--</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="permanent_post_office" class="form-label">Post Office: </label>
+                                                        <input type="text" class="form-control" name="permanent_post_office" id="permanent_post_office" placeholder="Enter your post office name" value="{{ old('permanent_post_office') }}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="permanent_post_code" class="form-label">Post Code</label>
+                                                        
+                                                        <input type="number" class="form-control" name="permanent_post_code" id="permanent_post_code" placeholder="Four digits code" value="{{ old('permanent_post_code') }}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div>
+                                                        <label for="permanent_village_road" class="form-label">Village/Road: </label>
+
+                                                        <textarea class="form-control" name="permanent_village_road" id="permanent_village_road" cols="30" rows="4"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> --}}
+
                                 <div class="row mt-4">
                                     <div class="col-12">
                                         <div class="card">
@@ -673,13 +1048,13 @@
                                                     <div class="col-5">
                                                         <div class="col-12">
                                                             <div>
-                                                                <img id="image_preview" src="{{ asset('backend-assets/assets/images/users/user-dummy-img.jpg') }}" alt="User Image" width="80px;">
+                                                                <img id="image_preview" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png" alt="User Image" width="80px;">
                                                             </div>
                                                         </div>
         
                                                         <div class="col-12 mt-4">
                                                             <div>
-                                                                <img id="signature_preview" src="{{ asset('backend-assets/assets/images/users/user-dummy-img.jpg') }}" alt="Signature" width="80px;">
+                                                                <img id="signature_preview" src="https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg" alt="Signature" width="80px;">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -693,7 +1068,7 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="hstack gap-2 justify-content-end">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -750,35 +1125,33 @@
                 reader.readAsDataURL(this.files[0]); 
             });
 
-            // if checkbox is checked for same present and permanent address
-            $('#same_as_present_address').click(function(){
+            $('#same_as_present_address').click(function() {
                 if($(this).prop("checked") == true){
                     
                     let present_division_id = $("#present_division_id").val();
                     $('#permanent_division_id').prop('disabled', 'disabled');
-                    // $('#permanent_division_id').removeAttr('required');
+                    $('#permanent_division_id').removeAttr('required');
 
                     let present_district_id = $("#present_district_id").val();
                     $('#permanent_district_id').prop('disabled', 'disabled');
-                    // $('#permanent_district_id').removeAttr('required');
+                    $('#permanent_district_id').removeAttr('required');
 
                     let present_upazila_id = $("#present_upazila_id").val();
                     $('#permanent_upazila_id').prop('disabled', 'disabled');
-                    // $('#permanent_upazila_id').removeAttr('required');
+                    $('#permanent_upazila_id').removeAttr('required');
 
                     let present_post_office = $("#present_post_office").val();
-                    $('#permanent_post_office').prop('disabled', 'disabled');
+                    $('#permanent_post_office').prop('readonly', 'readonly');
                     // $('#permanent_post_office').removeAttr('required');
 
                     let present_post_code = $("#present_post_code").val();
-                    $('#permanent_post_code').prop('disabled', 'disabled');
+                    $('#permanent_post_code').prop('readonly', 'readonly');
                     // $('#permanent_post_code').removeAttr('required');
 
                     let present_village_road = $("#present_village_road").val();
-                    $('#permanent_village_road').prop('disabled', 'disabled');
+                    $('#permanent_village_road').prop('readonly', 'readonly');
                     // $('#permanent_village_road').removeAttr('required');
-
-                }else if($(this).prop("checked") == false){
+                } else if ($(this).prop("checked") == false) {
                     $("#permanent_division_id").prop('disabled', false);
                     // $('#permanent_division_id').prop('required',true);
 
@@ -788,13 +1161,13 @@
                     $("#permanent_upazila_id").prop('disabled', false);
                     // $('#permanent_upazila_id').prop('required',true);
 
-                    $("#permanent_post_office").prop('disabled', false);
+                    $("#permanent_post_office").removeAttr('readonly');
                     // $('#permanent_post_office').prop('required',true);
 
-                    $("#permanent_post_code").prop('disabled', false);
+                    $("#permanent_post_code").removeAttr('readonly');
                     // $('#permanent_post_code').prop('required',true);
 
-                    $("#permanent_village_road").prop('disabled', false);
+                    $("#permanent_village_road").removeAttr('readonly');
                     // $('#permanent_village_road').prop('required',true);
                 }
             });
@@ -879,6 +1252,9 @@
         $(document).ready(function() {
             $("#createForm").on("submit", function(e) {
                 e.preventDefault();
+
+                $('#submitBtn').prop('disabled', true);
+                $('#submitBtn').html(`<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...`);
                 
                 let formData = new FormData(this);
 
@@ -892,34 +1268,23 @@
                         $("button[type='submit']").prop("disabled", true);
                     },
                     success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Employee added successfully!',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            location.reload();
-                        });
+                        if (response.success) {
+                            Swal.fire({
+                                title: response.message,
+                                icon: 'success',
+                                showCancelButton: false,
+                            });
+
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            toastr.error(response.message || 'An error occurred!');
+
+                            $('#submitBtn').prop('disabled', false);
+                            $('#submitBtn').html(`Submit`);
+                        }
                     },
                     error: function(xhr) {
-                        $("button[type='submit']").prop("disabled", false);
-                        
-                        if (xhr.status === 422) {
-                            let errors = xhr.responseJSON.errors;
-                            let errorMessages = "";
-
-                            $.each(errors, function(key, value) {
-                                errorMessages += value[0] + "\n";
-                            });
-
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Validation Error!',
-                                text: errorMessages,
-                            });
-                        } else {
-                            toastr.error("Something went wrong. Please try again.");
-                        }
+                        Swal.fire('Error', xhr.responseJSON.message || 'An error occurred.', 'error');
                     }
                 });
             });

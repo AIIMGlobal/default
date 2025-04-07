@@ -88,15 +88,15 @@
                             <ul class="nav nav-sm flex-column">
                                 @can('user_list')
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.user.researcherIndex') }}" class="nav-link">User List</a>
+                                        <a href="{{ route('admin.user.index') }}" class="nav-link">User List</a>
                                     </li>
                                 @endcan
 
-                                @can('employee_list')
+                                {{-- @can('employee_list')
                                     <li class="nav-item">
                                         <a href="{{ route('admin.user.index') }}" class="nav-link">Employee List</a>
                                     </li>
-                                @endcan
+                                @endcan --}}
 
                                 {{-- @can('user_appraisal')
                                     <li class="nav-item">

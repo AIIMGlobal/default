@@ -97,7 +97,7 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'forgotPasswor
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('resetPassword'); 
 
 // ****************************************** Back-end Links *****************************************
-Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/admin', 'as' => 'admin.'], function() {
+Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/authorized-user', 'as' => 'admin.'], function() {
     Route::get('/', [IndexController::class, 'index'])->name('home');
     Route::get('/change-language', [IndexController::class, 'language_change'])->name('language_change');
 
@@ -126,11 +126,15 @@ Route::group(['middleware' => ['AuthGates','set.locale'], 'prefix' => '/admin', 
         Route::post('/update', [UserController::class, 'update'])->name('update');
         Route::get('/edit-user-minimum/{id}', [UserController::class, 'editUserMinimum'])->name('editUserMinimum');
         Route::post('/update-user-minimum', [UserController::class, 'updateUserMinimum'])->name('updateUserMinimum');
-        Route::get('/block/{id}', [UserController::class, 'block'])->name('block');
-        Route::get('/active/{id}', [UserController::class, 'active'])->name('active');
         Route::get('/show/{id}', [UserController::class, 'show'])->name('show');
         Route::post('/update-password', [UserController::class, 'updatePassword'])->name('updatePassword');
         Route::post('/change-other-user-password', [UserController::class, 'changeOtherUserPassword'])->name('changeOtherUserPassword');
+
+        Route::delete('/delete', [UserController::class, 'destroy'])->name('delete');
+        Route::get('/active/{id}', [UserController::class, 'active'])->name('active');
+        Route::get('/archive', [UserController::class, 'block'])->name('block');
+        Route::get('/approve', [UserController::class, 'approve'])->name('approve');
+        Route::get('/decline', [UserController::class, 'decline'])->name('decline');
 
         Route::get('/archive-list', [UserController::class, 'archive_list'])->name('archive_list');
         Route::get('/print-doc/{id}', [UserController::class, 'print_doc'])->name('print_doc');
