@@ -830,7 +830,7 @@
 
                                     <div class="col-lg-12">
                                         <div class="hstack gap-2 justify-content-end">
-                                            <button type="submit" class="btn btn-primary">Update</button>
+                                            <button type="submit" class="btn btn-success">Update</button>
                                         </div>
                                     </div>
                                 </div>

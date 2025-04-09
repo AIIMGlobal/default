@@ -247,9 +247,9 @@
                                                         <label for="" class="text-dark">Signature:</label>
 
                                                         @if (($employee->userInfo->signature ?? '') && Storage::exists('public/signature/' . $employee->userInfo->signature))
-                                                            <img src="{{ asset('storage/signature/' . ($employee->userInfo->signature ?? ''))}}" alt="Signature" class="img-thumbnail" style="max-height: 200px;" />
+                                                            <img src="{{ asset('storage/signature/' . ($employee->userInfo->signature ?? ''))}}" alt="Signature" class="img-thumbnail" style="width: 200px;" />
                                                         @else
-                                                            <img src="https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg" alt="Signature" class="img-thumbnail" style="max-height: 200px;" />
+                                                            <img src="https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg" alt="Signature" class="img-thumbnail" style="width: 200px;" />
                                                         @endif
                                                     </div>
                                                 </div>

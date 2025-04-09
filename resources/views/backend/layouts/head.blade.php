@@ -322,6 +322,137 @@
                 height: 38px !important;
             }
 
+            /* button css */
+            .btn-primary {
+                color: #fff;
+                background: linear-gradient(90deg, #0F2027, #203A43, #2C5364);
+                border: none;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                z-index: 1;
+            }
+
+            .btn-primary::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, #1A2F36, #2D4A53, #3B6476);
+                transition: all 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-primary:hover::after {
+                left: 0;
+            }
+
+            .btn-warning {
+                color: #fff;
+                background: linear-gradient(90deg, #FFC107, #FFA000, #FF8F00);
+                border: none;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                z-index: 1;
+            }
+
+            .btn-warning::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, #FFCA28, #FFB300, #FFA21A);
+                transition: all 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-warning:hover::after {
+                left: 0;
+            }
+
+            .btn-danger {
+                color: #fff;
+                background: linear-gradient(90deg, #DC3545, #C82333, #B21F2D);
+                border: none;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                z-index: 1;
+            }
+
+            .btn-danger::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, #E4606D, #D9534F, #C9302C);
+                transition: all 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-danger:hover::after {
+                left: 0;
+            }
+
+            .btn-info {
+                color: #fff;
+                background: linear-gradient(90deg, #17A2B8, #138496, #117A8B);
+                border: none;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                z-index: 1;
+            }
+
+            .btn-info::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, #2BC4DB, #29B6F6, #26A69A);
+                transition: all 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-info:hover::after {
+                left: 0;
+            }
+
+            .btn-success {
+                color: #fff;
+                background: linear-gradient(90deg, #28A745, #218838, #1E7E34);
+                border: none;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                z-index: 1;
+            }
+
+            .btn-success::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, #34CE57, #2ECC71, #27AE60);
+                transition: all 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-success:hover::after {
+                left: 0;
+            }
+
             /* loader css */
             .bbs-loader-wrapper {
                 position: fixed;

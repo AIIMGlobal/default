@@ -74,8 +74,8 @@
                     @if(Auth::user() != NULL)
                         <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="d-flex align-items-center">
-                                @if (Auth::user()->userInfo->image)
-                                    <img class="rounded-circle header-profile-user" src="{{ asset('storage/userImages/' .  Auth::user()->userInfo->image ?? '') }}" alt="Header Avatar">
+                                @if (Auth::user()->userInfo->image ?? '')
+                                    <img class="rounded-circle header-profile-user" src="{{ asset('storage/userImages/' .  (Auth::user()->userInfo->image ?? '')) }}" alt="Header Avatar">
                                 @else
                                     <div class="rounded-circle header-profile-user no-user-image-found">
                                         <i class="ri-shield-user-line"></i>

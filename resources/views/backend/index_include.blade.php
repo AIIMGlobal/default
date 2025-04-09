@@ -98,7 +98,7 @@
         @endcan
     </div>
 
-    <div class="row mt-4">
+    <div class="row my-4">
         <div class="col-md-4">
             <h4>Content Graph</h4>
 
@@ -365,7 +365,7 @@
             data: {
                 labels: ['Approved', 'Inactive', 'Pending'],
                 datasets: [{
-                    // label: 'User Status',
+                    label: 'Content Upload Stats',
                     data: [65, 25, 10],
                     backgroundColor: [
                         gradientGreen,
@@ -460,22 +460,21 @@
     <script>
         var ctx = document.getElementById('lineChart').getContext('2d');
 
-        // Create gradients for the area under the line
         var gradientGreen = ctx.createLinearGradient(0, 0, 0, 200);
-        gradientGreen.addColorStop(0, 'rgba(15, 64, 16, 0.6)');  // Deep green
-        gradientGreen.addColorStop(1, 'rgba(58, 203, 59, 0.2)'); // Light green
+        gradientGreen.addColorStop(0, 'rgba(15, 64, 16, 0.6)');
+        gradientGreen.addColorStop(1, 'rgba(58, 203, 59, 0.2)');
 
         var gradientRed = ctx.createLinearGradient(0, 0, 0, 200);
-        gradientRed.addColorStop(0, 'rgba(128, 0, 0, 0.6)');     // Deep red
-        gradientRed.addColorStop(1, 'rgba(255, 102, 102, 0.2)'); // Light red
+        gradientRed.addColorStop(0, 'rgba(128, 0, 0, 0.6)');
+        gradientRed.addColorStop(1, 'rgba(255, 102, 102, 0.2)');
 
         var gradientBlue = ctx.createLinearGradient(0, 0, 0, 200);
-        gradientBlue.addColorStop(0, 'rgba(5, 0, 68, 0.6)');     // Deep blue
-        gradientBlue.addColorStop(1, 'rgba(51, 51, 255, 0.2)');  // Light blue
+        gradientBlue.addColorStop(0, 'rgba(5, 0, 68, 0.6)');
+        gradientBlue.addColorStop(1, 'rgba(51, 51, 255, 0.2)');
 
         var gradientDark = ctx.createLinearGradient(0, 0, 0, 200);
-        gradientDark.addColorStop(0, 'rgba(10, 23, 28, 0.6)');   // Deep dark teal
-        gradientDark.addColorStop(1, 'rgba(44, 83, 100, 0.2)');  // Light teal-blue
+        gradientDark.addColorStop(0, 'rgba(10, 23, 28, 0.6)');
+        gradientDark.addColorStop(1, 'rgba(44, 83, 100, 0.2)');
 
         var myLineChart = new Chart(ctx, {
             type: 'line',
@@ -483,33 +482,33 @@
                 labels: ['January', 'February', 'March', 'April'],
                 datasets: [
                     {
-                        data: [50, 75, 60, 90], // Demo data for visitors
-                        backgroundColor: gradientGreen, // Area under the line
-                        borderColor: 'rgba(24, 124, 25, 1)', // Green line
+                        data: [50, 75, 60, 90],
+                        backgroundColor: gradientGreen,
+                        borderColor: 'rgba(24, 124, 25, 1)',
                         borderWidth: 2,
-                        fill: true, // Fill the area under the line
-                        tension: 0.4 // Smooth the line (0 = straight, 0.4 = curved)
+                        fill: true,
+                        tension: 0.4
                     },
                     {
-                        data: [30, 45, 55, 70], // Second demo dataset
+                        data: [30, 45, 55, 70],
                         backgroundColor: gradientRed,
-                        borderColor: 'rgba(255, 0, 0, 1)', // Red line
+                        borderColor: 'rgba(255, 0, 0, 1)',
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4
                     },
                     {
-                        data: [20, 35, 25, 50], // Third demo dataset
+                        data: [20, 35, 25, 50],
                         backgroundColor: gradientBlue,
-                        borderColor: 'rgba(9, 0, 136, 1)', // Blue line
+                        borderColor: 'rgba(9, 0, 136, 1)',
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4
                     },
                     {
-                        data: [10, 25, 15, 40], // Fourth demo dataset
+                        data: [10, 25, 15, 40],
                         backgroundColor: gradientDark,
-                        borderColor: 'rgba(15, 32, 39, 1)', // Dark teal line
+                        borderColor: 'rgba(15, 32, 39, 1)',
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4
@@ -535,7 +534,7 @@
                 responsive: true,
                 plugins: {
                     legend: {
-                        display: false // Hide legend since no labels are specified
+                        display: false
                     }
                 }
             }

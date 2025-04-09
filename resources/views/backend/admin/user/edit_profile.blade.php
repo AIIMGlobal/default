@@ -389,7 +389,7 @@
 
                                                 <div class="col-lg-12">
                                                     <div class="text-end">
-                                                        <button type="submit" class="btn btn-success">{{__('pages.Update')}}</button>
+                                                        <button type="submit" class="btn btn-success">Update</button>
                                                     </div>
                                                 </div>
 

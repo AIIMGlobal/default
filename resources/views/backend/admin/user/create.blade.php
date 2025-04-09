@@ -135,7 +135,7 @@
                                         <div>
                                             <label for="designation_id" class="form-label">Designation: <span style="color:red;">*</span></label>
 
-                                            @if ($employee->user_type == 4)
+                                            @if (Auth::user()->user_type == 4)
                                                 <input type="text" class="form-control" name="designation" id="designation" placeholder="Enter Designation" value="{{ old('designation') }}">
                                             @else
                                                 <select class="form-control" name="designation_id" id="designation_id" required>
@@ -1068,7 +1068,7 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="hstack gap-2 justify-content-end">
-                                            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+                                            <button type="submit" class="btn btn-success" id="submitBtn">Submit</button>
                                         </div>
                                     </div>
                                 </div>

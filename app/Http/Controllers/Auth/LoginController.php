@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Socialite;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 /* included models */
@@ -103,25 +104,26 @@ class LoginController extends Controller
             $googleUser = Socialite::driver('google')->user();
             $user = User::where('email', $googleUser->getEmail())->first();
 
-            // if (!$user) {
-            //     $user = User::create([
-            //         'name' => $googleUser->getName(),
-            //         'email' => $googleUser->getEmail(),
-            //         'google_id' => $googleUser->getId(),
-            //         'password' => bcrypt(Str::random(24)),
-            //     ]);
-            // }
-
             if ($user) {
                 if ($user->status == 1) {
                     Auth::login($user, true);
 
                     return redirect()->route('admin.home');
                 } else {
-                    return redirect()->back()->with('error', 'Unauthorized User Account!');
+                    return redirect()->route('login')->with('error', 'Unauthorized User Account!');
                 }
             } else {
-                return redirect()->back()->with('error', 'No Account Found. Please register first!');
+                $user = User::create([
+                    'name_en'   => $googleUser->getName(),
+                    'email'     => $googleUser->getEmail(),
+                    'user_type' => 4,
+                    'role_id'   => 4,
+                    'google_id' => $googleUser->getId(),
+                    'password'  => Hash::make('12345678'),
+                    'status'    => 0,
+                ]);
+
+                return redirect()->route('login')->with('success', 'User registration successfull. Please wait for account approval.');
             }
         } catch (\Exception $e) {
             \Log::error($e->getMessage());
