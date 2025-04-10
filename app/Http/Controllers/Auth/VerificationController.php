@@ -110,7 +110,7 @@ class VerificationController extends Controller
 
                         DB::commit();
 
-                        return redirect()->route('login')->with('success', 'Email verification completed. Your have successfully registered in BARC Repository Software! Please wait for account approval.');
+                        return redirect()->route('login')->with('success', 'Email verification completed. You have successfully registered in BARC Repository Software! Please wait for account approval.');
                     }
                 } else {
                     DB::commit();

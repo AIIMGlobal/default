@@ -1,12 +1,12 @@
 @push('css')
     <style>
         .barChart-container {
-            width: 100%;
-            height: 400px;
+            width: 500px;
+            height: 500px;
         }
         .pieChart-container {
-            max-width: 100%;
-            max-height: 400px;
+            max-width: 500px;
+            max-height: 500px;
             width: 100%;
             height: 100%;
         }
@@ -100,7 +100,7 @@
 
     <div class="row my-4">
         <div class="col-md-4">
-            <h4>Content Graph</h4>
+            <h4 class="text-center">Category Record</h4>
 
             <div class="barChart-container">
                 <canvas id="barChart" width="500" height="500"></canvas>
@@ -108,19 +108,19 @@
         </div>
 
         <div class="col-md-4">
-            <h4>User Status</h4>
+            <h4 class="text-center">Content Graph</h4>
 
             <div class="pieChart-container">
                 {{-- <canvas id="pieChart" width="500" height="500"></canvas> --}}
-                <canvas id="lineChart" width="400" height="400"></canvas>
+                <canvas id="lineChart" width="500" height="500"></canvas>
             </div>
         </div>
 
         <div class="col-md-4">
-            <h4>Category Record</h4>
+            <h4 class="text-center">User Status</h4>
 
             <div class="pieChart-container">
-                <canvas id="pieChartCategory" width="500" height="400"></canvas>
+                <canvas id="pieChartCategory" width="500" height="500"></canvas>
             </div>
         </div>
     </div>
@@ -295,34 +295,17 @@
     <script>
         var ctx = document.getElementById('barChart').getContext('2d');
 
-        var gradientGreen = ctx.createLinearGradient(0, 0, 400, 400);
-        gradientGreen.addColorStop(0, '#3ACB3B');
-        gradientGreen.addColorStop(1, '#0F4010');
-
-        var gradientRed = ctx.createLinearGradient(0, 0, 400, 400);
-        gradientRed.addColorStop(0, '#FF0000');
-        gradientRed.addColorStop(1, '#800000');
-
-        var gradientBlue = ctx.createLinearGradient(0, 0, 400, 200);
-        gradientBlue.addColorStop(0, '#E4F2FD');
-        gradientBlue.addColorStop(1, '#0D47A1');
-
-        var gradientDark = ctx.createLinearGradient(0, 0, 100, 500);
-        gradientDark.addColorStop(0, '#00A3AA');
-        gradientDark.addColorStop(1, '#023B46');
-
         var myBarChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['January', 'February', 'March', 'April'],
+                labels: ['Invention', 'Paper', 'News', 'Posts'],
                 datasets: [{
-                    label: '',
                     data: [12, 19, 18, 15],
                     backgroundColor: [
-                        gradientGreen,
-                        gradientRed,
-                        gradientBlue,
-                        gradientDark
+                        '#3ACB3B',
+                        '#FF0000',
+                        '#0D47A1',
+                        '#00A3AA'
                     ],
                     borderColor: [
                         'rgba(24, 124, 25, 1)',
@@ -337,10 +320,28 @@
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        title: {
+                            display: false,
+                            text: 'Category'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: false,
+                            text: 'Months'
+                        },
+                        label: {
+                            display: false
+                        }
                     }
                 },
-                responsive: true
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
             }
         });
     </script>
@@ -521,7 +522,7 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Visitors'
+                            text: 'Contents'
                         }
                     },
                     x: {
