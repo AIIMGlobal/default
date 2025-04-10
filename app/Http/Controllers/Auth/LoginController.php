@@ -10,12 +10,21 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 use Socialite;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 
 /* included models */
 use App\Models\User;
+use App\Models\Setting;
+use App\Models\Notification;
+
+/* included mails */
+use App\Mail\UserRegistrationToAdminMail;
+use App\Mail\UserRegistrationToUserMail;
 
 class LoginController extends Controller
 {
@@ -77,6 +86,13 @@ class LoginController extends Controller
                     'message' => 'Login successful!',
                     'redirect' => route('admin.home'),
                 ]);
+            } elseif ($user->status == 4) {
+                Auth::logout();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please verify your account first!',
+                ]);
             } else {
                 Auth::logout();
                 
@@ -101,6 +117,8 @@ class LoginController extends Controller
     public function handleGoogleCallback()
     {
         try {
+            DB::beginTransaction();
+
             $googleUser = Socialite::driver('google')->user();
             $user = User::where('email', $googleUser->getEmail())->first();
 
@@ -109,11 +127,13 @@ class LoginController extends Controller
                     Auth::login($user, true);
 
                     return redirect()->route('admin.home');
+                } elseif ($user->status == 4) {
+                    return redirect()->route('login')->with('warning', 'Please verify your email!');
                 } else {
                     return redirect()->route('login')->with('error', 'Unauthorized User Account!');
                 }
             } else {
-                $user = User::create([
+                $newUser = User::create([
                     'name_en'   => $googleUser->getName(),
                     'email'     => $googleUser->getEmail(),
                     'user_type' => 4,
@@ -123,9 +143,38 @@ class LoginController extends Controller
                     'status'    => 0,
                 ]);
 
+                $setting = Setting::first();
+                $admins = User::whereIn('role_id', [1, 2])->where('status', 1)->get();
+
+                Mail::to($newUser->email)->send(new UserRegistrationToUserMail($setting, $newUser));
+
+                if (count($admins)) {
+                    foreach ($admins as $admin) {
+                        Mail::to($admin->email)->send(new UserRegistrationToAdminMail($setting, $newUser, $admin));
+
+                        $notification = new Notification;
+
+                        $notification->type             = 4;
+                        $notification->title            = 'New User Registration';
+                        $notification->message          = 'A new user has registered.';
+                        $notification->route_name       = route('admin.user.show', Crypt::encryptString($newUser->id));
+                        $notification->sender_role_id   = 4;
+                        $notification->sender_user_id   = $newUser->id;
+                        $notification->receiver_role_id = $admin->role_id;
+                        $notification->receiver_user_id = $admin->id;
+                        $notification->read_status      = 0;
+
+                        $notification->save();
+                    }
+                }
+
+                DB::commit();
+
                 return redirect()->route('login')->with('success', 'User registration successfull. Please wait for account approval.');
             }
         } catch (\Exception $e) {
+            DB::rollBack();
+
             \Log::error($e->getMessage());
 
             return redirect()->route('login')->withErrors('Something went wrong');

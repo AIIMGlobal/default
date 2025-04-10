@@ -37,7 +37,7 @@
                         </div>
 
                         <div class="card-body">
-                            <form action="{{ route('admin.user.update') }}" method="POST" enctype="multipart/form-data" autocapitalize="off">
+                            <form id="updateForm" action="{{ route('admin.user.update') }}" method="POST" enctype="multipart/form-data" autocapitalize="off">
                                 @csrf
                                 
                                 {{-- <input type="hidden" value="1" name="availablity"> --}}
@@ -89,7 +89,7 @@
                                         <div>
                                             <label for="mobile" class="form-label">Mobile Number: <span style="color:red;">*</span></label>
 
-                                            <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Enter Valid Mobile Number" value="{{ $employee->mobile ?? 'N/A' }}" minlength="11" maxlength="14" required>
+                                            <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Enter Mobile Number" value="{{ $employee->mobile ?? '' }}" minlength="11" maxlength="14" required>
                                         </div>
                                     </div>
 
@@ -143,13 +143,17 @@
                                         <div>
                                             <label for="designation_id" class="form-label">Designation: <span style="color:red;">*</span></label>
 
-                                            <select  class="form-control" name="designation_id" id="designation_id" required>
-                                                <option value="">--Select Designation--</option>
+                                            @if ($employee->user_type == 4)
+                                                <input type="text" class="form-control" name="designation" id="designation" placeholder="Enter Designation" value="{{ $employee->userInfo->designation ?? old('designation') }}">
+                                            @else
+                                                <select  class="form-control" name="designation_id" id="designation_id" required>
+                                                    <option value="">--Select Designation--</option>
 
-                                                @foreach ($designations as $designation)
-                                                    <option @if (($employee->userInfo->designation_id ?? 0) == $designation->id) selected @endif value="{{ $designation->id }}">{{ $designation->name }}</option>
-                                                @endforeach
-                                            </select>
+                                                    @foreach ($designations as $designation)
+                                                        <option @if (($employee->userInfo->designation_id ?? 0) == $designation->id) selected @endif value="{{ $designation->id }}">{{ $designation->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -450,7 +454,7 @@
                                                         <div>
                                                             <label for="village_road" class="form-label">Village/Road: </label>
 
-                                                            <textarea class="form-control" name="present_village_road" id="village_road" cols="30" rows="4">{{ $employee->userAddress->present_address ?? '' }}</textarea>
+                                                            <textarea class="form-control" name="present_village_road" id="village_road" cols="30" rows="4" placeholder="Enter Village/Road">{{ $employee->userAddress->present_address ?? '' }}</textarea>
                                                         </div>
                                                     </div>
 
@@ -515,7 +519,7 @@
                                                         <div>
                                                             <label for="post_office" class="form-label">Post Office: </label>
 
-                                                            <input type="text" class="form-control" name="permanent_post_office" id="permanent_post_office" placeholder="Enter your post office name" value="{{ $employee->userAddress->permanent_post_office ?? 'N/A' }}" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>
+                                                            <input type="text" class="form-control" name="permanent_post_office" id="permanent_post_office" placeholder="Enter your post office name" value="{{ $employee->userAddress->permanent_post_office ?? '' }}" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>
                                                         </div>
                                                     </div>
 
@@ -523,7 +527,7 @@
                                                         <div>
                                                             <label for="post_code" class="form-label">Post Code: </label>
 
-                                                            <input type="number" class="form-control" name="permanent_post_code" id="permanent_post_code" placeholder="Four digits code" value="{{ $employee->userAddress->permanent_post_code ?? 'N/A' }}" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>
+                                                            <input type="number" class="form-control" name="permanent_post_code" id="permanent_post_code" placeholder="Four digits code" value="{{ $employee->userAddress->permanent_post_code ?? '' }}" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>
                                                         </div>
                                                     </div>
 
@@ -531,7 +535,7 @@
                                                         <div>
                                                             <label for="village_road" class="form-label">Village/Road: </label>
 
-                                                            <textarea class="form-control" name="permanent_village_road" id="permanent_village_road" cols="30" rows="4" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>{{ $employee->userAddress->permanent_address ?? 'N/A' }}</textarea>
+                                                            <textarea class="form-control" name="permanent_village_road" id="permanent_village_road" cols="30" rows="4" placeholder="Enter Village/Road" {{ ($employee->userAddress->same_as_present_address ?? '') == 1 ? 'readonly' : '' }}>{{ $employee->userAddress->permanent_address ?? '' }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -805,9 +809,9 @@
                                                             <div class="col-12">
                                                                 <div>
                                                                     @if ($employee->userInfo && Storage::exists('public/userImages/' . $employee->userInfo->image))
-                                                                        <img id="image_preview" src="{{ asset('storage/userImages/' . ($employee->userInfo->image ?? '')) }}" alt="User Image" width="120px;">
+                                                                        <img id="image_preview" src="{{ asset('storage/userImages/' . ($employee->userInfo->image ?? '')) }}" alt="User Image" width="80px;">
                                                                     @else
-                                                                        <img id="image_preview" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png" alt="User Image" width="120px;">
+                                                                        <img id="image_preview" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png" alt="User Image" width="80px;">
                                                                     @endif
                                                                 </div>
                                                             </div>
@@ -815,9 +819,9 @@
                                                             <div class="col-12 mt-4">
                                                                 <div>
                                                                     @if ($employee->userInfo && Storage::exists('public/signature/' . $employee->userInfo->signature))
-                                                                        <img id="signature_preview" src="{{ asset('storage/signature/' . ($employee->userInfo->signature ?? '')) }}" alt="" width="120px;">
+                                                                        <img id="signature_preview" src="{{ asset('storage/signature/' . ($employee->userInfo->signature ?? '')) }}" alt="" width="80px;">
                                                                     @else
-                                                                        <img id="signature_preview" src="https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg" alt="" width="120px;">
+                                                                        <img id="signature_preview" src="https://png.pngtree.com/png-clipart/20190925/original/pngtree-no-image-vector-illustration-isolated-png-image_4979075.jpg" alt="" width="80px;">
                                                                     @endif
                                                                 </div>
                                                             </div>
@@ -830,7 +834,7 @@
 
                                     <div class="col-lg-12">
                                         <div class="hstack gap-2 justify-content-end">
-                                            <button type="submit" class="btn btn-success">Update</button>
+                                            <button type="submit" class="btn btn-success" id="submitBtn">Update</button>
                                         </div>
                                     </div>
                                 </div>
@@ -856,13 +860,9 @@
     
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function(e) {
             $('.select2').select2();
-        });
-    </script>
-
-    <script type="text/javascript">
-        $(document).ready(function (e) {
+        
             $('#image').change(function() {
                 let reader = new FileReader();
 
@@ -1138,6 +1138,49 @@
             uploadUrl: '#',
             browseOnZoneClick: true,
             initialPreviewShowDelete: true,
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#updateForm").on("submit", function(e) {
+                e.preventDefault();
+
+                $('#submitBtn').prop('disabled', true);
+                $('#submitBtn').html(`<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...`);
+                
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function() {
+                        $("button[type='submit']").prop("disabled", true);
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: response.message,
+                                icon: 'success',
+                                showCancelButton: false,
+                            });
+
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            Swal.fire('Error', response.message || 'An error occurred.', 'error');
+
+                            $('#submitBtn').prop('disabled', false);
+                            $('#submitBtn').html(`Update`);
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Error', xhr.responseJSON.message || 'An error occurred.', 'error');
+                    }
+                });
+            });
         });
     </script>
 @endpush

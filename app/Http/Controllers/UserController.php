@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 
@@ -33,6 +34,10 @@ use App\Models\Post;
 use App\Models\AcademicRecord;
 use App\Models\UserCompanyDoc;
 use App\Models\UserCategory;
+use App\Models\Setting;
+
+/* included mails */
+use App\Mail\UserAccountApproveToUserMail;
 
 class UserController extends Controller
 {
@@ -201,23 +206,6 @@ class UserController extends Controller
                         // 'present_upazila_id'    => 'required',
                     ]);
                 }
-            
-                $this->validate($request, [
-                    // 'name_bn' => 'required',
-                    'name_en'               => 'required',
-                    'user_type'             => 'required',
-                    'mobile'                => 'unique:users|required',
-                    'email'                 => 'unique:users|required',
-                    'password'              => 'required',
-                    'role_id'               => 'required',
-                    // 'employee_id'           => 'required',
-                    'department_id'         => 'required',
-                    'designation_id'        => 'required',
-                    // 'office_id'             => 'required',
-                    // 'present_division_id'   => 'required',
-                    // 'present_district_id'   => 'required',
-                    // 'present_upazila_id'    => 'required',
-                ]);
 
                 $newUser = new User;
 
@@ -449,261 +437,306 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $currentUser = Auth::user();
-        $newUser = User::where('id', $request->user_id)->first();
+        try {
+            DB::beginTransaction();
 
-        if (Gate::allows('edit_user', $currentUser)) {
-            $this->validate($request, [
-                // 'name_bn'               => 'required',
-                'name_en'               => 'required',
-                'mobile'                => 'required|unique:users,mobile,'.$newUser->id,
-                'email'                 => 'required|unique:users,email,'.$newUser->id,
-                // 'password'              => 'required',
-                'role_id'               => 'required',
-                'department_id'         => 'required',
-                'designation_id'        => 'required',
-                'office_id'             => 'required',
-                // 'present_division_id'   => 'required',
-                // 'present_district_id'   => 'required',
-                // 'present_upazila_id'    => 'required',
-            ]);
+            $currentUser = Auth::user();
+            $newUser = User::where('id', $request->user_id)->first();
 
-            // $newUser->name_bn            = $request->name_bn;
-            $newUser->name_en           = $request->name_en;
-            $newUser->email             = $request->email;
-            $newUser->mobile            = $request->mobile;
-            $newUser->role_id           = $request->role_id;
-            $newUser->team_id           = $request->team_id;
-            $newUser->user_category_id  = $request->user_category_id;
+            if (Gate::allows('edit_user', $currentUser)) {
+                if ($request->user_type == 4) {
+                    $this->validate($request, [
+                        // 'name_bn' => 'required',
+                        'name_en'               => 'required',
+                        'user_type'             => 'required',
+                        'mobile'                => 'required|unique:users,mobile,' . $newUser->id,
+                        'email'                 => 'required|unique:users,email,' . $newUser->id,
+                        'role_id'               => 'required',
+                        // 'employee_id'           => 'required',
+                        'department_id'         => 'required',
+                        'designation'           => 'required',
+                        'office_id'             => 'required',
+                        // 'present_division_id'   => 'required',
+                        // 'present_district_id'   => 'required',
+                        // 'present_upazila_id'    => 'required',
+                    ]);
+                } else {
+                    $this->validate($request, [
+                        // 'name_bn' => 'required',
+                        'name_en'               => 'required',
+                        'user_type'             => 'required',
+                        'mobile'                => 'unique:users|required,mobile,' . $newUser->id,
+                        'email'                 => 'unique:users|required,email,' . $newUser->id,
+                        'role_id'               => 'required',
+                        // 'employee_id'           => 'required',
+                        'department_id'         => 'required',
+                        'designation_id'        => 'required',
+                        'office_id'             => 'required',
+                        // 'present_division_id'   => 'required',
+                        // 'present_district_id'   => 'required',
+                        // 'present_upazila_id'    => 'required',
+                    ]);
+                }
 
-            $newUser->save();
+                // $newUser->name_bn            = $request->name_bn;
+                $newUser->name_en           = $request->name_en;
+                $newUser->email             = $request->email;
+                $newUser->mobile            = $request->mobile;
+                $newUser->role_id           = $request->role_id;
+                $newUser->user_category_id  = $request->user_category_id;
 
-            $userAddress = UserAddress::where('user_id', $request->user_id)->first();
+                $newUser->save();
 
-            if ($userAddress) {
-                $userAddress->present_division_id       = $request->present_division_id;
-                $userAddress->present_district_id       = $request->present_district_id;
-                $userAddress->present_upazila_id        = $request->present_upazila_id;
-                $userAddress->present_address           = $request->present_village_road;
-                $userAddress->present_post_office       = $request->present_post_office;
-                $userAddress->present_post_code         = $request->present_post_code;
-                $userAddress->permanent_division_id     = $request->same_as_present_address ? $request->present_division_id : $request->permanent_division_id;
-                $userAddress->permanent_district_id     = $request->same_as_present_address ? $request->present_district_id:$request->permanent_district_id;
-                $userAddress->permanent_upazila_id      = $request->same_as_present_address ? $request->present_upazila_id : $request->permanent_upazila_id;
-                $userAddress->permanent_post_office     = $request->same_as_present_address ? $request->present_post_office:$request->permanent_post_office;
-                $userAddress->permanent_post_code       = $request->same_as_present_address ? $request->present_post_code : $request->permanent_post_code;
-                $userAddress->permanent_address         = $request->same_as_present_address ? $request->present_village_road:$request->permanent_village_road;
-                $userAddress->same_as_present_address   = $request->same_as_present_address ? 1 : 0;
-            } else {
-                $userAddress = new UserAddress;
+                $userAddress = UserAddress::where('user_id', $request->user_id)->first();
 
-                $userAddress->present_division_id       = $request->present_division_id;
-                $userAddress->present_district_id       = $request->present_district_id;
-                $userAddress->present_upazila_id        = $request->present_upazila_id;
-                $userAddress->present_address           = $request->present_village_road;
-                $userAddress->present_post_office       = $request->present_post_office;
-                $userAddress->present_post_code         = $request->present_post_code;
-                $userAddress->permanent_division_id     = $request->same_as_present_address ? $request->present_division_id : $request->permanent_division_id;
-                $userAddress->permanent_district_id     = $request->same_as_present_address ? $request->present_district_id:$request->permanent_district_id;
-                $userAddress->permanent_upazila_id      = $request->same_as_present_address ? $request->present_upazila_id : $request->permanent_upazila_id;
-                $userAddress->permanent_post_office     = $request->same_as_present_address ? $request->present_post_office:$request->permanent_post_office;
-                $userAddress->permanent_post_code       = $request->same_as_present_address ? $request->present_post_code : $request->permanent_post_code;
-                $userAddress->permanent_address         = $request->same_as_present_address ? $request->present_village_road:$request->permanent_village_road;
-                $userAddress->same_as_present_address   = $request->same_as_present_address ? 1 : 0;
-            }
+                if ($userAddress) {
+                    $userAddress->user_id                   = $newUser->id;
+                    $userAddress->present_division_id       = $request->present_division_id;
+                    $userAddress->present_district_id       = $request->present_district_id;
+                    $userAddress->present_upazila_id        = $request->present_upazila_id;
+                    $userAddress->present_address           = $request->present_village_road;
+                    $userAddress->present_post_office       = $request->present_post_office;
+                    $userAddress->present_post_code         = $request->present_post_code;
+                    $userAddress->permanent_division_id     = $request->same_as_present_address ? $request->present_division_id : $request->permanent_division_id;
+                    $userAddress->permanent_district_id     = $request->same_as_present_address ? $request->present_district_id:$request->permanent_district_id;
+                    $userAddress->permanent_upazila_id      = $request->same_as_present_address ? $request->present_upazila_id : $request->permanent_upazila_id;
+                    $userAddress->permanent_post_office     = $request->same_as_present_address ? $request->present_post_office:$request->permanent_post_office;
+                    $userAddress->permanent_post_code       = $request->same_as_present_address ? $request->present_post_code : $request->permanent_post_code;
+                    $userAddress->permanent_address         = $request->same_as_present_address ? $request->present_village_road:$request->permanent_village_road;
+                    $userAddress->same_as_present_address   = $request->same_as_present_address ? 1 : 0;
+                } else {
+                    $userAddress = new UserAddress;
 
-            $userAddress->save();
+                    $userAddress->user_id                   = $newUser->id;
+                    $userAddress->present_division_id       = $request->present_division_id;
+                    $userAddress->present_district_id       = $request->present_district_id;
+                    $userAddress->present_upazila_id        = $request->present_upazila_id;
+                    $userAddress->present_address           = $request->present_village_road;
+                    $userAddress->present_post_office       = $request->present_post_office;
+                    $userAddress->present_post_code         = $request->present_post_code;
+                    $userAddress->permanent_division_id     = $request->same_as_present_address ? $request->present_division_id : $request->permanent_division_id;
+                    $userAddress->permanent_district_id     = $request->same_as_present_address ? $request->present_district_id:$request->permanent_district_id;
+                    $userAddress->permanent_upazila_id      = $request->same_as_present_address ? $request->present_upazila_id : $request->permanent_upazila_id;
+                    $userAddress->permanent_post_office     = $request->same_as_present_address ? $request->present_post_office:$request->permanent_post_office;
+                    $userAddress->permanent_post_code       = $request->same_as_present_address ? $request->present_post_code : $request->permanent_post_code;
+                    $userAddress->permanent_address         = $request->same_as_present_address ? $request->present_village_road:$request->permanent_village_road;
+                    $userAddress->same_as_present_address   = $request->same_as_present_address ? 1 : 0;
+                }
 
-            $userInfo = UserInfo::where('id', $request->user_info_id)->first();
+                $userAddress->save();
 
-            if ($userInfo) {
-                $userInfo->department_id        = $request->department_id;
-                $userInfo->designation_id       = $request->designation_id;
-                $userInfo->office_id            = $request->office_id;
-                $userInfo->employee_id          = $request->employee_id;
-                $userInfo->gender               = $request->gender;
-                $userInfo->dob                  = $request->dob;
-                $userInfo->nid_no               = $request->nid_no;
-                $userInfo->passport_no          = $request->passport_no;
-                $userInfo->marital_status       = $request->marital_status;
-                $userInfo->religion             = $request->religion;
-                $userInfo->driving_license_no   = $request->driving_license_no;
-                $userInfo->birth_certificate_no = $request->birth_certificate_no;
-                $userInfo->start                = $request->start;
-                // $userInfo->availablity          = $request->availablity ?? 0;
-                $userInfo->updated_by           = $currentUser->id;
+                $userInfo = UserInfo::where('id', $request->user_info_id)->first();
 
-                if ($request->have_company_document == 1) {
-                    if ($request->document) {
-                        foreach ($request->document as $key => $file) {
-                            if ($request->file('document')[$key]) {
-                                $path = $request->file('document')[$key]->store('/public/companyDocument');
-                                $path = Str::replace('public/companyDocument', '', $path);
-                                $companyDoc = Str::replace('/', '', $path);
+                if ($userInfo) {
+                    $userInfo->user_id              = $newUser->id;
+                    $userInfo->department_id        = $request->department_id;
+                    $userInfo->designation_id       = $request->designation_id;
+                    $userInfo->designation          = $request->designation;
+                    $userInfo->office_id            = $request->office_id;
+                    $userInfo->employee_id          = $request->employee_id;
+                    $userInfo->gender               = $request->gender;
+                    $userInfo->dob                  = $request->dob;
+                    $userInfo->nid_no               = $request->nid_no;
+                    $userInfo->passport_no          = $request->passport_no;
+                    $userInfo->marital_status       = $request->marital_status;
+                    $userInfo->religion             = $request->religion;
+                    $userInfo->driving_license_no   = $request->driving_license_no;
+                    $userInfo->birth_certificate_no = $request->birth_certificate_no;
+                    $userInfo->start                = $request->start;
+                    // $userInfo->availablity          = $request->availablity ?? 0;
+                    $userInfo->updated_by           = $currentUser->id;
 
-                                $document['user_id'] = $newUser->id;
-                                $document['document_title'] = $request->document[$key]->getClientOriginalName();
-                                $document['document'] = $companyDoc;
-                                $document['created_by'] = Auth::id();
+                    if ($request->have_company_document == 1) {
+                        if ($request->document) {
+                            foreach ($request->document as $key => $file) {
+                                if ($request->file('document')[$key]) {
+                                    $path = $request->file('document')[$key]->store('/public/companyDocument');
+                                    $path = Str::replace('public/companyDocument', '', $path);
+                                    $companyDoc = Str::replace('/', '', $path);
 
-                                UserCompanyDoc::create($document);
+                                    $document['user_id'] = $newUser->id;
+                                    $document['document_title'] = $request->document[$key]->getClientOriginalName();
+                                    $document['document'] = $companyDoc;
+                                    $document['created_by'] = Auth::id();
+
+                                    UserCompanyDoc::create($document);
+                                }
                             }
                         }
                     }
-                }
 
-                if ($request->image) {
-                    $imagePath = public_path(). '/storage/userImages/' . $userInfo->image;
+                    if ($request->image) {
+                        $imagePath = public_path(). '/storage/userImages/' . $userInfo->image;
 
-                    if(($userInfo->image != '') || ($userInfo->image != NULL)) {
-                        if(file_exists(public_path(). '/storage/userImages/' . $userInfo->image)){
-                            unlink($imagePath);
+                        if(($userInfo->image != '') || ($userInfo->image != NULL)) {
+                            if(file_exists(public_path(). '/storage/userImages/' . $userInfo->image)){
+                                unlink($imagePath);
+                            }
                         }
+
+                        $cp = $request->file('image');
+                        $extension = strtolower($cp->getClientOriginalExtension());
+                        $randomFileName = 'userImage'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
+                        Storage::disk('public')->put('userImages/' . $randomFileName, File::get($cp));
+
+                        $userInfo->image = $randomFileName;
                     }
 
-                    $cp = $request->file('image');
-                    $extension = strtolower($cp->getClientOriginalExtension());
-                    $randomFileName = 'userImage'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
-                    Storage::disk('public')->put('userImages/' . $randomFileName, File::get($cp));
+                    if ($request->signature) {
+                        $signature_path = public_path(). '/storage/signature/' . $userInfo->signature;
 
-                    $userInfo->image = $randomFileName;
-                }
-
-                if ($request->signature) {
-                    $signature_path = public_path(). '/storage/signature/' . $userInfo->signature;
-
-                    if(($userInfo->signature != '') || ($userInfo->signature != NULL)) {
-                        if(file_exists(public_path(). '/storage/signature/' . $userInfo->signature)){
-                            unlink($signature_path);
+                        if(($userInfo->signature != '') || ($userInfo->signature != NULL)) {
+                            if(file_exists(public_path(). '/storage/signature/' . $userInfo->signature)){
+                                unlink($signature_path);
+                            }
                         }
+
+                        $cp = $request->file('signature');
+                        $extension = strtolower($cp->getClientOriginalExtension());
+                        $signature = 'signature'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
+                        Storage::disk('public')->put('signature/'.$signature, File::get($cp));
+
+                        $userInfo->signature = $signature;
                     }
+                } else {
+                    $userInfo = new UserInfo;
 
-                    $cp = $request->file('signature');
-                    $extension = strtolower($cp->getClientOriginalExtension());
-                    $signature = 'signature'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
-                    Storage::disk('public')->put('signature/'.$signature, File::get($cp));
+                    $userInfo->user_id              = $newUser->id;
+                    $userInfo->department_id        = $request->department_id;
+                    $userInfo->designation_id       = $request->designation_id;
+                    $userInfo->designation          = $request->designation;
+                    $userInfo->office_id            = $request->office_id;
+                    $userInfo->employee_id          = $request->employee_id;
+                    $userInfo->gender               = $request->gender;
+                    $userInfo->dob                  = $request->dob;
+                    $userInfo->nid_no               = $request->nid_no;
+                    $userInfo->passport_no          = $request->passport_no;
+                    $userInfo->marital_status       = $request->marital_status;
+                    $userInfo->religion             = $request->religion;
+                    $userInfo->driving_license_no   = $request->driving_license_no;
+                    $userInfo->birth_certificate_no = $request->birth_certificate_no;
+                    $userInfo->start                = $request->start;
+                    // $userInfo->availablity          = $request->availablity ?? 0;
+                    $userInfo->updated_by           = $currentUser->id;
 
-                    $userInfo->signature = $signature;
-                }
-            } else {
-                $userInfo = new UserInfo;
+                    if ($request->have_company_document == 1) {
+                        if ($request->document) {
+                            foreach ($request->document as $key => $file) {
+                                if ($request->file('document')[$key]) {
+                                    $path = $request->file('document')[$key]->store('/public/companyDocument');
+                                    $path = Str::replace('public/companyDocument', '', $path);
+                                    $companyDoc = Str::replace('/', '', $path);
 
-                $userInfo->department_id        = $request->department_id;
-                $userInfo->designation_id       = $request->designation_id;
-                $userInfo->office_id            = $request->office_id;
-                $userInfo->employee_id          = $request->employee_id;
-                $userInfo->gender               = $request->gender;
-                $userInfo->dob                  = $request->dob;
-                $userInfo->nid_no               = $request->nid_no;
-                $userInfo->passport_no          = $request->passport_no;
-                $userInfo->marital_status       = $request->marital_status;
-                $userInfo->religion             = $request->religion;
-                $userInfo->driving_license_no   = $request->driving_license_no;
-                $userInfo->birth_certificate_no = $request->birth_certificate_no;
-                $userInfo->start                = $request->start;
-                // $userInfo->availablity          = $request->availablity ?? 0;
-                $userInfo->updated_by           = $currentUser->id;
+                                    $document['user_id'] = $newUser->id;
+                                    $document['document_title'] = $request->document[$key]->getClientOriginalName();
+                                    $document['document'] = $companyDoc;
+                                    $document['created_by'] = Auth::id();
 
-                if ($request->have_company_document == 1) {
-                    if ($request->document) {
-                        foreach ($request->document as $key => $file) {
-                            if ($request->file('document')[$key]) {
-                                $path = $request->file('document')[$key]->store('/public/companyDocument');
-                                $path = Str::replace('public/companyDocument', '', $path);
-                                $companyDoc = Str::replace('/', '', $path);
-
-                                $document['user_id'] = $newUser->id;
-                                $document['document_title'] = $request->document[$key]->getClientOriginalName();
-                                $document['document'] = $companyDoc;
-                                $document['created_by'] = Auth::id();
-
-                                UserCompanyDoc::create($document);
+                                    UserCompanyDoc::create($document);
+                                }
                             }
                         }
                     }
-                }
 
-                if ($request->image) {
-                    $imagePath = public_path(). '/storage/userImages/' . $userInfo->image;
+                    if ($request->image) {
+                        $imagePath = public_path(). '/storage/userImages/' . $userInfo->image;
 
-                    if(($userInfo->image != '') || ($userInfo->image != NULL)) {
-                        if(file_exists(public_path(). '/storage/userImages/' . $userInfo->image)){
-                            unlink($imagePath);
+                        if(($userInfo->image != '') || ($userInfo->image != NULL)) {
+                            if(file_exists(public_path(). '/storage/userImages/' . $userInfo->image)){
+                                unlink($imagePath);
+                            }
                         }
+
+                        $cp = $request->file('image');
+                        $extension = strtolower($cp->getClientOriginalExtension());
+                        $randomFileName = 'userImage'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
+                        Storage::disk('public')->put('userImages/' . $randomFileName, File::get($cp));
+
+                        $userInfo->image = $randomFileName;
                     }
 
-                    $cp = $request->file('image');
-                    $extension = strtolower($cp->getClientOriginalExtension());
-                    $randomFileName = 'userImage'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
-                    Storage::disk('public')->put('userImages/' . $randomFileName, File::get($cp));
+                    if ($request->signature) {
+                        $signature_path = public_path(). '/storage/signature/' . $userInfo->signature;
 
-                    $userInfo->image = $randomFileName;
+                        if (($userInfo->signature != '') || ($userInfo->signature != NULL)) {
+                            if(file_exists(public_path(). '/storage/signature/' . $userInfo->signature)){
+                                unlink($signature_path);
+                            }
+                        }
+
+                        $cp = $request->file('signature');
+                        $extension = strtolower($cp->getClientOriginalExtension());
+                        $signature = 'signature'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
+                        Storage::disk('public')->put('signature/'.$signature, File::get($cp));
+
+                        $userInfo->signature = $signature;
+                    }
                 }
 
-                if ($request->signature) {
-                    $signature_path = public_path(). '/storage/signature/' . $userInfo->signature;
+                $userInfo->save();
 
-                    if(($userInfo->signature != '') || ($userInfo->signature != NULL)) {
-                        if(file_exists(public_path(). '/storage/signature/' . $userInfo->signature)){
-                            unlink($signature_path);
+                if ($request->academic_exam_form_id) {
+                    AcademicRecord::where('user_id', $newUser->id)->delete();
+
+                    foreach ($request->academic_exam_form_id as $key => $value) {
+                        if(($request->academic_exam_form_id_data[$key] ?? 0) == 1) {
+                            $data['name_en'] = $request->academic_exam_form_name[$key] ?? NULL;
+                            $data['user_id'] = $newUser->id;
+                            $data['academic_exam_form_id'] = $value;
+                            $data['roll'] = $request->roll[$key] ?? NULL;
+                            $data['pass_year'] = $request->pass_year[$key] ?? NULL;
+                            $data['institute_id'] = $request->institute_id[$key] ?? NULL;
+                            $data['institute_name'] = $request->institute_name[$key] ?? NULL;
+                            $data['exam_id'] = $request->exam_id[$key] ?? NULL;
+                            $data['exam_name'] = $request->exam_name[$key] ?? NULL;
+                            $data['board_id'] = $request->board_id[$key] ?? NULL;
+                            $data['board_name'] = $request->board_name[$key] ?? NULL;
+                            $data['reg_no'] = $request->reg_no[$key] ?? NULL;
+                            $data['subject_id'] = $request->subject_id[$key] ?? NULL;
+                            $data['subject_name'] = $request->subject_name[$key] ?? NULL;
+                            $data['result_type'] = $request->result_type[$key] ?? NULL;
+                            $data['result'] = $request->result[$key] ?? NULL;
+                            $data['duration_id'] = $request->duration_id[$key] ?? NULL;
+                            $data['status'] = $request->academic_exam_form_id_data[$key] ?? 0;
+
+                            if ((isset($request->file('certificate_file')[$key]))) {
+                                $path = $request->file('certificate_file')[$key]->store('/public/certificate_file');
+                                $path = Str::replace('public/certificate_file', '', $path);
+                                $documentFile = Str::replace('/', '', $path);
+                                $data['certificate_file'] = $documentFile;
+                            } else if(isset($request->old_certificate_file[$key])) {
+                                
+                                $data['certificate_file'] = $request->old_certificate_file[$key];
+                            } else {
+                                $data['certificate_file'] = NULL;
+                            }
+
+                            AcademicRecord::create($data);
                         }
                     }
-
-                    $cp = $request->file('signature');
-                    $extension = strtolower($cp->getClientOriginalExtension());
-                    $signature = 'signature'.date('Y_m_d_his').'_'.rand(10000000,99999999).'.'.$extension;
-                    Storage::disk('public')->put('signature/'.$signature, File::get($cp));
-
-                    $userInfo->signature = $signature;
                 }
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User Information Updated Successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => "You don't have permission!",
+                ], 403);
             }
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-            $userInfo->save();
+            \Log::error($e->getMessage());
 
-            if ($request->academic_exam_form_id) {
-                AcademicRecord::where('user_id', $newUser->id)->delete();
-
-                foreach ($request->academic_exam_form_id as $key => $value) {
-                    if(($request->academic_exam_form_id_data[$key] ?? 0) == 1) {
-                        $data['name_en'] = $request->academic_exam_form_name[$key] ?? NULL;
-                        $data['user_id'] = $newUser->id;
-                        $data['academic_exam_form_id'] = $value;
-                        $data['roll'] = $request->roll[$key] ?? NULL;
-                        $data['pass_year'] = $request->pass_year[$key] ?? NULL;
-                        $data['institute_id'] = $request->institute_id[$key] ?? NULL;
-                        $data['institute_name'] = $request->institute_name[$key] ?? NULL;
-                        $data['exam_id'] = $request->exam_id[$key] ?? NULL;
-                        $data['exam_name'] = $request->exam_name[$key] ?? NULL;
-                        $data['board_id'] = $request->board_id[$key] ?? NULL;
-                        $data['board_name'] = $request->board_name[$key] ?? NULL;
-                        $data['reg_no'] = $request->reg_no[$key] ?? NULL;
-                        $data['subject_id'] = $request->subject_id[$key] ?? NULL;
-                        $data['subject_name'] = $request->subject_name[$key] ?? NULL;
-                        $data['result_type'] = $request->result_type[$key] ?? NULL;
-                        $data['result'] = $request->result[$key] ?? NULL;
-                        $data['duration_id'] = $request->duration_id[$key] ?? NULL;
-                        $data['status'] = $request->academic_exam_form_id_data[$key] ?? 0;
-
-                        if ((isset($request->file('certificate_file')[$key]))) {
-                            $path = $request->file('certificate_file')[$key]->store('/public/certificate_file');
-                            $path = Str::replace('public/certificate_file', '', $path);
-                            $documentFile = Str::replace('/', '', $path);
-                            $data['certificate_file'] = $documentFile;
-                        } else if(isset($request->old_certificate_file[$key])) {
-                            
-                            $data['certificate_file'] = $request->old_certificate_file[$key];
-                        } else {
-                            $data['certificate_file'] = NULL;
-                        }
-
-                        AcademicRecord::create($data);
-                    }
-                }
-            }
-
-            return redirect()->route('admin.user.index')->with('success', "Employee information updated successfully..!");
-        } else {
-            return abort(403, "You don't have permission..!");
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred:' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -1260,28 +1293,37 @@ class UserController extends Controller
 
     public function approve(Request $request)
     {
-        $user = Auth::user();
+        try {
+            $authUser = Auth::user();
 
-        if (!(Gate::allows('approve_user', $user))) {
-            return abort(403, "You don't have permission!");
-        } else {
-            $user = User::where('id', $request->id)->first();
-
-            if ($user) {
-                $user->status = 1;
-
-                $user->save();
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'User Approved Successfully!'
-                ]);
+            if (!(Gate::allows('approve_user', $authUser))) {
+                return abort(403, "You don't have permission!");
             } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User Not Found!'
-                ]);
+                $setting = Setting::first();
+                $user = User::where('id', $request->id)->first();
+
+                if ($user) {
+                    $user->status = 1;
+
+                    $user->save();
+
+                    Mail::to($user->email)->send(new UserAccountApproveToUserMail($setting, $user));
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'User Approved Successfully!'
+                    ]);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'User Not Found!'
+                    ]);
+                }
             }
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+
+            return redirect()->route('login')->withErrors('Something went wrong');
         }
     }
 
@@ -1298,6 +1340,10 @@ class UserController extends Controller
                 $user->status = 2;
 
                 $user->save();
+
+                $setting = Setting::first();
+
+                Mail::to($user->email)->send(new UserAccountApproveToUserMail($setting, $user));
 
                 return response()->json([
                     'success' => true,

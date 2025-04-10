@@ -1105,7 +1105,7 @@
         $(document).ready(function (e) {
             $('.select2').select2();
             
-            $('#image').change(function(){
+            $('#image').change(function() {
                 let reader = new FileReader();
 
                 reader.onload = (e) => { 
@@ -1115,7 +1115,7 @@
                 reader.readAsDataURL(this.files[0]); 
             });
 
-            $('#signature').change(function(){
+            $('#signature').change(function() {
                 let reader = new FileReader();
 
                 reader.onload = (e) => { 
@@ -1277,7 +1277,7 @@
 
                             setTimeout(() => window.location.reload(), 1000);
                         } else {
-                            toastr.error(response.message || 'An error occurred!');
+                            Swal.fire('Error', response.message || 'An error occurred.', 'error');
 
                             $('#submitBtn').prop('disabled', false);
                             $('#submitBtn').html(`Submit`);
