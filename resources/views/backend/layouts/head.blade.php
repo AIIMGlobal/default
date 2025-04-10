@@ -125,6 +125,9 @@
             }
 
             /* sidebar css */
+            .simplebar-content-wrapper, .simplebar-wrapper, .simplebar-height-auto-observer-wrapper, .simplebar-height-auto-observer, .simplebar-mask {
+                overflow: visible !important;
+            }
             .navbar-menu {
                 width: 280px;
             }

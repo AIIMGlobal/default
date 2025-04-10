@@ -170,7 +170,7 @@ class LoginController extends Controller
 
                 DB::commit();
 
-                return redirect()->route('login')->with('success', 'User registration successfull. Please wait for account approval.');
+                return redirect()->route('login')->with('success', 'User registration successful. Please wait for account approval.');
             }
         } catch (\Exception $e) {
             DB::rollBack();
