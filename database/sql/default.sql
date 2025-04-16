@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 04, 2025 at 09:21 AM
+-- Generation Time: Apr 16, 2025 at 07:14 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -800,7 +800,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 
 CREATE TABLE `notifications` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `type` int(11) DEFAULT NULL COMMENT '1: new leave notification; 2=leave status approve; 3=leave status decline , 11=tender history',
+  `type` int(11) DEFAULT NULL COMMENT '1=new leave notification; 2=leave status approve; 3=leave status decline, 4=new user registration',
   `title` varchar(255) DEFAULT NULL,
   `message` varchar(255) DEFAULT NULL,
   `route_name` text DEFAULT NULL,
@@ -814,6 +814,14 @@ CREATE TABLE `notifications` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `type`, `title`, `message`, `route_name`, `sender_role_id`, `sender_user_id`, `receiver_role_id`, `receiver_user_id`, `read_status`, `read_at`, `created_at`, `updated_at`) VALUES
+(1, 4, 'New User Registration', 'A new user has registered.', 'http://localhost:8000/admin/user/show/eyJpdiI6InN5Um9UVytYUkNySzQ1ek5pSnJaMXc9PSIsInZhbHVlIjoiRllLdDRDV0FKUUZrTUNjaDFncml0dz09IiwibWFjIjoiMjA2MDY0MGZjNDkzZWYxZmFjMjM3Yzk0YTFiZmY3NTVhNGQ3N2NmZDUwNDdlMGQ3YTM5Y2UwYmZiNTJmYTRhZiIsInRhZyI6IiJ9', 4, 7, 1, 1, 1, '2025-03-12 15:58:14', '2025-03-12 08:40:57', '2025-03-12 09:58:14'),
+(2, 4, 'New User Registration', 'A new user has registered.', 'http://localhost:8000/authorized-user/user/show/eyJpdiI6ImtqYlQvWTRTMHEwNUxQUXEvS1I1a2c9PSIsInZhbHVlIjoidjYyVXNDVFg2clI4MElmcFZIbFIyUT09IiwibWFjIjoiZGM0OTJiMmNjZmIwNjk2YzNkNzQ3ZThhZWMzNjliNWYwZGYzOTdlOTg3MDUwY2FlYzA0MDg4M2QzYWE5ZWQwYyIsInRhZyI6IiJ9', 4, 19, 1, 1, 0, NULL, '2025-04-10 12:08:18', '2025-04-10 12:08:18');
+
 -- --------------------------------------------------------
 
 --
@@ -824,9 +832,12 @@ CREATE TABLE `offices` (
   `id` int(11) NOT NULL,
   `head_office` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
+  `short_name` varchar(255) DEFAULT NULL,
   `division_id` int(11) DEFAULT NULL,
   `district_id` int(11) DEFAULT NULL,
   `upazila_id` int(11) DEFAULT NULL,
+  `website_url` longtext DEFAULT NULL,
+  `logo` varchar(255) DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
@@ -838,9 +849,12 @@ CREATE TABLE `offices` (
 -- Dumping data for table `offices`
 --
 
-INSERT INTO `offices` (`id`, `head_office`, `name`, `division_id`, `district_id`, `upazila_id`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, NULL, 'MBD', 7, 32, 577, 1, 1, NULL, '2023-12-07 11:20:51', '2023-12-07 11:20:51'),
-(2, NULL, 'Mohakhali DOHS', 6, 47, 1, 1, 1, NULL, '2023-12-12 15:57:11', '2023-12-12 15:57:11');
+INSERT INTO `offices` (`id`, `head_office`, `name`, `short_name`, `division_id`, `district_id`, `upazila_id`, `website_url`, `logo`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'MBD', NULL, 7, 32, 577, NULL, NULL, 2, 1, NULL, '2023-12-07 11:20:51', '2025-03-20 09:50:19'),
+(2, NULL, 'Mohakhali DOHS', NULL, 6, 47, 1, NULL, NULL, 1, 1, NULL, '2023-12-12 15:57:11', '2023-12-12 15:57:11'),
+(3, NULL, 'Bangladesh Agricultural Research Council', 'BARC', 3, 13, 133, 'https://barc.gov.bd/', 'organizations/1742456376_WuC7ti4AsvrvYDeDKEZRuwxEiGBIIJViZ1Kasg2e.png', 1, 1, 1, '2025-03-20 06:24:10', '2025-03-20 07:39:36'),
+(4, NULL, 'Bangladesh Agricultural Research Institute', 'BARI', 2, 11, 112, 'https://bari.gov.bd/', 'organizations/1742452296_1524407119.jpg', 1, 1, NULL, '2025-03-20 06:31:36', '2025-03-20 06:31:36'),
+(5, NULL, 'Bangladesh Rice Research Institute', 'BRRI', 3, 13, 130, 'www.brri.gov.bd', 'organizations/1742456618_1524407119.jpg', 1, 1, NULL, '2025-03-20 07:43:38', '2025-03-20 07:43:38');
 
 -- --------------------------------------------------------
 
@@ -863,7 +877,6 @@ INSERT INTO `password_reset_tokens` (`email`, `token`, `created_at`) VALUES
 ('atiqewu012@gmail.com', '$2y$10$zsy0uJ52V/lGW9aWxjY4JOXnJpA7VHh0vlcWkNSMO/PgGUByAcgyu', '2023-06-14 04:01:00'),
 ('khalesi2@email.com', '$2y$10$Oo8FN.0rIV30qbDS5/GOnOS3w2WOLBLhdcRhiHmLwI8XHZS9gPzUS', '2023-12-13 12:37:16'),
 ('mamun.hossain@sebpo.com', '$2y$10$xUG3wpZnTuq0NN4tSBcrPeC0o6UmjVjk9j4dLVTG1jBpKMyOMuK3a', '2024-01-23 19:53:52'),
-('rayhan.zaman333@gmail.com', '$2y$10$jVCdQ6qvGgQ09YVCX9JEseQw0YhUNJU9ZkJyJRRQJ8O4z/taC4JGG', '2023-07-29 18:10:59'),
 ('sebpo.bd.team@gmail.com', '$2y$10$XAvFKVmdELmrrxXLaUIojOGxFbU7ubsKXULg85vaimbloTVu8vg5C', '2023-06-20 18:27:00');
 
 -- --------------------------------------------------------
@@ -992,7 +1005,6 @@ INSERT INTO `permissions` (`id`, `name_en`, `name_bn`, `status`, `created_by`, `
 (455, 'manage_post_category', 'manage_post_category', 1, 1, NULL, NULL),
 (459, 'show_post_category', 'show_post_category', 1, 1, NULL, NULL),
 (493, 'manage_report', 'manage_report', 1, 1, NULL, NULL),
-(494, 'employee_report', 'employee_report', 1, 1, NULL, NULL),
 (515, 'employee_report', 'employee_report', 1, 1, NULL, NULL),
 (516, 'add_educational_form', 'add_educational_form', 1, 1, NULL, NULL),
 (517, 'edit_educational_form', 'edit_educational_form', 1, 1, NULL, NULL),
@@ -1121,7 +1133,13 @@ INSERT INTO `permissions` (`id`, `name_en`, `name_bn`, `status`, `created_by`, `
 (737, 'pm_get_eticket_support', 'pm_get_eticket_support', 1, 1, NULL, NULL),
 (738, 'employee_get_eticket_support', 'employee_get_eticket_support', 1, 1, NULL, NULL),
 (739, 'eTicket_status_record', 'eTicket_status_record', 1, 1, NULL, NULL),
-(740, 'change_eTicket_status', 'change_eTicket_status', 1, 1, NULL, NULL);
+(740, 'change_eTicket_status', 'change_eTicket_status', 1, 1, NULL, NULL),
+(741, 'user_list', 'user_list', 1, 1, NULL, NULL),
+(742, 'employee_list', 'employee_list', 1, 1, NULL, NULL),
+(743, 'delete_user', 'delete_user', 1, 1, NULL, NULL),
+(744, 'approve_user', 'approve_user', 1, 1, NULL, NULL),
+(745, 'decline_user', 'decline_user', 1, 1, NULL, NULL),
+(746, 'user_count', 'user_count', 1, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1385,11 +1403,11 @@ INSERT INTO `roles` (`id`, `access_all`, `name_en`, `name_bn`, `display_name`, `
 (1, NULL, 'Super Admin', 'Super Admin', 'Super Admin', 1, 1, 1, 1, '2022-07-19 09:32:20', '2023-11-29 17:35:24'),
 (2, NULL, 'Admin', 'Admin', 'Admin', 2, 1, 1, 1, '2022-07-19 09:32:20', '2023-11-29 17:35:40'),
 (3, NULL, 'Employee', 'Employee', 'Employee', 3, 1, 1, NULL, '2023-01-24 11:39:02', '2023-01-24 11:39:02'),
-(4, NULL, 'Client', 'Client', 'Client', 4, 1, 1, 1, '2023-01-24 11:39:02', '2023-11-29 16:06:46'),
-(5, NULL, 'Receptionist', 'Receptionist', 'Receptionist', 5, 2, 1, NULL, '2023-01-24 11:39:02', '2023-12-07 16:51:41'),
-(6, NULL, 'Moderator', 'Moderator', 'Moderator', 6, 2, 1, NULL, '2023-04-09 17:31:52', '2023-12-07 16:51:50'),
+(4, NULL, 'User', 'User', 'User', 4, 1, 1, 1, '2023-01-24 11:39:02', '2023-11-29 16:06:46'),
+(5, NULL, 'Content Manager', 'Content Manager', 'Content Manager', 5, 2, 1, NULL, '2023-01-24 11:39:02', '2023-12-07 16:51:41'),
+(6, NULL, 'System Observer', 'System Observer', 'System Observer', 6, 2, 1, NULL, '2023-04-09 17:31:52', '2023-12-07 16:51:50'),
 (7, NULL, 'Project Manager', 'Project Manager', 'Project Manager', 7, 1, 1, 1, '2023-09-05 01:27:26', '2023-11-28 17:26:55'),
-(8, NULL, 'Visitor', 'Visitor', 'Visitor', 8, 2, 1, 1, '2023-11-28 17:23:56', '2023-12-28 13:12:17'),
+(8, NULL, 'Director', 'Director', 'Director', 8, 2, 1, 1, '2023-11-28 17:23:56', '2023-12-28 13:12:17'),
 (9, NULL, 'Head of Department', 'Head of Department', 'Head of Department', 9, 2, 1, NULL, '2023-12-20 22:51:08', '2023-12-28 13:12:12');
 
 -- --------------------------------------------------------
@@ -1869,11 +1887,12 @@ INSERT INTO `role_permissions` (`id`, `user_id`, `permission_id`, `role_id`, `cr
 (2503, NULL, 737, 7, 1, NULL, '2024-03-05 20:56:55', '2024-03-05 20:56:55'),
 (2504, NULL, 739, 7, 1, NULL, '2024-03-05 20:56:55', '2024-03-05 20:56:55'),
 (2505, NULL, 740, 1, 1, NULL, '2024-03-05 21:00:12', '2024-03-05 21:00:12'),
-(2506, NULL, 696, 4, 1, NULL, '2024-03-05 21:06:51', '2024-03-05 21:06:51'),
-(2507, NULL, 728, 4, 1, NULL, '2024-03-05 21:06:51', '2024-03-05 21:06:51'),
-(2508, NULL, 729, 4, 1, NULL, '2024-03-05 21:06:51', '2024-03-05 21:06:51'),
-(2509, NULL, 730, 4, 1, NULL, '2024-03-05 21:06:51', '2024-03-05 21:06:51'),
-(2510, NULL, 731, 4, 1, NULL, '2024-03-05 21:06:51', '2024-03-05 21:06:51');
+(2518, NULL, 741, 1, 1, NULL, '2025-03-19 08:34:55', '2025-03-19 08:34:55'),
+(2519, NULL, 742, 1, 1, NULL, '2025-03-19 08:34:55', '2025-03-19 08:34:55'),
+(2520, NULL, 743, 1, 1, NULL, '2025-04-06 09:17:45', '2025-04-06 09:17:45'),
+(2521, NULL, 744, 1, 1, NULL, '2025-04-06 10:22:57', '2025-04-06 10:22:57'),
+(2522, NULL, 745, 1, 1, NULL, '2025-04-06 10:22:57', '2025-04-06 10:22:57'),
+(2523, NULL, 746, 1, 1, NULL, '2025-04-07 09:11:07', '2025-04-07 09:11:07');
 
 -- --------------------------------------------------------
 
@@ -1907,7 +1926,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `title`, `sub_title`, `logo`, `soft_logo`, `social_link`, `address`, `phone`, `mobile`, `email`, `alt_phone`, `alt_mobile`, `alt_email`, `copyright`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, 'Sixth Sense', 'Project Management Software', '6XLoEFgsdGhmrYxEv5l0NFp6jZhBJOybathUy0yy.png', 'SzmzLIQK2R1NysPHU4w3GpQrn84d8eV91umQoEdZ.jpg', NULL, NULL, NULL, '01536256985', 'demo@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, '2022-08-29 10:16:43', '2025-03-04 06:30:13');
+(1, 'BARC Repository Software', 'BARC', 'c7rHl96fc2KIMmPtf6GpcABf8lFTFoSWIKmf0gcC.png', 'WuC7ti4AsvrvYDeDKEZRuwxEiGBIIJViZ1Kasg2e.png', NULL, NULL, NULL, '01536256985', 'demo@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, '2022-08-29 10:16:43', '2025-03-13 06:37:57');
 
 -- --------------------------------------------------------
 
@@ -11177,13 +11196,13 @@ CREATE TABLE `users` (
   `name_en` text DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `mobile` varchar(255) DEFAULT NULL,
-  `user_type` int(11) NOT NULL COMMENT '1=super-admin, 2=admin, 3=employee, 4=visitor, 5=executive committee, 6=standing committee, 7=client, 8=contact person',
+  `user_type` int(11) NOT NULL COMMENT '1=super-admin, 2=admin, 3=employee, 4=user',
   `role_id` int(11) DEFAULT NULL,
   `user_category_id` int(11) DEFAULT NULL,
   `client_id` int(11) DEFAULT NULL,
-  `contact_person_designation` text DEFAULT NULL,
+  `google_id` varchar(255) DEFAULT NULL,
   `details` longtext DEFAULT NULL,
-  `status` int(11) DEFAULT NULL COMMENT '1=active, 2=disable',
+  `status` int(11) DEFAULT NULL COMMENT '0=pending, 1=approved, 2=declined, 3=archived, 4=pending verification, 5=deleted',
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
@@ -11195,8 +11214,11 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name_bn`, `name_en`, `email`, `mobile`, `user_type`, `role_id`, `user_category_id`, `client_id`, `contact_person_designation`, `details`, `status`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Super Admin', 'Super Admin', 'superadmin@gmail.com', '01234567897', 1, 1, NULL, NULL, NULL, NULL, 1, NULL, '$2y$10$6hyf0B1NnkBd7cbmpU3M6un4te6r9WVVRQNh40Cxiak1njMT32HW2', NULL, '2022-08-25 12:33:48', '2023-12-28 17:49:41');
+INSERT INTO `users` (`id`, `name_bn`, `name_en`, `email`, `mobile`, `user_type`, `role_id`, `user_category_id`, `client_id`, `google_id`, `details`, `status`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'Super Admin', 'rayhan.zaman@sebpo.com', '01234567890', 1, 1, NULL, NULL, NULL, NULL, 1, NULL, '$2y$10$6hyf0B1NnkBd7cbmpU3M6un4te6r9WVVRQNh40Cxiak1njMT32HW2', NULL, '2022-08-25 12:33:48', '2025-03-13 11:11:09'),
+(7, NULL, 'Rayhan Zaman', 'rayhan.zaman@sebpo.com', '01521449100', 4, 4, 1, NULL, NULL, NULL, 1, NULL, '$2y$10$dXPXUfXIRKFmU.nIwFw9zeEcxxQaE5j0qnjCpeR8dWHC8kX7xUoce', NULL, '2025-03-12 08:40:50', '2025-03-25 11:45:44'),
+(17, NULL, 'Rayhan Zaman', 'test@gmail.com', '01521449875', 4, 4, 3, NULL, NULL, NULL, 3, NULL, '$2y$10$a6DaeDk8Ej9xPPYqIIJPhu3PwiEbyvwJmr/i3oZNTz8NGf2rw1yPK', NULL, '2025-04-06 08:12:58', '2025-04-10 09:57:00'),
+(19, NULL, 'Rayhan Zaman', 'rayhan.zaman333@gmail.com', NULL, 4, 4, NULL, NULL, '100953447460615822249', NULL, 1, NULL, '$2y$10$KokuO0xmCdTOXLbOQOcG8Ojm1Pynl3bq74oYp9YfroP2pS1J9D6ti', NULL, '2025-04-10 12:08:10', '2025-04-10 12:21:30');
 
 -- --------------------------------------------------------
 
@@ -11229,7 +11251,12 @@ CREATE TABLE `user_addresses` (
 --
 
 INSERT INTO `user_addresses` (`id`, `user_id`, `present_division_id`, `present_district_id`, `present_upazila_id`, `present_post_office`, `present_post_code`, `permanent_division_id`, `permanent_district_id`, `permanent_upazila_id`, `permanent_post_office`, `permanent_post_code`, `present_address`, `permanent_address`, `same_as_present_address`, `created_at`, `updated_at`) VALUES
-(1, 1, 4, 14, 32, NULL, '3500', 4, 14, 32, NULL, '3500', 'Wahab Monzil, Housing Road', 'Wahab Monzil, Housing Road', 1, '2023-03-06 20:43:10', '2023-12-28 17:49:41');
+(1, 1, 4, NULL, NULL, NULL, '3500', 4, NULL, NULL, NULL, '3500', 'Wahab Monzil, Housing Road', 'Wahab Monzil, Housing Road', 1, '2023-03-06 20:43:10', '2025-03-13 11:11:09'),
+(2, 17, 2, 8, 62, 'Sadar', '3500', 2, 8, 62, '62', '3500', '23/A', '23/A', 1, '2025-04-06 08:12:58', '2025-04-06 08:12:58'),
+(3, NULL, 3, 13, NULL, NULL, NULL, 3, 13, NULL, NULL, NULL, 'Road 1, 13/A', 'Road 1, 13/A', 1, '2025-04-10 06:16:30', '2025-04-10 06:16:30'),
+(4, NULL, 3, 13, 130, NULL, '3500', 3, 13, 130, NULL, '3500', NULL, NULL, 1, '2025-04-10 06:35:40', '2025-04-10 06:35:40'),
+(5, NULL, 3, 13, 130, 'CM', '3500', 3, 13, 130, 'CM', '3500', 'Road 1, 13/A', 'Road 1, 13/A', 1, '2025-04-10 08:58:14', '2025-04-10 08:58:14'),
+(6, NULL, 3, 13, 130, 'CM', '3500', 3, 13, 130, 'CM', '3500', 'Road 1, 13/A', 'Road 1, 13/A', 1, '2025-04-10 09:23:01', '2025-04-10 09:23:01');
 
 -- --------------------------------------------------------
 
@@ -11286,6 +11313,8 @@ CREATE TABLE `user_infos` (
   `user_id` int(11) DEFAULT NULL,
   `department_id` int(11) DEFAULT NULL,
   `designation_id` int(11) DEFAULT NULL,
+  `organization` varchar(255) DEFAULT NULL,
+  `designation` varchar(255) DEFAULT NULL,
   `address` mediumtext DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `office_id` int(11) DEFAULT NULL,
@@ -11313,8 +11342,11 @@ CREATE TABLE `user_infos` (
 -- Dumping data for table `user_infos`
 --
 
-INSERT INTO `user_infos` (`id`, `user_id`, `department_id`, `designation_id`, `address`, `image`, `office_id`, `employee_id`, `gender`, `dob`, `nid_no`, `passport_no`, `driving_license_no`, `religion`, `availablity`, `visitor_organization`, `visitor_designation`, `birth_certificate_no`, `marital_status`, `signature`, `start`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, 1, NULL, NULL, NULL, 'userImage2023_11_30_111448_33496121.jpeg', NULL, '1', 'Male', '2023-11-30', '18948742846', 'AA00BB', '285628582357', 'Islam', 1, NULL, NULL, '2659926526', 'Single', 'signature2023_11_30_111448_48171751.jpg', NULL, 1, 1, '2023-11-30 16:06:56', '2023-11-30 16:33:28');
+INSERT INTO `user_infos` (`id`, `user_id`, `department_id`, `designation_id`, `organization`, `designation`, `address`, `image`, `office_id`, `employee_id`, `gender`, `dob`, `nid_no`, `passport_no`, `driving_license_no`, `religion`, `availablity`, `visitor_organization`, `visitor_designation`, `birth_certificate_no`, `marital_status`, `signature`, `start`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(1, 1, NULL, NULL, NULL, NULL, NULL, 'userImage2025_03_13_051150_10417729.png', NULL, '1', 'Male', '2023-11-30', '18948742846', 'AA00BB', '285628582357', 'Islam', 1, NULL, NULL, '2659926526', 'Single', 'signature2023_11_30_111448_48171751.jpg', NULL, 1, 1, '2023-11-30 16:06:56', '2025-03-13 11:11:50'),
+(6, 7, NULL, NULL, 'SEBPO', 'Senior Software Engineer', NULL, 'userImages/1kPgwNi5z5gTr89GfO2tN5wVM2bQvV2p8jYxbFbF.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-12 08:40:50', '2025-03-12 08:40:50'),
+(16, 17, 1, 2, 'SEBPO', 'Ass. Manager', NULL, 'userImage2025_04_06_021258_54702425.jpg', NULL, NULL, 'Male', '2025-04-14', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'signature2025_04_06_021258_88147852.jpeg', NULL, 1, NULL, '2025-04-06 08:12:58', '2025-04-06 08:12:58'),
+(17, NULL, 1, NULL, NULL, NULL, NULL, 'userImage2025_04_10_121630_26508796.png', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 'signature2025_04_10_121630_65643590.jpeg', NULL, NULL, 1, '2025-04-10 06:16:30', '2025-04-10 06:16:30');
 
 --
 -- Indexes for dumped tables
@@ -11769,19 +11801,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `offices`
 --
 ALTER TABLE `offices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=741;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=749;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -11841,7 +11873,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `role_permissions`
 --
 ALTER TABLE `role_permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2518;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2524;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -11877,13 +11909,13 @@ ALTER TABLE `upazilas`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `user_addresses`
 --
 ALTER TABLE `user_addresses`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `user_categories`
@@ -11901,7 +11933,7 @@ ALTER TABLE `user_company_docs`
 -- AUTO_INCREMENT for table `user_infos`
 --
 ALTER TABLE `user_infos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
