@@ -1,11 +1,57 @@
 @extends('backend.layouts.app')
 
 @section('title', ''.($global_setting->title ?? "").' | Give Permission')
+
 @section('content')
     @push('css')
         <style>
             label {
                 display: block;
+            }
+            
+            .card-header {
+                border-bottom: 0;
+            }
+            .form-check {
+                transition: background-color 0.2s;
+                min-height: 80px;
+            }
+            .form-check:hover {
+                background-color: #f1f1f1 !important;
+            }
+            .form-check-label {
+                font-size: 0.95rem;
+                cursor: pointer;
+                flex-grow: 1;
+            }
+            .search-input {
+                width: 200px;
+                margin-right: 10px;
+            }
+
+            @media only screen and (max-width: 480px) and (-webkit-min-device-pixel-ratio: 1.5), (max-width: 480px) and (min-resolution: 144dpi) {
+                .card-header.bg-success.text-white.d-flex.justify-content-between.align-items-center {
+                    display: block !important;
+                }
+                .search-input {
+                    width: 100%;
+                }
+                button#selectAllAssigned {
+                    width: 100%;
+                }
+                button#removeAllAssigned {
+                    width: 100%;
+                }
+
+                .card-header.bg-danger.text-white.d-flex.justify-content-between.align-items-center {
+                    display: block !important;
+                }
+                button#selectAllUnassigned {
+                    width: 100%;
+                }
+                button#removeAllUnassigned {
+                    width: 100%;
+                }
             }
         </style>
     @endpush
@@ -17,11 +63,9 @@
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                         <h4 class="mb-sm-0">Give Permission</h4>
-
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Dashboard</a></li>
-
                                 <li class="breadcrumb-item active">Give Permission</li>
                             </ol>
                         </div>
@@ -39,7 +83,6 @@
                             <div class="row">
                                 <div class="col-md-2 form-group">
                                     <label for="role">Select Role: </label>
-
                                     <select class="form-control" name="roleId" id="role">
                                         @if ($selected_role != '')
                                             @foreach($roles as $role)
@@ -60,7 +103,6 @@
                         </div>
                         <!-- end card body -->
                         <div class="card-footer">
-
                         </div>
                     </div>
                     <!-- end card -->
@@ -80,8 +122,9 @@
                     showPermissions(roleId);
                 });
 
-                function showPermissions(roleId){
+                function showPermissions(roleId) {
                     let url = "{{ route('admin.rolePermission.showPermission', ':roleId') }}";
+                    
                     url = url.replace(':roleId', roleId);
 
                     $.ajax({
@@ -90,50 +133,93 @@
                         dataType: "json",
                         success: function(response) {
                             $("#assignedPermissionList").empty();
-                            $.each(response.rolePermissions, function (key, item) {
-                                if (item.permission_name) {
-                                    var name = item.permission_name.name_en;
-                                } else {
-                                    var name = '-';
-                                }
-
-                                $("#assignedPermissionList").append('<div class="bg-soft-success m-1 p-2 col-md-2" style="border:1px solid rgba(0, 0, 0, 0.319);">\
-                                    <input type="hidden" name="hiddenRoleId" value="'+item.role_id+'">\
-                                    <input class="assignedPermissions" type="checkbox" name="removePermission[]" id="removePermission'+item.permission_id+'" value="'+item.permission_id+'">\
-                                    <label class="form-check-label" for="removePermission'+item.permission_id+'">'+name+'</label>\
-                                </div>');
-                            });
-
                             $("#unassignedPermissionList").empty();
 
-                            $.each(response.unassignedPermissions, function (key, item) {
-                                $("#unassignedPermissionList").append('<div class="bg-soft-danger m-1 p-2 col-md-2" style="border:1px solid rgba(0, 0, 0, 0.319);">\
-                                    <input type="hidden" name="hiddenRoleId" value="'+roleId+'">\
-                                    <input class="unassignedPermissions" type="checkbox" name="givePermission[]" id="givePermission'+item.id+'" value="'+item.id+'">\
-                                    <label class="form-check-label" for="givePermission'+item.id+'">'+item.name_en+'</label>\
-                                </div> ');
+                            function formatPermissionName(name) {
+                                if (!name || name === '-') return '-';
+                                return name.replace(/_/g, ' ')
+                                    .split(' ')
+                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                    .join(' ');
+                            }
+
+                            let assignedIndex = 1;
+
+                            $.each(response.rolePermissions, function (key, item) {
+                                let name = formatPermissionName(item.permission_name ? item.permission_name.name_en : '-');
+                                $("#assignedPermissionList").append(`
+                                    <div class="col-12 col-md-6 col-xl-4 permission-item" data-name="${name.toLowerCase()}">
+                                        <div class="form-check p-3 alert-success rounded border d-flex align-items-center">
+                                            <input class="form-check-input me-2 assignedPermissions" type="checkbox" name="removePermission[]" id="removePermission${assignedIndex}" value="${item.permission_id}" style="margin-top: 0; flex-shrink: 0;">
+
+                                            <label class="form-check-label" for="removePermission${assignedIndex}" style="word-break: break-word; color: #000;">
+                                                ${name}
+                                            </label>
+                                        </div>
+                                    </div>
+                                `);
+
+                                assignedIndex++;
                             });
+
+                            let unassignedIndex = 1;
+
+                            $.each(response.unassignedPermissions, function (key, item) {
+                                let name = formatPermissionName(item.name_en || '-');
+
+                                $("#unassignedPermissionList").append(`
+                                    <div class="col-12 col-md-6 col-xl-4 permission-item" data-name="${name.toLowerCase()}">
+                                        <div class="form-check p-3 alert-danger rounded border d-flex align-items-center">
+                                            <input class="form-check-input me-2 unassignedPermissions" type="checkbox" name="givePermission[]" id="givePermission${unassignedIndex}" value="${item.id}" style="margin-top: 0; flex-shrink: 0;">
+
+                                            <label class="form-check-label" for="givePermission${unassignedIndex}" style="word-break: break-word; color: #000;">
+                                                ${name}
+                                            </label>
+                                        </div>
+                                    </div>
+                                `);
+                                unassignedIndex++;
+                            });
+
+                            filterPermissions('#searchAssigned', '#assignedPermissionList');
+                            filterPermissions('#searchUnassigned', '#unassignedPermissionList');
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error fetching permissions:', error);
                         }
                     });
                 }
-            });
-        </script>
 
-        <script>
-            // select, remove all assigned permissions
-            $("#selectAllAssigned").click(function(){
-                $(".assignedPermissions").prop('checked', true);
-            });
-            $("#removeAllAssigned").click(function(){
-                $(".assignedPermissions").prop('checked', false);
-            });
+                function filterPermissions(searchInput, permissionList) {
+                    $(searchInput).on('input', function() {
+                        let searchTerm = $(this).val().toLowerCase();
+                        $(permissionList).find('.permission-item').each(function() {
+                            let permissionName = $(this).data('name');
+                            if (permissionName.includes(searchTerm)) {
+                                $(this).show();
+                            } else {
+                                $(this).hide();
+                            }
+                        });
+                    });
+                }
 
-            // select, remove all unassigned permissions
-            $("#selectAllUnassigned").click(function(){
-                $(".unassignedPermissions").prop('checked', true);
-            });
-            $("#removeAllUnassigned").click(function(){
-                $(".unassignedPermissions").prop('checked', false);
+                filterPermissions('#searchAssigned', '#assignedPermissionList');
+                filterPermissions('#searchUnassigned', '#unassignedPermissionList');
+
+                $("#selectAllAssigned").click(function(){
+                    $(".assignedPermissions:visible").prop('checked', true);
+                });
+                $("#removeAllAssigned").click(function(){
+                    $(".assignedPermissions:visible").prop('checked', false);
+                });
+
+                $("#selectAllUnassigned").click(function(){
+                    $(".unassignedPermissions:visible").prop('checked', true);
+                });
+                $("#removeAllUnassigned").click(function(){
+                    $(".unassignedPermissions:visible").prop('checked', false);
+                });
             });
         </script>
     @endpush
