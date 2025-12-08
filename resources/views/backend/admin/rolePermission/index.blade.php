@@ -84,15 +84,9 @@
                                 <div class="col-md-2 form-group">
                                     <label for="role">Select Role: </label>
                                     <select class="form-control" name="roleId" id="role">
-                                        @if ($selected_role != '')
-                                            @foreach($roles as $role)
-                                                <option value="{{$role->id}}" @if($selected_role->id == $role->id) selected @endif>{{$role->display_name}}</option>
-                                            @endforeach
-                                        @else
-                                            @foreach ($roles as $role)
-                                                <option value="{{$role->id}}">{{$role->display_name}}</option>
-                                            @endforeach
-                                        @endif
+                                        @foreach($roles as $role)
+                                            <option value="{{$role->id}}" {{ $role->id == $selected_role_id ? 'selected' : '' }}>{{$role->display_name}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
 
@@ -124,7 +118,6 @@
 
                 function showPermissions(roleId) {
                     let url = "{{ route('admin.rolePermission.showPermission', ':roleId') }}";
-                    
                     url = url.replace(':roleId', roleId);
 
                     $.ajax({
@@ -132,9 +125,11 @@
                         url: url,
                         dataType: "json",
                         success: function(response) {
+                            // Clear existing permissions
                             $("#assignedPermissionList").empty();
                             $("#unassignedPermissionList").empty();
 
+                            // Format permission name: Remove underscores and capitalize words
                             function formatPermissionName(name) {
                                 if (!name || name === '-') return '-';
                                 return name.replace(/_/g, ' ')
@@ -143,6 +138,7 @@
                                     .join(' ');
                             }
 
+                            // Populate Assigned Permissions
                             let assignedIndex = 1;
 
                             $.each(response.rolePermissions, function (key, item) {
@@ -158,12 +154,11 @@
                                         </div>
                                     </div>
                                 `);
-
                                 assignedIndex++;
                             });
 
+                            // Populate Unassigned Permissions
                             let unassignedIndex = 1;
-
                             $.each(response.unassignedPermissions, function (key, item) {
                                 let name = formatPermissionName(item.name_en || '-');
 
@@ -181,6 +176,10 @@
                                 unassignedIndex++;
                             });
 
+                            // Update hidden role ID in both forms to match the selected role
+                            $('input[name="hiddenRoleId"]').val(roleId);
+
+                            // Trigger search filter on load
                             filterPermissions('#searchAssigned', '#assignedPermissionList');
                             filterPermissions('#searchUnassigned', '#unassignedPermissionList');
                         },
@@ -190,6 +189,7 @@
                     });
                 }
 
+                // Search filter function
                 function filterPermissions(searchInput, permissionList) {
                     $(searchInput).on('input', function() {
                         let searchTerm = $(this).val().toLowerCase();
@@ -204,9 +204,11 @@
                     });
                 }
 
+                // Initialize search filters
                 filterPermissions('#searchAssigned', '#assignedPermissionList');
                 filterPermissions('#searchUnassigned', '#unassignedPermissionList');
 
+                // Select/Remove All Assigned Permissions
                 $("#selectAllAssigned").click(function(){
                     $(".assignedPermissions:visible").prop('checked', true);
                 });
@@ -214,6 +216,7 @@
                     $(".assignedPermissions:visible").prop('checked', false);
                 });
 
+                // Select/Remove All Unassigned Permissions
                 $("#selectAllUnassigned").click(function(){
                     $(".unassignedPermissions:visible").prop('checked', true);
                 });

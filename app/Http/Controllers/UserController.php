@@ -814,6 +814,10 @@ class UserController extends Controller
     {
         $user = User::where('id', Auth::user()->id)->first();
         $employee = User::with('userInfo')->where('id', $user->id)->first();
+        $departments = Department::where('status', 1)->orderBy('name', 'asc')->get();
+        $designations = Designation::where('status', 1)->orderBy('name', 'asc')->get();
+        $offices = Office::where('status', 1)->orderBy('name', 'asc')->get();
+
         $divisions = Division::where('status', 1)->get();
         $userAddress = UserAddress::where('user_id', $user->id)->first();
 
@@ -827,10 +831,14 @@ class UserController extends Controller
             'user', 
             'employee', 
             'divisions', 
+            'userAddress', 
             'presentDistricts', 
             'presentUpazilas', 
             'permanentDistricts', 
             'permanentUpazilas',
+            'departments',
+            'designations',
+            'offices'
         ));
     }
 
